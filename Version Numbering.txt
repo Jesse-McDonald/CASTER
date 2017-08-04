@@ -1,0 +1,14 @@
+INDEV:
+INDEV-B base program as completed at the end of the 2017 summer, synonymous with INDEV-17w31a
+further indev versions marked as INDEV-[yy]w[ww][i] where yy is the 2 digit year, ww is the month number within that year, and i is an alphabetical incremented for the number of releases in that week
+Example: version released on 8/4/2017 being the first version that week would be INDEV-17w31a
+program shall remain in INDEV until it is a functioning standalone program and should have 3d visualization, multiple layer handling, more file types supported, and be a functioning and stable manual segmentation solution prior to advancing
+
+ALPHA:
+dev releases number as the indev are but with ALPHA- instead of INDEV-, major releases released with a 'a' preceding the version number
+
+BETA:
+dev releases number as the alpha are but with BETA- instead of ALPHA-, major releases released with a 'b' preceding the version number
+ 
+RELEASE:
+standard version numbering, for dev releases stick with previous scheme but use CASTER- instead of BETA-

@@ -1,0 +1,10 @@
+This is just my plan for the next steps of CASTER
+
+Modify JEMO format to be compressed (Still lossless) by specifying a single byte before each color to indicate how many sequential pixels are of that color
+add Decision tree classifier
+make layer copying adjust layers to new membrane (plan is to look for closest pixel that matches the previous pixel the best, probably a quadratic or exponential distance drop off)
+add handling of non png file types (like tif)
+add .dm3 file handling
+add import/export of track em projects
+add multiple segmentation layers (Colors)
+add 3d visualization
