@@ -1,6 +1,6 @@
-CASTER is a Computer Assisted Segmentation Tool Environment Revisit and is designed for the segmentation of Neves with in stacks of Scanning Electron Microscope scans of retina
+CASTER is a programm called Computer Assisted Segmentation Tool Environment Revisit, and has been developed for the segmentation of neves with in stacks of Scanning Electron Microscope scans of retina
 caster is currently indev and is not ready to be used as a standalone system, but it does make a good platform for testing automatic and semi-automatic segmentation tools
-the current plan is to attempt to make CASTER a full program and eventually port it from Processing to another language in the C/Java family
+the current plan is to attempt to make CASTER a fully functioning program and eventually port it from Processing to another language in the C/Java family
 
 FEATURES:
 Import and display multiple sequential images representing SEM scans in png format 
