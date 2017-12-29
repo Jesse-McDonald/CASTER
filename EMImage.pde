@@ -27,7 +27,7 @@ class EMImage {
     prevLayer=0;
 		img=stack;
 		overlay=new EMOverlay(img.width, img.height, img.depth);//create a overlay for the stack
-		brush=new Brush(color(255, 0, 0, 50),this);//create generic brush
+		brush=new Brush(color(255, 0, 0, 50),this,9);//create generic brush
     meta=new ArrayList<EMMeta>();
     for(int i=0;i<img.depth;i++){
       meta.add(new EMMeta()); 
@@ -45,15 +45,16 @@ class EMImage {
 	}
 	
 	public EMImage move(float x, float y) {
-		//calculate the offset allowing for a 10 pixel allowance adjusted by zoom
-		offsetX=range(width-10*zoom, offsetX+x, 10*zoom-img.width*zoom);
-		offsetY=range(height-10*zoom, offsetY+y, 10*zoom-img.height*zoom);
+		//calculate the offset allowing for a 1 pixel allowance adjusted by zoom
+               offsetX=range(width-zoom, offsetX+x, zoom-img.width*zoom);
+              offsetY=range(height-zoom, offsetY+y, zoom-img.height*zoom);
 		return this.update();//not sure what I planned for update
 	}
 	
 	public EMImage zoom(float fac) {
 		float oldZ=zoom;
 		zoom+=(fac)*zoom*.01;
+        
 		//adjust offset so center pixel does not move
 		//to do this find the edge of the image's offset from the center of the screen
 		//then divide it by the original zoom and multiply by the new zoom
@@ -62,6 +63,8 @@ class EMImage {
 		//then apply the range function for safety
 		offsetX=width/2+(offsetX-width/2)/oldZ*zoom;
 		offsetY=height/2+(offsetY-height/2)/oldZ*zoom;
+                move(0,0);//do checking in offset, but dont move this keeps the image from snaping in the next movement
+                
 		return this.update();//but its here again
 	}
 	
@@ -99,7 +102,7 @@ class EMImage {
 		
 	public EMImage changeLayer(float direction){//changes the current layer, designed for a mouse wheel, expects a signed input so as to decide which direction to go
     
-		brush.floodFillBackup=new ArrayList<Pixel>();
+		brush.eStop();
 		if (direction>0){//I could probiably optimize this, but with the number of layer changes being so low.... why bother
       prevLayer=layer;//do this inside the if so it does not accidentally trigger
 			layer=min(img.depth-1,layer+1);

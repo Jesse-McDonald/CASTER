@@ -1,0 +1,8 @@
+INDEV-17w52a
+*Added ChangeLog.txt (I know, I know, meta and all that)
+*Refactored Brush class to be polymorphic rather than mode dependant
+*Refactored Lambda functions to work with new polymorphic brushes
+*removed debug prints from UI lookup by name
+*changed pixel border minimum from 10 to 1 (EMImage.move)
+*Renamed test-environment.pde to CASTER.pde
+

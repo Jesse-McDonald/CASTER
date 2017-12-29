@@ -63,7 +63,7 @@ class Ui_PopupPanel extends Ui_Element{
   }
   
   Ui_Element getId(String s){
-    println("String s="+s);println("String id="+id);
+    //println("String s="+s);println("String id="+id);
     if(this.id.equals(s)){
       return this;
     }

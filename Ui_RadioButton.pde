@@ -88,7 +88,7 @@ class Ui_RadioButton extends Ui_Element{
   }
   
    Ui_Element getId(String s){//check own id and id of all children, return if match
-    println("String s="+s);println("String id="+id);
+    //println("String s="+s);println("String id="+id);
     if(this.id.equals(s)){
       return this;
     }
