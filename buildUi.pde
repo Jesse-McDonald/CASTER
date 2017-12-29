@@ -79,7 +79,7 @@ Ui buildUi(){
     Ui_Button build=new Ui_Button(.005,6/numButtons,spacing,"blank.png");
     build.setPressedImg("blankActive.png");
     build.setHighlightedImg("highlight.png");
-    build.onActivate=new BlankBrush();
+    build.onActivate=new BlankButton();
 
     ui.add(build);
     

@@ -40,13 +40,13 @@ class Ui{
   public Ui_Element getId(final String id){
    for(int i=0;i<elements.size();i++){
       Ui_Element temp=elements.get(i).getId(id);
-      println(id);
+      //println(id);
       if (temp!=null){
-        println(temp);
+        //println(temp);
        return temp; 
       }
    }
-   println("Returning nul");
+   //println("Returning nul");
    return null;
   }
   

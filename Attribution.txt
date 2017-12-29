@@ -2,3 +2,7 @@
 Base program developed to INDEV-B by Jesse McDonald under Dr. Samual (Seth) Long at Lewis Clark State College
 Funding was provided by INBRE and the National Institute of General Medical Sciences of the National Institutes of Health Grant #P20GM103408
 
+12/29/2017
+INDEV-17w52a developed from INDEV-B by Jesse McDonald 
+No funding was provided for this development branch
+
