@@ -1,4 +1,5 @@
 The JEMO (J Electron Microscopy Overlay) is designed to store the overlay data created by test_environment EMImage class.
+
 The file contains a 2-part header, the first part is 4 bytes long and contains the letters J E M O in that order (4A 45 4D 4F) to describe the file type, (there is no null terminator) followed by a 1 byte version number for the file type
 
 Version 0:

@@ -1,3 +1,4 @@
+
 /**
 implements a rough lambda concept since processing does not have it by default
 the Lambda class is technically abstract, but has been declared otherwise so as a empty Lambda can be created by default
