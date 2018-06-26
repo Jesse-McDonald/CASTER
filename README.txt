@@ -9,4 +9,5 @@ Easily Modifiable code for rapid testing of tools
 Brush style Segmentation
 Saving and loading overlays in JEMO format
 RAE CAST ray segmentation semi-automatic segmentation brush
+EdgeDetection brush for semi-automatic and automatic selection of membrain
 Landmark alignment

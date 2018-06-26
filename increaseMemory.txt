@@ -1,0 +1,2 @@
+Control Pannel -> Programs -> Java -> Java -> View and manage java runtime versions and settings -> runtime paramiters->
+add -Xms128000m

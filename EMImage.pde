@@ -20,41 +20,62 @@ class EMImage {
 	public int layer;//layer in overlay and img
   public int prevLayer;
   public ArrayList<EMMeta> meta;//meta data for a given layer
+  public long uuidHigh;
+  public long uuidLow;
   
-
 	public EMImage(EMStack stack) {//expect the stack to be given to you, theoretically EMImage can deal with making the stack, but currently the loading happens outside for this
 		layer=0;
     prevLayer=0;
 		img=stack;
-		overlay=new EMOverlay(img.width, img.height, img.depth);//create a overlay for the stack
 		brush=new Brush(color(255, 0, 0, 50),this,9);//create generic brush
-    meta=new ArrayList<EMMeta>();
-    for(int i=0;i<img.depth;i++){
-      meta.add(new EMMeta()); 
-    }
-    img.meta=meta;
-    overlay.meta=meta;
+    meta=stack.meta;
+    overlay=stack.overlay;
 		this.update();//call update... apparently update does not actually do anything right now..... not sure what it was going to do
 	}
+  EMImage undo(){
+    overlay.undo(this);
+    return this;
+  }
+  EMImage redo(){
+    overlay.redo(this);
+    return this;
+  }
+  EMImage snap(){
+   overlay.pushHistory(layer);
+   return this;
+  }
+  public EMImage draw(PApplet screen){
+    if(img.size()>0){
+      Pixel p0=getPixel(0,0);
+      Pixel pe=getPixel(screen.width,screen.height);
 
+      img.draw(this,p0,pe);
+      overlay.draw(this,p0,pe);
+      //overlay.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the overlay OVER that
+      brush.draw();//draw the brush on top
+    }
+    return this;
+  }
 	public EMImage draw() {
-		img.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the image stack 
-		overlay.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the over lay OVER that
-		brush.draw();//draw the brush on top
-		return this.update();//again, why update?
+    if(img.size()>0){
+      img.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the image stack 
+  		overlay.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the overlay OVER that
+  		brush.draw();//draw the brush on top
+    }
+  	return this.update();//again, why update?
+    
 	}
 	
 	public EMImage move(float x, float y) {
-		//calculate the offset allowing for a 1 pixel allowance adjusted by zoom
-               offsetX=range(width-zoom, offsetX+x, zoom-img.width*zoom);
-              offsetY=range(height-zoom, offsetY+y, zoom-img.height*zoom);
+		//calculate the offset allowing for a 10 pixel allowance adjusted by zoom
+		offsetX=range(width-10*zoom, offsetX+x, 10*zoom-img.width*zoom);
+		offsetY=range(height-10*zoom, offsetY+y, 10*zoom-img.height*zoom);
 		return this.update();//not sure what I planned for update
 	}
 	
 	public EMImage zoom(float fac) {
 		float oldZ=zoom;
 		zoom+=(fac)*zoom*.01;
-        
 		//adjust offset so center pixel does not move
 		//to do this find the edge of the image's offset from the center of the screen
 		//then divide it by the original zoom and multiply by the new zoom
@@ -63,8 +84,6 @@ class EMImage {
 		//then apply the range function for safety
 		offsetX=width/2+(offsetX-width/2)/oldZ*zoom;
 		offsetY=height/2+(offsetY-height/2)/oldZ*zoom;
-                move(0,0);//do checking in offset, but dont move this keeps the image from snaping in the next movement
-                
 		return this.update();//but its here again
 	}
 	
@@ -85,7 +104,7 @@ class EMImage {
 		return this;
 	}
 	
-	public Pixel getPixel(int screenX, int screenY) {//gets the img pixel at a screen coord
+	public Pixel getPixel(int screenX, int screenY) {//gets the img pixel at a screen cord
 		int x, y;
 		color c;
 		x=int((screenX-offsetX)/zoom);//+meta.get(layer).offsetX;
@@ -101,7 +120,6 @@ class EMImage {
 	}
 		
 	public EMImage changeLayer(float direction){//changes the current layer, designed for a mouse wheel, expects a signed input so as to decide which direction to go
-    
 		brush.eStop();
 		if (direction>0){//I could probiably optimize this, but with the number of layer changes being so low.... why bother
       prevLayer=layer;//do this inside the if so it does not accidentally trigger
@@ -110,9 +128,28 @@ class EMImage {
       prevLayer=layer;
 			layer=max(0,layer-1);
 		}
+    
 		return this;
 	}
-
+  public byte[] wrapInt(int toWrap){//a method that wraps an int in a byte[] because write(int) ONLY WRITES THE LOW BYTE TO THE FILE!!!!!!!!
+    ByteBuffer temp = ByteBuffer.allocate(4);
+    temp.putInt(toWrap);//convert int to ByteBuffer
+    byte[] conv=new byte[4];//integers are generally 4 bytes, and if that changes for some reason, the file type still thinks ints are 4 bytes so this is constant
+    for(int i=0;i<4;i++){//convert ByteBuffer to byte[] (Since for some reason ByteBuffer does not have a .getBytes or similar)
+      conv[i]=temp.get(i);
+    }
+    return conv;
+  }
+  public byte[] wrapLong(long toWrap){//I dont know that writing longs does not work, but at this point I dont trust it
+    ByteBuffer temp = ByteBuffer.allocate(8);
+    temp.putLong(toWrap);//convert int to ByteBuffer
+    byte[] conv=new byte[4];//integers are generally 4 bytes, and if that changes for some reason, the file type still thinks ints are 4 bytes so this is constant
+    for(int i=0;i<4;i++){//convert ByteBuffer to byte[] (Since for some reason ByteBuffer does not have a .getBytes or similar)
+      conv[i]=temp.get(i);
+    }
+    return conv;
+  }
+ 
 	public boolean save(File fileName){//saves current layout to JEMO format
 		try{
 			OutputStream file= new BufferedOutputStream(new FileOutputStream(fileName));
@@ -120,7 +157,9 @@ class EMImage {
 			file.write('E');
 			file.write('M');
 			file.write('O');
-      file.write(0);//NOT A NULL TERMINATOR, write the version number for the file type
+      file.write(1);//write the version number for the file type
+      file.write(wrapLong(overlay.uuidHigh));
+      file.write(wrapLong(overlay.uuidLow));
 			file.write(wrapInt(layer));//write current active layer, I threw this in because I think when I load an overlay I would want to snap to the last position
 			overlay.save(file);//turn the saving over to EMOverlay, we expect it to not close the file
 			file.flush();
@@ -131,22 +170,13 @@ class EMImage {
 		return true;
 	}
 	
-	public byte[] wrapInt(int toWrap){//a method that wraps an int in a byte[] because write(int) ONLY WRITES THE LOW BYTE TO THE FILE!!!!!!!!
-		ByteBuffer temp = ByteBuffer.allocate(4);
-		temp.putInt(toWrap);//convert int to ByteBuffer
-		byte[] conv=new byte[4];//integers are generally 4 bytes, and if that changes for some reason, the file type still thinks ints are 4 bytes so this is constant
-		for(int i=0;i<4;i++){//convert ByteBuffer to byte[] (Since for some reason ByteBuffer does not have a .getBytes or similar)
-			conv[i]=temp.get(i);
-		}
-		return conv;
-	}
 
 	public boolean load(File fileName){//load JEMO file to overlay, replaces overlay
 		try{
 			InputStream file = new BufferedInputStream(new FileInputStream(fileName));
-			byte[] temp=new byte[4];
-			file.read(temp);
-			String var=new String(temp);//read and test header
+			byte[] byte4=new byte[4];
+			file.read(byte4);
+			String var=new String(byte4);//read and test header
       byte ver;//get version number
       ver=(byte)file.read();
 			if(!var.equals("JEMO")){
@@ -155,35 +185,56 @@ class EMImage {
 				return false;
 
 			}
-      if(ver>0){
-        println("file version not suported");
+      if(ver<1){
+        println("file version no longer suported");
         file.close();
         return false;
       }
-			file.read(temp);
-			int tLayer=min(ByteBuffer.wrap(temp).getInt(),img.depth-1);//it is very important we don’t change layer yet, processing multithreads
-			//file io, so this is running parallel to draw, if we change the layer now there is a very good chance we switch to that layer in the overlay
-			//before it exists and we don’t want that
-			overlay.load(file);//pass loading EMOverlay
-			layer=tLayer;//ok, now that overlay is fully loaded we can safely change layers to the proper layer
-			file.close();
-			}
-		catch(IOException ex){
-			println(ex);
-			println("exception");
-			return false; 
-		}
-		return true;
+      if(ver>1){
+        println("file version not yet suported");
+        file.close();
+        return false;
+      }
+      //read and check uuid here
+      if(ver==1){
+        byte[] byte8=new byte[8];
+        file.read(byte8);
+        long UUIDHigh=ByteBuffer.wrap(byte8).getLong();
+        file.read(byte8);
+        long UUIDLow=ByteBuffer.wrap(byte8).getLong();
+  			file.read(byte4);
+        overlay.uuidHigh=UUIDHigh;
+        overlay.uuidLow=UUIDLow;
+        if(UUIDHigh==uuidHigh&&UUIDLow==uuidLow){
+          //warn()
+          println("Warning, this file was saved from a different project");
+        }
+        
+  			int tLayer=min(ByteBuffer.wrap(byte4).getInt(),img.depth-1);//it is very important we don’t change layer yet, processing multithreads
+  			//file io, so this may running parallel to draw, if we change the layer now there is a very good chance we switch to that layer in the overlay
+  			//before it exists and we don’t want that
+  			overlay.load(file);//pass loading to EMOverlay
+  			layer=tLayer;//ok, now that overlay is fully loaded we can safely change layers to the proper layer
+  			file.close();
+  			}  
+      }
+  		catch(IOException ex){
+  			println(ex);
+  			println("exception");
+  			return false; 
+  		}
+  		return true;
+   
 	}  
-
+  
   float greyVal(color c){//this averages the RGB values of a given color to determine its grayscale value
-    return ((c >> 16 & 0xFF) + (c >> 8 & 0xF) + (c & 0xFF))/3.0;//extract and average rgb values
+    return ((c >> 16 & 0xFF) + (c >> 8 & 0xFF) + (c & 0xFF))/3.0;//extract and average rgb values
   }
   public EMImage alignLandmarks(int size){return alignLandmarks(size,1);}//because FRIKING JAVA DOES NOT ALLOW DEFAULT ARGUMENTS!!!
   
-  public EMImage alignLandmarks(int size, int startLayer){//how large of a shift should be considered for a alignment
+  public EMImage alignLandmarks(int size, int startLayer){//size is how large of a shift should be considered for a alignment
     for(int l=min(1,startLayer);l<img.depth;l++){
-      float bestVal=999999999;//large start
+      float bestVal=Float.MAX_VALUE;//large start-
       EMMeta bestPos=new EMMeta();//track the meta of the best spot
       for(int x=-size; x<size;x++){
         for(int y=-size; y<size;y++){

@@ -8,36 +8,156 @@ EMOverlay does depends on void PImage.updatePixels(), void PImage.loadPixels(), 
 color must be resolvable to int for save to work
 */
 class EMOverlay{
-	ArrayList<PImage> overlay;//PImage stack for storing the overlay
+  FBuffer<HistorySnap> history;
+  HistorySnap fHistory;
+  boolean logChanges=true;
+	ArrayList<PNGOverlay> overlay;//PImage stack for storing the overlay
+  HashMap<Integer,Integer> key;
+  ArrayList<Integer> palette;
+  HashMap<Integer,Integer> paletteMap;
 	int width;//width of overlay, all PImages in overlay should have same width
 	int height;//height of overlay, all PImages in overlay should have same width
 	int depth;//number of PImages in overlay
+  long uuidHigh;
+  long uuidLow;
+  PImage drawCache;
+  PImage cached;
+  int lastLayer=-1;
+  PNGThread pthread; //this is a c joke ;)
   public ArrayList<EMMeta> meta;//meta data for a given layer
 	EMOverlay(int w, int h, int d){
 		width=w;//set width height and depth
 		height=h;
-		depth=d;
-		overlay=new ArrayList<PImage>();
+		depth=0;
+		overlay=new ArrayList<PNGOverlay>();
     meta=new ArrayList<EMMeta>();
+    key=new HashMap<Integer,Integer>();
+    palette=new ArrayList<Integer>();
+    paletteMap=new HashMap<Integer,Integer>();
+    palette.add(0);
+    paletteMap.put(0,0);
+    cached=createImage(w,h,ARGB);
 		for( int i=0;i<d;i++){
-			overlay.add(new PImage(w,h,ARGB));//populate overlay with blank PImages
+			addLayer();
 		}
-
+    pthread=new PNGThread();
+    history=new FBuffer<HistorySnap>(new HistorySnap[100]);
+    fHistory=new HistorySnap();
 	}
-	
-	EMOverlay set(int l, int x, int y, color c){//obfuscate overlay.overlay.get(layer).set(x,y,c) to overlay.set(layer, x, y, c)
-		overlay.get(l).set(x-meta.get(l).offsetX,y-meta.get(l).offsetY,c);
+	EMOverlay addLayer(){
+    //println("adding "+width+" "+height+" image");
+    meta.add(new EMMeta());
+    //overlay.add(new PImage(width,height,ARGB));//populate overlay with blank PImages//removed for keyed stack
+    depth++;
+    return this;
+  }
+	EMOverlay set(int l, int x, int y, color c){//obfuscate overlay.overlay.get(key.get(layer)).set(x,y,c) to overlay.set(layer, x, y, c)
+    if(!key.containsKey(l)){
+      overlay.add(new PNGOverlay(width,height,palette,paletteMap));//add new image to the stack and add its index to the key
+      key.put(l,overlay.size()-1);
+         }
+    if(cached!=null){
+      cached.set(x,y,c);
+    }else{
+      drawCache.set(x,y,c); 
+    }
+    if(logChanges){
+      fHistory.log(new Pixel(x,y,overlay.get(key.get(l)).get(x,y)),c);
+    }
+		overlay.get(key.get(l)).set(x-meta.get(l).offsetX,y-meta.get(l).offsetY,c);
+
 		return this;
 	}
 	
 	color get(int l, int x,int y){//obfuscate overlay.overlay.get(layer).get(x,y) to overlay.get(layer, x, y)
-		return overlay.get(l).get(x-meta.get(l).offsetX,y-meta.get(l).offsetY); 
+    if(key.containsKey(l)){
+		  return overlay.get(key.get(l)).get(x-meta.get(l).offsetX,y-meta.get(l).offsetY); 
+    }else{
+     return 0; 
+    }
 	}
-	
-	EMOverlay draw(int layer, float offsetX,float offsetY, float zX, float zY){//draw overlay to screen, should be done after the EMStack is drawn
-		image(overlay.get(layer), offsetX, offsetY, zX, zY);//draw the overlay at layer, assumes layer is within bounds
-		return this;
-	}
+  EMOverlay pushHistory(int layer){
+
+      if(fHistory.changed){
+         history.push(fHistory); 
+      }
+      fHistory=new HistorySnap(layer);
+      return this;    
+  }
+  EMOverlay undo(EMImage parrent){
+    HistorySnap temp=history.top();
+    history.prev();
+    if(temp!=null){
+      temp.undo(parrent); 
+    }
+    
+    return this;
+  }
+  EMOverlay redo(EMImage parrent){
+    history.next();
+    HistorySnap temp=history.top();
+    
+    if(temp!=null){
+      temp.redo(parrent); 
+    }
+    
+    return this;
+  }
+	EMOverlay draw(EMImage p,Pixel p0, Pixel pe){
+ 
+    if(key.containsKey(p.layer)){
+        if(p.layer!=lastLayer){
+          if(pthread.alive){
+            pthread.terminate=true;
+            try{//I hate java, if I dont want to catch an exception, dont force me to
+              pthread.join();
+            }catch (InterruptedException e) {
+              e.printStackTrace();
+           }
+           
+          }
+          pthread=new PNGThread();
+          pthread.terminate=false;
+          pthread.in=overlay.get(key.get(p.layer));
+          cached=null;
+          
+          pthread.retv=cached;
+          new Thread(pthread).start();
+          lastLayer=p.layer;
+          drawCache=createImage(width,height,ARGB);
+          pushHistory(lastLayer);
+        }
+        if(cached!=null){
+            if(drawCache!=null){
+              cached=merge(cached,drawCache);
+              drawCache=null;
+            }
+            image(cached,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
+        }else{
+          if(pthread.retv!=null){
+           cached=pthread.retv; 
+          }
+          PImage temp=overlay.get(key.get(p.layer)).fastGet(p0.x,p0.y,pe.x,pe.y);
+          image(temp,p.offsetX+p0.x*p.zoom+p.meta.get(p.layer).offsetX*p.zoom+.5,p.offsetY+p0.y*p.zoom+p.meta.get(p.layer).offsetY*p.zoom+.5,(pe.x-p0.x+1)*p.zoom,(pe.y-p0.y+1)*p.zoom);//this line took a loooooooot of trial an error, trust that it is right
+          //never the less, it is off by less than 1 screen pixel).... not sure how to fix it
+          
+        }
+    }
+    return this;
+  }
+  EMOverlay draw(int layer,float x,float y,float zX,float zY){//draw current layer
+    if(key.containsKey(layer)){
+      if(overlay.size()>layer){
+        if(layer!=lastLayer){
+          cached = overlay.get(key.get(layer)).getImage();
+          lastLayer=layer;
+        }
+        image(cached,x,y,zX,zY);
+      }
+    }
+    return this;
+  }
+ 
 	
 	public byte[] wrapInt(int toWrap){//a method that wraps an int in a byte[] because write(int) ONLY WRITES THE LOW BYTE TO THE FILE!!!!!!!!
 		ByteBuffer temp = ByteBuffer.allocate(4);
@@ -48,17 +168,24 @@ class EMOverlay{
 		}
 		return conv;
 	}
-	
+	//convert to JEMO v.1 major fixes needed, taken temporaroly off line
 	EMOverlay save(OutputStream file) throws IOException{//this writes the overlay to a JEMO file
 		file.write(wrapInt(width));//write width, height, and depth
 		file.write(wrapInt(height));
 		file.write(wrapInt(depth));
 		for(int i=0;i<depth;i++){
-			file.write(toByteArray(overlay.get(i)));//write all pixels of layer i
+      //TODO probiably need to fix something here
+      if(key.containsKey(i)){
+			  //file.write(toByteArray(overlay.get(key.get(i))));//write all pixels of layer i
+      }
 		}
 		return this;
 	}
-	
+	EMOverlay set(int x, int y, color c){
+    this.set(img.layer,x,y,c);
+    return this;
+  }
+  //update to JEMO v.1
 	EMOverlay load(InputStream file) throws IOException{//load overlay from JEMO file
 		byte[] temp=new byte[4];
 		file.read(temp);
@@ -73,10 +200,11 @@ class EMOverlay{
 			file.read(temp);
 			tOverlay.add(fromByteArray(temp,width,height));//read all pixels of layer i
 		}
-    overlay=tOverlay;
+    //overlay=tOverlay;
 		return this;
 	}
 	
+  //to and from Byte Array have now been Depricated
 	PImage fromByteArray(byte[] bytes,int w, int h){//translate a byte[] to a PImage
 		PImage ret= new PImage(w,h,ARGB);
 		ret.loadPixels();//prep pixels, I don’t think this is actually needed
@@ -100,5 +228,17 @@ class EMOverlay{
 		}
 		return ret; 
 	}
-
+PImage merge(PImage _1, PImage _2){
+    PImage ret=_1.get(); 
+    ret.loadPixels();
+    _2.loadPixels();
+    for(int i =0;i<ret.pixels.length;i++){
+         if(_2.pixels[i]!=0){
+           ret.pixels[i]=_2.pixels[i];
+         }
+        
+     }
+     ret.updatePixels();
+    return ret;
+  }
 }
