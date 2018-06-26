@@ -20,12 +20,13 @@ class Brush{
 	EMImage img;
         public Brush(){
             this(color(0,0,0,0), (EMImage)null,9);//please never try to use this constructor, java just instits we have it so here is something
+        
         }
 	public Brush(color col,EMImage image,int s){
                 this.img=image;
                 this.setSize(s);
-		c=col;
-		update();//update does almost everything we would want the constructor to do anyway
+		            c=col;
+		            update();//update does almost everything we would want the constructor to do anyway
 	}
 
 	public Brush draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process
@@ -40,7 +41,7 @@ class Brush{
         }
 
 	float greyVal(color c){//this averages the RGB values of a given color to determine its grayscale value
-		return ((c >> 16 & 0xFF) + (c >> 8 & 0xF) + (c & 0xFF))/3.0;//extract and average rgb values
+		return ((c >> 16 & 0xFF) + (c >> 8 & 0xFF) + (c & 0xFF))/3.0;//extract and average rgb values
 	}
 
 	public Brush setSize(int s){//sets the size, this should be odd numbers for best performance

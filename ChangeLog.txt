@@ -6,3 +6,38 @@ INDEV-17w52a
 *changed pixel border minimum from 10 to 1 (EMImage.move)
 *Renamed test-environment.pde to CASTER.pde
 
+INDEV-18w26a
+*Merged changes from sepperate DEV branch
+*changes merged:
+	*EdgeFinder brush
+	*edgeFinder controle pannel
+*added semi automation pannel
+*added edgefinder to the semi automation pannel
+*moved RAE to semi automation pannel
+*added 3d button
+*added 3d test
+*added PNGImage
+	*compresses image in memory without loosing quality
+	*fast access to any pixel
+	*image buffering on layer change
+	*designed to hold scans
+	*presents self as color[width][height] or PImage(width,height)
+*changed EMImage to use PNGImage instead of PImage
+*added PNGOverlay
+	*Extends PNGImage
+	*designed to hold overlay
+	*expandable pallet
+	*fast access of color pallet from color to index or index to color
+	*presents self as color[width][height] or PImage(width,height)
+*changed EMOverlay to use PNGOverlay
+*changed EMOverlay to uses dynamic stack of PNGOverlay
+	*Each layer only uses memory if there is "ink" on the layer
+	*use HashMap key to look up given layer to real layer location
+*fixed memory issues to allow for loading of larger stacks (up to 50GB in 128GB ram in theory) with above changes to EMImage and EMOverlay
+*designed JEMO V.1 for compressed overlay storage
+*updating saving to JEMO v.1
+*NOTICE: Saving currently dissabled due to being in transition from JEMO v.0 to JEMO v.1, saving and loading not recomended, un expected results may occur 
+*parallelised image stack loading so you dont have to wait for a full stack to load
+*parallelised image caching so you dont have any frame hitches changing layers
+*added an undo/redo cache 
+*moved icon images to /data folder for cleaner main folder

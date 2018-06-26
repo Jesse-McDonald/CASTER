@@ -70,9 +70,9 @@ class ClearBrush extends Lambda{//allows for clear brush button that is tuned to
 }*/
 class ClearBrush extends Lambda{//allows for clear brush button that is tuned to specific brush via constructor
   ClearBrush(){}
-  ClearBrush(int in){}
+  ClearBrush(int in){}//we no longer care which brush it is, that ship has been fixed and retired to a museum
   void run(){img.brush= new Brush(img.brush.c,img.brush.img,img.brush.size);}
-}//large chunks of code depend on this existing, but they dont care if it actually does anything
+}
 class EraserBrush extends Lambda{//allows for erase mode button
 	boolean state;
 	EraserBrush(boolean b){
@@ -107,10 +107,44 @@ public class Load extends Lambda{//allow for overlay load button
 		img.load(f);
 	}
 }
+public class EdgeFollowingBrush extends Lambda{//blank button for testing, hyjack all you want
+  public void run(){
+    //img.alignLandmarks(5);//hyjacked for stack alignment
+    //LayerSeeded.seedFromPrev(img);//hyjack for seeding
+    
+    img.brush= new BrushEdgeFollowing(img.brush.c,img.brush.img,img.brush.size);
+                img.brush.erase=((Ui_Button)ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+  
+    
+    
+  }
+ 
+}
+public class EdgeFollowingBrushDestroy extends Lambda{//blank button for testing, hyjack all you want
+  public void run(){
+    //img.alignLandmarks(5);//hyjacked for stack alignment
+    //LayerSeeded.seedFromPrev(img);//hyjack for seeding
+    
+    ((BrushEdgeFollowing)img.brush).close();
+    img.brush= new Brush(img.brush.c,img.brush.img,img.brush.size);
+    
+    
+  }
+ 
+}
 public class BlankButton extends Lambda{//blank button for testing, hyjack all you want
   public void run(){
     //img.alignLandmarks(5);//hyjacked for stack alignment
-    LayerSeeded.seedFromPrev(img);//hyjack for seeding
+    //LayerSeeded.seedFromPrev(img);//hyjack for seeding
   }
 
+}
+public class Create3D extends Lambda{
+  EMOverlay display;
+  Visulization3D view=new Visulization3D();
+  String[] args={""};
+  Create3D(EMOverlay d){display=d;}
+  void run(){
+    PApplet.runSketch(args,view);
+ }
 }
