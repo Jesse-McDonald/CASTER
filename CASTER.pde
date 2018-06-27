@@ -2,7 +2,7 @@
 this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
-//version INDEV-B (INDEV-18w26a)
+//version: INDEV-18w26a
 //https://github.com/Jesse-McDonald/CASTER
 EMImage img;//global because so many things need it
 Ui ui;
