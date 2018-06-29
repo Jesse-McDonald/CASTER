@@ -144,7 +144,7 @@ class PNGImage{
    int cn=ceil(sqrt(px/700000.));//if we process more than 700,000 pixles we start to lag our machines, so limit processing to a total of 700,000
    if(cn<1)cn=1;
    
-   PImage ret=createImage((eX-sX+1)/cn,(eY-sY+1)/cn,ARGB);
+   PImage ret=createImage(max((eX-sX+1)/cn,0),max((eY-sY+1)/cn,0),ARGB);
 
         for(int y=0;y<eY-sY+1;y+=cn){
              for(int x=0;x<eX-sX+1;x+=cn){//x inc is better for speed... I think

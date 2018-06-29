@@ -1,4 +1,3 @@
-
 //only exists as a way of moving ui construction to its own file
 //depends only on fully implimented Ui_ elements
 Ui buildUi(){  
@@ -111,7 +110,7 @@ Ui buildUi(){
     Ui_Button build=new Ui_MomentaryButton(.005,3/numButtons,spacing,"3d.png");
     build.setPressedImg("3dActive.png");
     build.setHighlightedImg("highlight.png");
-    build.onActivate=new Create3D(img.overlay);
+    build.onActivate=new Create3D();
 
     ui.add(build);
     

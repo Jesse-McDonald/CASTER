@@ -1,7 +1,10 @@
 This is just my plan for the next steps of CASTER
 
-pass overlay to 3d
-increse 3d performance with grid based approach
+Export 3d
+export project file
+project uuid
+external 3d viewer/display lists
+server based landmark allignment
 
 finish implimenting JEMO v.1
 

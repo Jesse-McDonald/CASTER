@@ -96,7 +96,9 @@ public class SecondApplet extends PApplet
       //}
       //undo.lock = false;
     }
-
+    void dispose(){
+      g.dispose(); 
+    }
     void exit(){//I cant figure this out, when called this should join the thread drawing the window, and it should also close that window
     //after exploring the processing source I found out that the way they appear do to it is calling System.exit(1); this closes the entire JVM
     //which is not what we want.  After some hunting I was not able to find the java.awt.window we need to target to destroy this window.
