@@ -41,3 +41,10 @@ INDEV-18w26a
 *parallelised image caching so you dont have any frame hitches changing layers
 *added an undo/redo cache 
 *moved icon images to /data folder for cleaner main folder
+
+INDEV-18w26b
+*3d visulization now works
+*3d visulization now pulls overlay
+*multi color support
+*no export yet
+*still no export

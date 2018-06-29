@@ -44,6 +44,9 @@ class EMOverlay{
     history=new FBuffer<HistorySnap>(new HistorySnap[100]);
     fHistory=new HistorySnap();
 	}
+  boolean exists(int layer){
+    return key.containsKey(layer); 
+  }
 	EMOverlay addLayer(){
     //println("adding "+width+" "+height+" image");
     meta.add(new EMMeta());
@@ -52,20 +55,24 @@ class EMOverlay{
     return this;
   }
 	EMOverlay set(int l, int x, int y, color c){//obfuscate overlay.overlay.get(key.get(layer)).set(x,y,c) to overlay.set(layer, x, y, c)
+    
     if(!key.containsKey(l)){
+
       overlay.add(new PNGOverlay(width,height,palette,paletteMap));//add new image to the stack and add its index to the key
       key.put(l,overlay.size()-1);
-         }
+    }
     if(cached!=null){
       cached.set(x,y,c);
     }else{
       drawCache.set(x,y,c); 
     }
+    
     if(logChanges){
       fHistory.log(new Pixel(x,y,overlay.get(key.get(l)).get(x,y)),c);
     }
-		overlay.get(key.get(l)).set(x-meta.get(l).offsetX,y-meta.get(l).offsetY,c);
-
+    if(x<width||x>=0||y<height||y>=0){
+		  overlay.get(key.get(l)).set(x-meta.get(l).offsetX,y-meta.get(l).offsetY,c);
+    }
 		return this;
 	}
 	

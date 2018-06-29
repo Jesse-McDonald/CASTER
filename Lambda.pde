@@ -1,4 +1,3 @@
-
 /**
 implements a rough lambda concept since processing does not have it by default
 the Lambda class is technically abstract, but has been declared otherwise so as a empty Lambda can be created by default
@@ -141,11 +140,13 @@ public class BlankButton extends Lambda{//blank button for testing, hyjack all y
 
 }
 public class Create3D extends Lambda{
-  EMOverlay display;
+
   Visulization3D view=new Visulization3D();
   String[] args={""};
-  Create3D(EMOverlay d){display=d;}
+  Create3D(){}
   void run(){
+    view.cloud=img.overlay;
     PApplet.runSketch(args,view);
- }
+  }
+  
 }
