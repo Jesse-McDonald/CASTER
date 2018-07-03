@@ -3,6 +3,8 @@ import java.util.*;
 class PNGImage{
  int width;
  int height;
+ int hashV=0;
+ boolean calculatedHash=false;
  char mode;//0 decide, 1 grayscale, 2 byteArray palette, 3 shortArray palette, 4 full color
  protected byte byteArray[][];
  protected short shortArray[][];
@@ -30,7 +32,21 @@ class PNGImage{
  PNGImage(String source){
    this(loadImage(source)); 
  }
-
+ int hashCode(){
+   long hash=0;
+   if(calculatedHash){
+     return hashV; 
+   }
+   for(int y=0;y<this.height;y++){
+           for(int x=0;x<this.width;x++){
+             hash+=this.get(x,y);
+           } 
+           
+   }
+   calculatedHash=true;
+   hashV=(int)hash;
+   return hashV;
+ }
  void genPalette(PImage source,int forceGray){//this can not be called from the constructor or other threads will block for this rather long process
    if(forceGray!=0){
       mode=1;

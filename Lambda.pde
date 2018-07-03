@@ -14,7 +14,7 @@ class CircleBrush extends Lambda{//allows for circle brush button
 	void run(){
    
 		img.brush= new BrushCircle(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
      
 	}
 }
@@ -24,7 +24,7 @@ class SquareBrush extends Lambda{//allows for square brush button
   
             
 		img.brush= new BrushSquare(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
      
 	}
 }
@@ -32,7 +32,7 @@ class RayCastBrush extends Lambda{//allows for raycast brush button
   void run(){
  
        img.brush= new RayCast(img.brush.c,img.brush.img,img.brush.size);
-      img.brush.erase=((Ui_Button)ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+      img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
 
   }
 }
@@ -40,7 +40,7 @@ class DiamondBrush extends Lambda{//allows for diamond brush button
 	void run(){
     
 		img.brush= new BrushDiamond(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
       
 	}
 }
@@ -49,7 +49,7 @@ class FloodBrush extends Lambda{//allows for flood fill button
 	void run(){
          
 		img.brush= new BrushFill(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
     
 	}
 }
@@ -113,7 +113,7 @@ public class EdgeFollowingBrush extends Lambda{//blank button for testing, hyjac
     //LayerSeeded.seedFromPrev(img);//hyjack for seeding
     
     img.brush= new BrushEdgeFollowing(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
   
     
     

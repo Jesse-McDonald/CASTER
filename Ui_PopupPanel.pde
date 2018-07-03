@@ -50,6 +50,7 @@ class Ui_PopupPanel extends Ui_Element{
   }
 
   public Ui_PopupPanel add(Ui_Element e){//add new element to the ui, new elements always appear over older one
+    e.setDM(dm);
     elements.add(e);
     return this;
   }
@@ -61,7 +62,14 @@ class Ui_PopupPanel extends Ui_Element{
   public Ui_Element get(int i){//get a specific element, obfuscates ui.elements.get(i) to ui.get(i)
     return elements.get(i); 
   }
-  
+  Ui_PopupPanel setDM(PApplet DrawM){
+      dm=DrawM;
+      for(int i=0; i<elements.size();i++){
+        elements.get(i).setDM(dm);
+      }
+      trigger.setDM(dm);
+      return this;
+  }
   Ui_Element getId(String s){
     //println("String s="+s);println("String id="+id);
     if(this.id.equals(s)){
@@ -77,5 +85,23 @@ class Ui_PopupPanel extends Ui_Element{
       }
    }
    return null;
+  }
+  public int calcWidth(){
+   int max=trigger.calcWidth();
+   if(open){
+     for(int i=0; i<elements.size();i++){
+          max=max(max,elements.get(i).calcWidth());
+     }
+   }
+   return max;
+  }
+  public int calcHeight(){
+   int max=trigger.calcHeight();
+   if(open){
+     for(int i=0; i<elements.size();i++){
+          max=max(max,elements.get(i).calcHeight());
+     }
+   }
+   return max;
   }
 }

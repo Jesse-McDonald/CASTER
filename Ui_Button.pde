@@ -3,7 +3,7 @@ import java.util.BitSet;
 A complicated class for a simple concept, a button that you can click to toggle it on or off
 depends on access to void run() from Lambda,
 and a fully implimented Ui_Element to extend
-also depends on boolean mousePressed, int mouseButton, LEFT, PImage loadImage(String path), void image(PImage,int x, int y), int width, int height, int mouseX, int mouseY, void pushMatrix(), void popMatrix(), void translate(int posX,int posY), void scale(float scale) from processing
+also depends on boolean mousePressed, int mouseButton, LEFT, PImage loadImage(String path), void image(PImage,int x, int y), int displayWidth int displayHeight int mouseX, int mouseY, void pushMatrix(), void popMatrix(), void translate(int posX,int posY), void scale(float scale) from processing
 */
 class Ui_Button extends Ui_Element{
 	private boolean MOUSE_STATE;//previous mouse state
@@ -11,9 +11,9 @@ class Ui_Button extends Ui_Element{
 	public PImage highlighted;//an image overlayed over button when it is moused over
 	public PImage pressed;//an image displayed when button is pressed
 	public PImage dissabled;//an image overlayed over the button when it is dissabled
-	float relativeX;//used for self scaling, relative to width
-	float relativeY;//used for self scaling, relative to height
-	float relativeScale;//used for self scaling, relative to height
+	float relativeX;//used for self scaling, relative to displayWidth
+	float relativeY;//used for self scaling, relative to displayHeight
+	float relativeScale;//used for self scaling, relative to displayHeight
 	float scale=1;//current scale
 	boolean prevState;//previous state[0]
 	Lambda onActivate;//run this objects .run() when clicked on
@@ -24,12 +24,12 @@ class Ui_Button extends Ui_Element{
 	Ui_Button(){super();}//default constructor only exists so it can be inherited by Ui_MomentaryButton
 	
 	Ui_Button(float rX,float rY,float rS,PImage img){//use this constructor if you want the button to self scale
-		this(round(rX*width),round(rY*height),img);//we over ride most of what this constructor does anyway so it does not matter that is is the no scale one
+		this(round(rX*displayWidth),round(rY*displayHeight),img);//we over ride most of what this constructor does anyway so it does not matter that is is the no scale one
 		relativeX=rX;
 		relativeY=rY;
 		relativeScale=rS;
 		autoReposition=true;
-		this.draw();
+		//this.draw();//What kind of idiot (apparently me btw) would call draw from a constructor? thats just asking for trouble
 	}
 
 	Ui_Button(int x, int y, PImage img){//use this constructor if you dont want the button to self scale
@@ -65,7 +65,7 @@ class Ui_Button extends Ui_Element{
 	}
 
 	public boolean mouseOn(){//detect if mouse is in the button, does not check transparency 
-		boolean ret=(mouseX>=posX)&&(mouseY>=posY)&&(mouseX<=posX+tile.width*scale)&&(mouseY<=posY+tile.height*scale);
+		boolean ret=(dm.mouseX>=posX)&&(dm.mouseY>=posY)&&(dm.mouseX<=posX+tile.width*scale)&&(dm.mouseY<=posY+tile.height*scale);
 		state.set(1,ret);
 		detectClick(ret);//we know where the mouse is so this is the natural time to check for button clicks
 		return ret;
@@ -73,23 +73,28 @@ class Ui_Button extends Ui_Element{
 
 	public boolean detectClick(boolean onButton){//detect click, expects to know wether the mouse is already on the button
 		boolean ret=false;
-		boolean currentState=mousePressed&&mouseButton==LEFT&&onButton;//detect if mouse is pressed or not
+		boolean currentState=dm.mousePressed&&dm.mouseButton==LEFT&&onButton;//detect if mouse is pressed or not
 		ret=!currentState&&MOUSE_STATE&&onButton;//detect if mouse is still pressed (or not) from last time, if it is clearly no click happened
 		MOUSE_STATE=currentState;//update last state
 		boolean cState=state.get(0)^ret;//use xor to toggle state if ret is true
 		state.set(0,cState);
 		return ret;
 	}
-
+  public int calcWidth(){//remember to update if you change scaling
+    return ceil(posX+scale*tile.width);
+  }
+  public int calcHeight(){
+    return ceil(posY+scale*tile.height);
+  }
 	public Ui_Button draw(){//draw the button
-		pushMatrix();//prep matrix
+		dm.pushMatrix();//prep matrix
 		if(autoReposition){//do magic scaling stuff if this button is auto scaling
-			scale=height*relativeScale/ (float)tile.height;
-			posX=round(relativeX*width);
-			posY=round(relativeY*height);
+			scale=displayHeight*relativeScale/ (float)tile.height;
+			posX=round(relativeX*displayWidth);
+			posY=round(relativeY*displayHeight);
 		}
-		translate(posX,posY);//prep translation
-		scale(scale);//prep scale
+		dm.translate(posX,posY);//prep translation
+		dm.scale(scale);//prep scale
 		Lambda[] func={dummy,onDeactivate,onActivate};//that optimization that uses dummy
 		func[(1+int(state.get(0)))*int(prevState^state.get(0))].run();//this should run dummy if the previous state and current state are the same otherwise
 		//it should run onDeactivate if state is false, and onActivate if true
@@ -97,18 +102,18 @@ class Ui_Button extends Ui_Element{
 		mouseOn();//run mouseOn again because it also handles click processing and kinda needs to get ran
 		//this is the reason that mouseOn and detectClick have been optimised, they can be expected to run twice in each frame so have to be lite
 		if(state.get(0)){//button is active
-			image(pressed,0,0);//the matrix handles the positioning
+			dm.image(pressed,0,0);//the matrix handles the positioning
 			whileActive.run();//run lambda for while deactive
 		}else{//matrix is deactive
-			image(tile,0,0);
+			dm.image(tile,0,0);
 			whileDeactive.run();//run lambda
 		}
 		if(state.get(2)){//detect if button is disabled
-			image(dissabled,00,00);
+			dm.image(dissabled,00,00);
 		}else if(state.get(1)){//detect if button is highlighted, it cant be if dissabled
-			image(highlighted,0,0);
+			dm.image(highlighted,0,0);
 		}
-		popMatrix();//apply matrix
+		dm.popMatrix();//apply matrix
 		return this;
 	}
 	//if you want to set these directly rather than from a file... the variables for them are public...

@@ -2,13 +2,15 @@ This is just my plan for the next steps of CASTER
 
 Export 3d
 export project file
-project uuid
+finish implimenting JEMO v.1
+migrate edgeFinder toolbar to 2nd window
+
 external 3d viewer/display lists
 server based landmark allignment
+make the ui (look) great again
+add multiple segmentation layers (Colors) (3rd window?)
 
-finish implimenting JEMO v.1
 
-add multiple segmentation layers (Colors)
 
 make layer copying adjust layers to new membrane (plan is to look for closest pixel that matches the previous pixel the best, probably a quadratic or exponential distance drop off)
 add Decision tree classifier

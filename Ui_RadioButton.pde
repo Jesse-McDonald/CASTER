@@ -54,6 +54,7 @@ class Ui_RadioButton extends Ui_Element{
 	}
 	
 	Ui_RadioButton add(Ui_Button button){//add a new button to the list
+    button.setDM(dm);
 		buttons.add(button);
 		return this;
 	}
@@ -99,5 +100,26 @@ class Ui_RadioButton extends Ui_Element{
       }
    }
    return null;
+  }
+  Ui_RadioButton setDM(PApplet DrawM){
+      dm=DrawM;
+      for(int i=0; i<buttons.size();i++){
+        buttons.get(i).setDM(dm);
+      }
+      return this;
+  }
+  public int calcWidth(){
+   int max=0;
+   for(int i=0; i<buttons.size();i++){
+        max=max(max,buttons.get(i).calcWidth());
+   }
+   return max;
+  }
+  public int calcHeight(){
+    int max=0;
+   for(int i=0; i<buttons.size();i++){
+        max=max(max,buttons.get(i).calcHeight());
+   }
+   return max;
   }
 }
