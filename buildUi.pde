@@ -1,7 +1,7 @@
 //only exists as a way of moving ui construction to its own file
 //depends only on fully implimented Ui_ elements
-Ui buildUi(){  
-  ui=new Ui();//prep ui
+Ui buildUi(PApplet dm){  
+  Ui ui=new Ui(dm);//prep ui
   float numButtons=5;//a arbitrary number to help size the the buttons,it is really quite missnamed
   
   float spacing=1/((numButtons+.5)*2.5);//more sizing stuff
@@ -143,5 +143,6 @@ Ui buildUi(){
 
   ui.add(build);
   }//load button
+  ui.setDM(dm);
   return ui;
 }

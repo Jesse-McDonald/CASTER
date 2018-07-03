@@ -12,6 +12,10 @@ class ThreadStack extends Thread{
       target.frameLoadStack();
       //println(millis()-startTime);
     }
+    long start=millis();
+    println("final hash");
+    println(target.hashCode());
+    println(millis()-start);
     target.files=null;
   }
 }

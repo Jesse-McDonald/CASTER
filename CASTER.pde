@@ -7,11 +7,9 @@ this is heavily reliant much of on processing
 
 //https://github.com/Jesse-McDonald/CASTER
 EMImage img;//global because so many things need it
-Ui ui;
-int RADIO_INDEX=1;//constants to keep track of ui elements
-int ERASER=2;
+//Ui ui;
 boolean PAINTING=false;
-
+SideBar sidebar;
 int snapFrameCounter=0;//counter for the frames
 int snapFrames=100;//number of frames before auto saving a snap, in theory at 600 it should save every 10 seconds or so and populate the 100 deep buffer at 16 minutes of continuous drawing
 //experimentation showes that 100 frames while drawing is about 4 seconds or so due to frame lag, and should fill the buffer in 8 minutes
@@ -43,13 +41,17 @@ void settings()
 void setup(){//setup the window
   //output = createWriter("log.txt");//not sure we need a log file right now
 	frameRate(60);
-	
+
 	EMStack stack=new EMStack();//get the stack ready
 	//stack.add(createImage(0,0,ARGB));//get ANYTHING on that stack before we try to draw it
 	img=new EMImage(stack);//build an EMImage around that stack
+  
 	surface.setResizable(true);//allow the window to be resized
 	selectInput("Select an image in the Stack","load");//trigger stack load
-	ui=buildUi();
+	//ui=buildUi(this);
+  String[] args={""};
+  sidebar=new SideBar();
+  PApplet.runSketch(args,sidebar);
 	
 }
 
@@ -68,7 +70,7 @@ void draw(){
 	stroke(0,0,255,100);//set stroke to blue
 	line(width/2,0,width/2,height);//draw center lines
 	line(width,height/2,0,height/2); 
-	ui.draw();//draw ui on top
+	//ui.draw();//draw ui on top
   //text(frameRate,width/2,height/2);
    if(img.img.files!=null){//hard code in file loading bar because I didnt feel like trying to shove it somewhere
       noStroke();
@@ -84,7 +86,7 @@ void draw(){
 }
 
 void mouseDragged(){//mouse drag handler
-	boolean onUi=ui.onUi();
+	boolean onUi=false;//ui.onUi();//the UI has been moved to a different window so this is not a thing anymore
 	if (mouseButton==CENTER&&!onUi){//dont do anything if we are on the ui
 		//move image
 		img.move(mouseX-pmouseX,mouseY-pmouseY);
@@ -123,7 +125,7 @@ void keyTyped(){//key type handler, obsolete brush resizing
 }
 
 void mousePressed(){//mouse pressed handler
-	boolean onUi=ui.onUi();
+	boolean onUi=false;//ui.onUi();//the UI has been moved to a different window so this is not a thing anymore
 	if (mouseButton==LEFT&&!onUi){//theoretically we could also handle button presses here.... but there is no mechanic for it in Ui_Element and button already handles it so there is no need
 		img.brush.paint(img);//lay down paint, this would other wise not happen unless the mouse was moved afterwards making placing a single shape hard to imposible
 	  PAINTING=true;
@@ -144,7 +146,7 @@ void mouseReleased(){//mouse pressed handler
 
 void keyPressed(){//key press handler
 	if(key==CODED&&keyCode==ALT){//eraser set on alt
-		((Ui_Button)ui.getId("eraser")).state.set(0,true);
+		((Ui_Button)sidebar.ui.getId("eraser")).state.set(0,true);
 	}else if(key==CODED&&keyCode==SHIFT){
     SHIFT_DOWN=true;
   }else if(key==CODED&&keyCode==CONTROL){
@@ -155,7 +157,7 @@ void keyPressed(){//key press handler
 
 void keyReleased(){//key release handler
 	if(key==CODED&&keyCode==ALT){//eraser clear on alt release
-		((Ui_Button)ui.getId("eraser")).state.set(0,false);
+		((Ui_Button)sidebar.ui.getId("eraser")).state.set(0,false);
 	}  else if(key==CODED&&keyCode==SHIFT){
     SHIFT_DOWN=false;
   }else if(key==CODED&&keyCode==CONTROL){

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;//because I wanted full random for uuid, dont worry about it
 /**
 EMImage is a master class to coordinate the actions of EMStack, EMOverlay, and Brush
 it is designed to have a single global instance of its self called img //TODO: remove this//, some of the sub classes depend heavily on this master object
@@ -20,18 +21,49 @@ class EMImage {
 	public int layer;//layer in overlay and img
   public int prevLayer;
   public ArrayList<EMMeta> meta;//meta data for a given layer
-  public long uuidHigh;
-  public long uuidLow;
+  public byte[] uuid;
+  
+
   
 	public EMImage(EMStack stack) {//expect the stack to be given to you, theoretically EMImage can deal with making the stack, but currently the loading happens outside for this
-		layer=0;
+		uuid=createUUID();
+    
+    layer=0;
     prevLayer=0;
 		img=stack;
 		brush=new Brush(color(255, 0, 0, 50),this,9);//create generic brush
     meta=stack.meta;
     overlay=stack.overlay;
-		this.update();//call update... apparently update does not actually do anything right now..... not sure what it was going to do
-	}
+    overlay.uuid=uuid;
+		this.update();//call update... apparently update does not actually do anything right now..... not sure what it was going to do	
+  }
+  byte[] createUUID(){
+    SecureRandom random=new SecureRandom();//I know, I know, a bit over kill for a uuid
+    byte[] ret=random.generateSeed(16);
+    ret[6]=byte((ret[6])|0x40);
+    ret[6]=byte(ret[6]&0x4f);//sets 4 highest bits of 7th byte to 0100 because RFC4122 requires it for some reason
+    ret[8]=byte(ret[8]|0x80);
+    ret[8]=byte(ret[8]&0xbf);//sets 2 highest bits of 9th byte to 10 also for no good reason
+    
+    //yah, I am not going to encode the UUID as a string, do I look like someone who would just willy nilly increase the size of an id by 16x?
+    return ret;
+  }
+  public String stringUUID(){//ok so I will encode it if you want
+    String ret="";
+    if(uuid==null){
+      return "no uuid created for this project";
+    }
+    if(uuid.length!=16){
+      return "malformed uuid";
+    }
+    for(int i=0;i<16;i++){
+     if(i==4||i==6||i==8||i==10){
+      ret+='-'; 
+     }
+     ret+=hex(uuid[i]);    
+    }
+    return ret;
+  }
   EMImage undo(){
     overlay.undo(this);
     return this;
@@ -158,8 +190,7 @@ class EMImage {
 			file.write('M');
 			file.write('O');
       file.write(1);//write the version number for the file type
-      file.write(wrapLong(overlay.uuidHigh));
-      file.write(wrapLong(overlay.uuidLow));
+      file.write(uuid);
 			file.write(wrapInt(layer));//write current active layer, I threw this in because I think when I load an overlay I would want to snap to the last position
 			overlay.save(file);//turn the saving over to EMOverlay, we expect it to not close the file
 			file.flush();
@@ -197,19 +228,19 @@ class EMImage {
       }
       //read and check uuid here
       if(ver==1){
-        byte[] byte8=new byte[8];
-        file.read(byte8);
-        long UUIDHigh=ByteBuffer.wrap(byte8).getLong();
-        file.read(byte8);
-        long UUIDLow=ByteBuffer.wrap(byte8).getLong();
-  			file.read(byte4);
-        overlay.uuidHigh=UUIDHigh;
-        overlay.uuidLow=UUIDLow;
-        if(UUIDHigh==uuidHigh&&UUIDLow==uuidLow){
-          //warn()
-          println("Warning, this file was saved from a different project");
+        byte[] byte16=new byte[16];
+        file.read(byte16);
+        overlay.uuid=byte16;
+
+        for(int i=0;i<16;i++){
+           if(uuid[i]!=byte16[i]){
+             //warn()
+             println("Warning, this file was saved from a different project");
+             break;
+           }
         }
         
+        file.read(byte4);
   			int tLayer=min(ByteBuffer.wrap(byte4).getInt(),img.depth-1);//it is very important we don’t change layer yet, processing multithreads
   			//file io, so this may running parallel to draw, if we change the layer now there is a very good chance we switch to that layer in the overlay
   			//before it exists and we don’t want that

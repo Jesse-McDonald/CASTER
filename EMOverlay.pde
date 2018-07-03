@@ -18,8 +18,7 @@ class EMOverlay{
 	int width;//width of overlay, all PImages in overlay should have same width
 	int height;//height of overlay, all PImages in overlay should have same width
 	int depth;//number of PImages in overlay
-  long uuidHigh;
-  long uuidLow;
+  public byte[] uuid;
   PImage drawCache;
   PImage cached;
   int lastLayer=-1;

@@ -20,23 +20,29 @@ class EMStack{
   public ArrayList<EMMeta> meta;//meta data for a given layer
 	EMStack(){//new empty EMStack
 		img=new ArrayList<PNGImage>();
-    
+    overlay=new EMOverlay(0, 0, 0);//create a overlay for the stack
+    meta=overlay.meta;
 	}
 	EMStack(String dir){//new EMStack seeded from picture file by path
 		this(new File(dir)); 
 	}    
-	
+	int hashCode(){
+    long hash=0;
+    for(int i=0;i<depth;i++){
+      hash+=img.get(i).hashCode();
+           
+    }
+    return (int)hash;
+  }
 	EMStack(File base){//new EMStack seeded from picture file
 		this();
 		File folder=new File(base.getParent());//this gets the parrent folder of the given image
    extension=base.getName();//extract img type
    extension=extension.substring(extension.lastIndexOf('.'),extension.length()-1);
    files=folder.listFiles();//get all files in folder
-		 overlay=new EMOverlay(0, 0, 0);//create a overlay for the stack
+		 
     frameLoadStack();//load 1 layer so the rest of the program does not complain
-   
-    meta=overlay.meta;
-
+  
 		ts=new ThreadStack(this);//load the full dir to the stack in sepperate thread
     new Thread(ts).start();
     pthread=new PNGThread();
@@ -57,6 +63,7 @@ class EMStack{
         tempPng.genPalette(temp,1);
         //println("adding PNG to stack");
         add(tempPng);
+        println(tempPng.hashCode());
         //println("done frame load");        
       }
     }

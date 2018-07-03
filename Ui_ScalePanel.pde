@@ -10,20 +10,20 @@ class Ui_ScalePanel extends Ui_Element{
 	float relativeScale;//fraction of height to scale to
 	float scale=1;//absolute scale tracker
 	Ui_ScalePanel(float rX, float rY, float w, float h, color c){//make flat colored panel
-		this(rX,rY,h,createImage(round(w*width),round(h*height),ARGB)); 
-		for(int i=0;i<round(w*width);i++){
-			for (int j=0;j<round(h*height);j++){
+		this(rX,rY,h,createImage(round(w*displayWidth),round(h*displayHeight),ARGB)); 
+		for(int i=0;i<round(w*displayWidth);i++){
+			for (int j=0;j<round(h*displayHeight);j++){
 				tile.set(i,j,c); //color all pixels
 			}
 		}
 	}
 	
 	Ui_ScalePanel(float rX,float rY,float rS,PImage img){//make panel from image
-		this(round(rX*width),round(rY*height),img);
+		this(round(rX*displayWidth),round(rY*displayHeight),img);
 		relativeX=rX;
 		relativeY=rY;
 		relativeScale=rS;
-		this.draw();
+		//this.draw();//What kind of idiot (apparently me btw) would call draw from a constructor? thats just asking for trouble
 	}
 
 	private Ui_ScalePanel(int x, int y, PImage img){//this constructor only exists to be called as a super constructor, dont call directly
@@ -43,14 +43,14 @@ class Ui_ScalePanel extends Ui_Element{
 	}
 
 	public Ui_ScalePanel draw(){//render the panel
-		pushMatrix();//prep transformation matrix
-		scale=height*relativeScale/ (float)tile.height;//calculate scale
-		posX=round(relativeX*width);//calculate position
+		dm.pushMatrix();//prep transformation matrix
+		scale=displayHeight*relativeScale/ (float)tile.height;//calculate scale
+		posX=round(relativeX*displayWidth);//calculate position
 		posY=round(relativeY*height);
-		translate(posX,posY);//prep translation
-		scale(scale);//prep scale
-		image(tile,0,0);//display image
-		popMatrix();//apply transformation matrix to move image to the correct place
+		dm.translate(posX,posY);//prep translation
+		dm.scale(scale);//prep scale
+		dm.image(tile,0,0);//display image
+		dm.popMatrix();//apply transformation matrix to move image to the correct place
 		return this;
 	}
 }

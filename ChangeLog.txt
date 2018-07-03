@@ -47,4 +47,10 @@ INDEV-18w26b
 *3d visulization now pulls overlay
 *multi color support
 *no export yet
-*still no export
+
+INDEV-18w27a
+*Migrated ui to 2nd window (not edgefinder brush controles yet)
+*UI now supports n window (in theory)
+*hashCode implimented for PNGImage and EMStack
+*UUID implimented for EMStack
+*updated priorities in TODO
