@@ -1,6 +1,5 @@
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.security.SecureRandom;//because I wanted full random for uuid, dont worry about it
 /**
 EMImage is a master class to coordinate the actions of EMStack, EMOverlay, and Brush
 it is designed to have a single global instance of its self called img //TODO: remove this//, some of the sub classes depend heavily on this master object
@@ -22,12 +21,12 @@ class EMImage {
   public int prevLayer;
   public ArrayList<EMMeta> meta;//meta data for a given layer
   public byte[] uuid;
-  
+  public EMProject project;
 
   
 	public EMImage(EMStack stack) {//expect the stack to be given to you, theoretically EMImage can deal with making the stack, but currently the loading happens outside for this
-		uuid=createUUID();
-    
+		project=new EMProject();
+    uuid=project.uuid;
     layer=0;
     prevLayer=0;
 		img=stack;
@@ -37,33 +36,7 @@ class EMImage {
     overlay.uuid=uuid;
 		this.update();//call update... apparently update does not actually do anything right now..... not sure what it was going to do	
   }
-  byte[] createUUID(){
-    SecureRandom random=new SecureRandom();//I know, I know, a bit over kill for a uuid
-    byte[] ret=random.generateSeed(16);
-    ret[6]=byte((ret[6])|0x40);
-    ret[6]=byte(ret[6]&0x4f);//sets 4 highest bits of 7th byte to 0100 because RFC4122 requires it for some reason
-    ret[8]=byte(ret[8]|0x80);
-    ret[8]=byte(ret[8]&0xbf);//sets 2 highest bits of 9th byte to 10 also for no good reason
-    
-    //yah, I am not going to encode the UUID as a string, do I look like someone who would just willy nilly increase the size of an id by 16x?
-    return ret;
-  }
-  public String stringUUID(){//ok so I will encode it if you want
-    String ret="";
-    if(uuid==null){
-      return "no uuid created for this project";
-    }
-    if(uuid.length!=16){
-      return "malformed uuid";
-    }
-    for(int i=0;i<16;i++){
-     if(i==4||i==6||i==8||i==10){
-      ret+='-'; 
-     }
-     ret+=hex(uuid[i]);    
-    }
-    return ret;
-  }
+  
   EMImage undo(){
     overlay.undo(this);
     return this;
@@ -181,9 +154,25 @@ class EMImage {
     }
     return conv;
   }
- 
-	public boolean save(File fileName){//saves current layout to JEMO format
-		try{
+  public boolean saveProject(File file){
+    boolean ret=false;
+    project.height=img.height;
+    project.width=img.width;
+    project.uuid=uuid;
+    project.meta=meta;
+    if(img.img.size()>0){
+      project.stackTopHash=this.img.img.get(0).hashCode();
+    }
+    try {
+        PrintWriter pw = new PrintWriter(file);
+        ret=project.exportJSON().write(pw);
+        
+        pw.close();
+    } catch (FileNotFoundException e) {}
+    return ret;
+  }
+	public boolean saveOverlay(File fileName){//saves current layout to JEMO format
+    try{
 			OutputStream file= new BufferedOutputStream(new FileOutputStream(fileName));
 			file.write('J'); //setup header
 			file.write('E');
@@ -202,7 +191,7 @@ class EMImage {
 	}
 	
 
-	public boolean load(File fileName){//load JEMO file to overlay, replaces overlay
+	public boolean loadOverlay(File fileName){//load JEMO file to overlay, replaces overlay
 		try{
 			InputStream file = new BufferedInputStream(new FileInputStream(fileName));
 			byte[] byte4=new byte[4];
@@ -245,7 +234,10 @@ class EMImage {
   			//file io, so this may running parallel to draw, if we change the layer now there is a very good chance we switch to that layer in the overlay
   			//before it exists and we don’t want that
   			overlay.load(file);//pass loading to EMOverlay
-  			layer=tLayer;//ok, now that overlay is fully loaded we can safely change layers to the proper layer
+        
+        if(tLayer<img.depth){//only move if the stack is loaded there too
+  			  layer=tLayer;//ok, now that overlay is fully loaded we can safely change layers to the proper layer
+        }
   			file.close();
   			}  
       }

@@ -21,7 +21,7 @@ class EMStack{
 	EMStack(){//new empty EMStack
 		img=new ArrayList<PNGImage>();
     overlay=new EMOverlay(0, 0, 0);//create a overlay for the stack
-    meta=overlay.meta;
+    meta=new ArrayList<EMMeta>();;
 	}
 	EMStack(String dir){//new EMStack seeded from picture file by path
 		this(new File(dir)); 
@@ -32,6 +32,8 @@ class EMStack{
       hash+=img.get(i).hashCode();
            
     }
+    println(hash);
+    println(depth);
     return (int)hash;
   }
 	EMStack(File base){//new EMStack seeded from picture file
@@ -44,14 +46,18 @@ class EMStack{
     frameLoadStack();//load 1 layer so the rest of the program does not complain
   
 		ts=new ThreadStack(this);//load the full dir to the stack in sepperate thread
-    new Thread(ts).start();
+    //new Thread(ts).start();//this line would trigger a race condition with the thread stack updating a project vs an EMImage being initilized
     pthread=new PNGThread();
     
 		
 		
 	}
+  EMStack launch(){
+    new Thread(ts).start(); 
+    return this;
+  }
 	EMStack frameLoadStack(){
-   
+    
     if(progress<files.length){
     if (files[progress].isFile()) {
       if (files[progress].getName().contains(extension)){//only attempt to load a file if the file types match existing
@@ -63,8 +69,8 @@ class EMStack{
         tempPng.genPalette(temp,1);
         //println("adding PNG to stack");
         add(tempPng);
-        println(tempPng.hashCode());
-        //println("done frame load");        
+        //println(tempPng.hashCode());
+        //println("done frame load");  
       }
     }
     
@@ -87,6 +93,7 @@ class EMStack{
     
     //println("creating new overlay layer");
     overlay.addLayer();
+    meta.add(new EMMeta());
     //println("adding image to stack");
     img.add(image);
     depth=img.size();

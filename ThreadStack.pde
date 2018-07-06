@@ -5,6 +5,12 @@ class ThreadStack extends Thread{
   }
   public void run(){
     int startTime;
+    int totalStart=target.files.length;
+    img.project.numFiles=target.files.length;
+    if(target.files.length>0){
+      img.project.stackTopName=target.files[0].getName();
+      img.project.stackPath=target.files[0].getParent();
+    }
     while(target.progress<target.files.length){
       startTime=millis();
       //PNGImage temp=new PNGImage(
@@ -12,10 +18,9 @@ class ThreadStack extends Thread{
       target.frameLoadStack();
       //println(millis()-startTime);
     }
-    long start=millis();
-    println("final hash");
-    println(target.hashCode());
-    println(millis()-start);
+    img.project.stackLoaded=true;
+    img.project.stackSize=target.img.size();
+    img.project.stackHash=target.hashCode();
     target.files=null;
   }
 }

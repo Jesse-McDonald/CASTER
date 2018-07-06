@@ -93,7 +93,8 @@ public class Save extends Lambda{//allows for overlay save button
 	
 	public void handler(File f){//this gets called by selectOutput when the output is selected
 		if(f!=null){
-		img.save(f); 
+		  img.saveOverlay(f); 
+      
 		} 
 	}
 }
@@ -104,7 +105,7 @@ public class Load extends Lambda{//allow for overlay load button
 	}
 
 	public void handler(File f){//this gets called by selectInput when the input is selected
-		img.load(f);
+		img.loadOverlay(f);
 	}
 }
 public class EdgeFollowingBrush extends Lambda{//blank button for testing, hyjack all you want
@@ -136,6 +137,7 @@ public class BlankButton extends Lambda{//blank button for testing, hyjack all y
   public void run(){
     //img.alignLandmarks(5);//hyjacked for stack alignment
     //LayerSeeded.seedFromPrev(img);//hyjack for seeding
+    img.saveProject(new File("D:\\project.json"));//hyjack for saving project
   }
 
 }

@@ -23,13 +23,13 @@ class EMOverlay{
   PImage cached;
   int lastLayer=-1;
   PNGThread pthread; //this is a c joke ;)
-  public ArrayList<EMMeta> meta;//meta data for a given layer
+  //public ArrayList<EMMeta> meta;//meta data for a given layer
 	EMOverlay(int w, int h, int d){
 		width=w;//set width height and depth
 		height=h;
 		depth=0;
 		overlay=new ArrayList<PNGOverlay>();
-    meta=new ArrayList<EMMeta>();
+    //meta=new ArrayList<EMMeta>();
     key=new HashMap<Integer,Integer>();
     palette=new ArrayList<Integer>();
     paletteMap=new HashMap<Integer,Integer>();
@@ -48,7 +48,7 @@ class EMOverlay{
   }
 	EMOverlay addLayer(){
     //println("adding "+width+" "+height+" image");
-    meta.add(new EMMeta());
+    //meta.add(new EMMeta());
     //overlay.add(new PImage(width,height,ARGB));//populate overlay with blank PImages//removed for keyed stack
     depth++;
     return this;
@@ -70,14 +70,18 @@ class EMOverlay{
       fHistory.log(new Pixel(x,y,overlay.get(key.get(l)).get(x,y)),c);
     }
     if(x<width||x>=0||y<height||y>=0){
-		  overlay.get(key.get(l)).set(x-meta.get(l).offsetX,y-meta.get(l).offsetY,c);
+		  //overlay.get(key.get(l)).set(x-meta.get(l).offsetX,y-meta.get(l).offsetY,c);
+      overlay.get(key.get(l)).set(x,y,c);//we removed meta shifts from the overlay, it does not make sense for the future of this since meta is not stored in the JEMO, but the 3d visualization is only based on the JEMO so if
+      //we landmark align the image and save an JEMO, then make a 3d of it, it will be shifted.  combine that with the server based landmark alignment that is planned and overlay shifting is rather hard to justify
     }
 		return this;
 	}
 	
 	color get(int l, int x,int y){//obfuscate overlay.overlay.get(layer).get(x,y) to overlay.get(layer, x, y)
     if(key.containsKey(l)){
-		  return overlay.get(key.get(l)).get(x-meta.get(l).offsetX,y-meta.get(l).offsetY); 
+		  //return overlay.get(key.get(l)).get(x-meta.get(l).offsetX,y-meta.get(l).offsetY); 
+      return overlay.get(key.get(l)).get(x,y);//we removed meta shifts from the overlay, it does not make sense for the future of this since meta is not stored in the JEMO, but the 3d visualization is only based on the JEMO so if
+      //we landmark align the image and save an JEMO, then make a 3d of it, it will be shifted.  combine that with the server based landmark alignment that is planned and overlay shifting is rather hard to justify
     }else{
      return 0; 
     }
@@ -138,7 +142,9 @@ class EMOverlay{
               cached=merge(cached,drawCache);
               drawCache=null;
             }
-            image(cached,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
+            //image(cached,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
+            image(cached,p.offsetX, p.offsetY, this.width*p.zoom, this.height*p.zoom);//we removed meta shifts from the overlay, it does not make sense for the future of this since meta is not stored in the JEMO, but the 3d visualization is only based on the JEMO so if
+      //we landmark align the image and save an JEMO, then make a 3d of it, it will be shifted.  combine that with the server based landmark alignment that is planned and overlay shifting is rather hard to justify
         }else{
           if(pthread.retv!=null){
            cached=pthread.retv; 
@@ -176,15 +182,45 @@ class EMOverlay{
 	}
 	//convert to JEMO v.1 major fixes needed, taken temporaroly off line
 	EMOverlay save(OutputStream file) throws IOException{//this writes the overlay to a JEMO file
+
 		file.write(wrapInt(width));//write width, height, and depth
 		file.write(wrapInt(height));
 		file.write(wrapInt(depth));
-		for(int i=0;i<depth;i++){
-      //TODO probiably need to fix something here
-      if(key.containsKey(i)){
-			  //file.write(toByteArray(overlay.get(key.get(i))));//write all pixels of layer i
-      }
+    for(int i=palette.size()-1;i>0;i--){//create pallete
+      color c=palette.get(i);
+      if(c==0){
+        palette.remove(i);//there should be no null colors in the palette other than index 0, if there are, destroy them
+      }else{
+       
+       file.write(wrapInt(c));//wrap the colors nice and tight in a byte array, this should be in the correct order, but there is a chance that this is in RGBA order, if it is, change the JEMO protocal to match 
+      } 
+    }
+    file.write(wrapInt(0));//write 0x00000000, this should terminate the palette array with the null color
+		int firstLayer=-1;
+    int lastLayer=-1;
+    for(int i=0;i<depth;i++){//find first and last layer
+      if(key.containsKey(i)&&exists(i)){
+        if(firstLayer<0){
+          firstLayer=i;
+        }
+        lastLayer=i;
+      } 
+    }
+    lastLayer++;
+    file.write(wrapInt(firstLayer));
+    int colorSize=ceil((log(palette.size())/log(2))/8);//calculate how many bytes are required for a layer
+    for(int i=firstLayer;i<lastLayer;i++){//process layers
+      
+      if(key.containsKey(i)&&exists(i)){
+        overlay.get(key.get(i)).toJEMOv1(colorSize,file);//write all pixels of layer i
+      }else{
+        byte[] scrap=new byte[colorSize+6];//get enough zeros
+        scrap[0]=1;//prevent file terminating, only terminate layer
+        file.write(scrap);
+      } 
 		}
+      byte[] scrap=new byte[colorSize+6];//get enough zeros,colorSize for the color, 4 for the offset, and 2 for the length
+      file.write(scrap);//terminate file
 		return this;
 	}
 	EMOverlay set(int x, int y, color c){
@@ -200,40 +236,50 @@ class EMOverlay{
 		height=ByteBuffer.wrap(temp).getInt();
 		file.read(temp);
 		depth=ByteBuffer.wrap(temp).getInt();
-		ArrayList<PImage>tOverlay=new ArrayList<PImage>();//generate temportary overlay, safer
-		for(int i=0;i<depth;i++){
-			temp =new byte[width*height*4];
-			file.read(temp);
-			tOverlay.add(fromByteArray(temp,width,height));//read all pixels of layer i
+		//ArrayList<PImage>tOverlay=new ArrayList<PImage>();//generate temportary overlay, safer
+
+    key=new HashMap<Integer,Integer>();//dump old overlay and make a new one
+    overlay=new ArrayList<PNGOverlay>();
+    palette=new ArrayList<Integer>();
+    paletteMap=new HashMap<Integer,Integer>();
+    
+    color c=1;
+    ArrayList<Integer> inversePalette=new ArrayList<Integer>();
+    while(c!=0){
+      file.read(temp);
+      c=ByteBuffer.wrap(temp).getInt();
+      inversePalette.add(c);
+    }
+    for(int i=inversePalette.size()-1;i>=0;i--){
+       palette.add(inversePalette.get(i));
+       paletteMap.put(inversePalette.get(i),palette.size()-1);//this should work I think, but if the colors are screwed up this is probiably why
+    }
+    inversePalette=null;
+    int colorSize=ceil((log(palette.size())/log(2))/8);//calculate how many bytes are required for a layer
+    boolean run=true;
+    file.read(temp);
+    int layerCount=ByteBuffer.wrap(temp).getInt();
+    
+    
+		while(run){
+      
+      PNGOverlay layer=new PNGOverlay(width,height,palette,paletteMap);
+			run=!layer.fromJEMOv1(colorSize,file);//continue reading if not terminated
+      
+      if(run){
+        //println("added layer at "+layerCount);
+        overlay.add(layer);
+        key.put(layerCount,overlay.size()-1);
+      }
+      layerCount++;
+			//Overlay.add(fromByteArray(temp,width,height));//read all pixels of layer i
 		}
     //overlay=tOverlay;
 		return this;
 	}
 	
-  //to and from Byte Array have now been Depricated
-	PImage fromByteArray(byte[] bytes,int w, int h){//translate a byte[] to a PImage
-		PImage ret= new PImage(w,h,ARGB);
-		ret.loadPixels();//prep pixels, I don’t think this is actually needed
-		for(int i=0;i<w*h;i++){//note that i needs to increment by 1 for ret, but by 4 for bytes, so we do this
-			ret.pixels[i]=color(bytes[4*i+1]& 0xFF,bytes[4*i+2]& 0xFF,bytes[4*i+3]& 0xFF,bytes[4*i+0]& 0xFF);//extract 4 byte color in ARGB order into a function that expects RGBA order
-		}
-		ret.updatePixels(); //save the updated pixels back to the image
-		return ret;
-	}
-	
-	byte[] toByteArray(PImage img){//convert PImage to byte[]
-		img.loadPixels();//this one is needed to ensure latest pixels data
-		byte[] ret=new byte[img.height*img.width*4];
-		for(int i=0; i<img.height*img.width;i++){//go through pixel by pixel
-			color c=img.pixels[i];
-			ByteBuffer temp = ByteBuffer.allocate(4);
-			temp.putInt(c);//color is stored internally as an integer in the form 0xAARRGGBB so this works fine
-			for(int j=0;j<4;j++){
-				ret[i*4+j]=temp.get(j);//note that i needs to increment by 1 for pixels, but by 4 for ret, so we do this
-			}
-		}
-		return ret; 
-	}
+
+
 PImage merge(PImage _1, PImage _2){
     PImage ret=_1.get(); 
     ret.loadPixels();

@@ -54,3 +54,9 @@ INDEV-18w27a
 *hashCode implimented for PNGImage and EMStack
 *UUID implimented for EMStack
 *updated priorities in TODO
+
+INDEV-18w27b
+*JEMO v.1 support
+*project import/export via json file
+*updated grant numbers in attribution.txt
+*added project data to stacks

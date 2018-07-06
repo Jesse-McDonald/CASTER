@@ -125,9 +125,14 @@ class PNGImage{
      }
     }
  }
+ color get(long i){//get color i in left to right top to bottom
+   //println(i+" "+i%width+" "+i/width);
+   //println(width+" "+height);
+   return get(int(i%width),int(i/width));
+ }
  color get(int x,int y){
-   
-   if(x<0||y<0||x>=width||y>=height){
+  //println(x+" "+y);
+   if(x<0||y<0||x>width||y>height){
      return 0;
    }
    if(mode==1){
