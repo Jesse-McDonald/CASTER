@@ -6,4 +6,15 @@ class EMMeta{
   offsetX=0;
   offsetY=0;
  }
+ JSONObject exportJSON(){
+  JSONObject ret=new JSONObject();
+  ret.setInt("offsetX",offsetX);
+  ret.setInt("offsetY",offsetY);
+  return ret;
+ }
+ EMMeta importJSON(JSONObject in){
+  offsetX=in.getInt("offsetX");
+  offsetY=in.getInt("offsetY");
+  return this;
+ }
 }

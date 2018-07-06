@@ -29,6 +29,7 @@ float range(float a, float b, float c){
 void load(File selection){// this is the handler for the load event
 	if(selection!=null){
 		img=new EMImage(new EMStack(selection.getAbsolutePath()));
+    img.img.launch();//start thread stack
 	}
 }
 //PrintWriter output;
@@ -48,11 +49,13 @@ void setup(){//setup the window
   
 	surface.setResizable(true);//allow the window to be resized
 	selectInput("Select an image in the Stack","load");//trigger stack load
+  //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
+  img.img.launch();//start thread stack
 	//ui=buildUi(this);
   String[] args={""};
   sidebar=new SideBar();
   PApplet.runSketch(args,sidebar);
-	
+  
 }
 
 void draw(){
@@ -72,15 +75,17 @@ void draw(){
 	line(width,height/2,0,height/2); 
 	//ui.draw();//draw ui on top
   //text(frameRate,width/2,height/2);
-   if(img.img.files!=null){//hard code in file loading bar because I didnt feel like trying to shove it somewhere
+   if(img.img.files!=null&&img.img.progress<img.img.files.length){//hard code in file loading bar because I didnt feel like trying to shove it somewhere
       noStroke();
       fill(200,200,150,200);
       rect(width/4-10,0,width/2+20,60);
       String lable="Loading Image "+img.img.files[img.img.progress]+"("+img.img.progress+"/"+img.img.files.length+")";
+
       fill(0);
       text(lable,(width-textWidth(lable))/2,20);
       fill(255,0,0);
       rect(width/4,40,(width/2*img.img.progress/(float)img.img.files.length),10);
+
   }
   //println(img.brush.getSize());
 }
