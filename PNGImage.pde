@@ -132,9 +132,10 @@ class PNGImage{
  }
  color get(int x,int y){
   //println(x+" "+y);
-   if(x<0||y<0||x>width||y>height){
+   if(x<0||y<0||x>=width||y>=height){
      return 0;
    }
+
    if(mode==1){
      return (0xff<<24)+((byteArray[x][y])<<16)  +((byteArray[x][y])<<8)  +(byteArray[x][y]);
    }else if(mode==2){
@@ -160,15 +161,17 @@ class PNGImage{
    image(this.getImage(),x,y);
    return this;
  }
- PImage fastGet(int sX, int sY, int eX, int eY){
+ PImage fastGet(int sX, int sY, int eX, int eY){//start xy, end xy
+ //this might not actually work how I think it does... which is sad, because I wrote it
    int px=(eX-sX)*(eY-sY);
    int cn=ceil(sqrt(px/700000.));//if we process more than 700,000 pixles we start to lag our machines, so limit processing to a total of 700,000
    if(cn<1)cn=1;
-   
    PImage ret=createImage(max((eX-sX+1)/cn,0),max((eY-sY+1)/cn,0),ARGB);
-
+   //I found the error, deep in the source is a line int[width*height], so if width*height>Integer.MAX_VALUE it tries to create a badly sized array
+    //but I still dont have a good fix, the last one I tried broke everything and I hade a huge crash
         for(int y=0;y<eY-sY+1;y+=cn){
              for(int x=0;x<eX-sX+1;x+=cn){//x inc is better for speed... I think
+
           ret.set(x/cn,y/cn,this.get(x+sX,y+sY));
         }
    }

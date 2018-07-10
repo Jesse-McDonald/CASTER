@@ -62,6 +62,10 @@ class Visulization3D extends PApplet{
      line(x,y,z,other.x,other.y,other.z);
      return this;
    }
+   Vertex mark(PShape target){
+     target.vertex(x*10,y*10,z*10); 
+     return this;
+   }
    Vertex mark(){
      vertex(x*10,y*10,z*10); 
      return this;
@@ -106,6 +110,16 @@ class Visulization3D extends PApplet{
       p2.mark();
       p3.mark();
       return this;
+    }
+    PShape buffer(PShape base){
+    
+     base.beginShape();
+     base.noStroke();
+     p1.mark(base);
+     p2.mark(base);
+     p3.mark(base);
+     base.endShape();
+     return base;
     }
     String toString(){
       return p1.toString()+" "+p2.toString()+" "+p3.toString(); 
@@ -209,6 +223,7 @@ class Visulization3D extends PApplet{
   }
   float minX=Float.MAX_VALUE,minY=Float.MAX_VALUE,minZ=Float.MAX_VALUE,maxX=Float.MIN_VALUE,maxY=Float.MIN_VALUE,maxZ=Float.MIN_VALUE;
   class Web{
+    PShape triangelBuffer;
     byte grid[][][];
     float ofx,ofy,ofz;
     int zext,xext,yext;
@@ -216,7 +231,9 @@ class Visulization3D extends PApplet{
     ArrayList<Line> lines;
     ArrayList<Triangle> triangles;
     color col;
+    PShape triangleBuffer;
     Web(EMOverlay cloud,color c){
+      triangleBuffer= createShape(GROUP);
       col=c;
      if(c==0) return;
      triangles=new ArrayList<Triangle>();
@@ -285,8 +302,11 @@ class Visulization3D extends PApplet{
          triangles.get(i).draw(); 
        }
     }
+    void drawBuffer(){
+      shape(triangleBuffer); 
+    }
     void map(){
-      
+
       triangles=new ArrayList<Triangle>();
       nodes =new ArrayList<Node>();
       if(col==0) return;
@@ -331,10 +351,10 @@ class Visulization3D extends PApplet{
           }
        }
      } 
-               println(nodes.size());
-               println(triangles.size());
+               //println(nodes.size());
+               //println(triangles.size());
                stripDupeTriangles();
-               println(triangles.size());
+               //println(triangles.size());
                //for(int i=0;i<triangles.size();i++){
                //  println(triangles.get(i).toString());
                //}
@@ -352,28 +372,34 @@ class Visulization3D extends PApplet{
       }
       return this;
     }
-    
+    Web bufferTriangles(){
+      for(int i=0;i<triangles.size();i++){
+        PShape temp=createShape();
+         temp.setFill(color(red(col),green(col),blue(col)));
+ 
+
+        temp=triangles.get(i).buffer(temp);
+ 
+        triangleBuffer.addChild(temp);
+      }
+      return this;
+    }
   }
    ArrayList<Web> web;
    void settings(){
-       size(800,800,P3D); 
+       size(800,800,OPENGL); 
    }
    void center(){
       translate(-(minX+maxX)/2*10,-(minY+maxY)/2*10,-(minZ+maxZ)/2*10);
     }
   void setup(){
-
+ surface.setTitle("3D Visulization"); 
    //square();
    //sphere();
    
    //torus();
-  
-   strip();
-   web=new ArrayList<Web>();
-   for(int i=1;i<cloud.palette.size();i++){
-     web.add(new Web(cloud,cloud.palette.get(i)));
-     web.get(i-1).map();
-   }
+    prep();
+   
    
    //teapot();
    //web.recursive(0);
@@ -381,7 +407,16 @@ class Visulization3D extends PApplet{
 
    frameRate(60);
   }
-  
+  void prep(){
+   strip();
+   web=new ArrayList<Web>();
+   for(int i=1;i<cloud.palette.size();i++){
+     web.add(new Web(cloud,cloud.palette.get(i)));
+     web.get(i-1).map();
+     web.get(i-1).bufferTriangles();
+   } 
+
+  }
   float rad=0;
   float rotX,rotY,posX,posY,posZ;
   void draw(){
@@ -390,7 +425,7 @@ class Visulization3D extends PApplet{
     fill(255);
     //rect(0,0,100,100);
     translate(width/2,height/2,000);
-    
+       
     translate(posX,posY,posZ);
     rotateX(-PI/2);
     rotateZ(rotX);
@@ -418,11 +453,13 @@ class Visulization3D extends PApplet{
       }
     }
     */
+
     stroke(255);
     noFill();
     fill(100);
     for(int i=0;i<web.size();i++){
-      web.get(i).triangles();
+      //web.get(i).triangles();
+      web.get(i).drawBuffer();
     }
     //box(100,100,100);
     //web.lines();

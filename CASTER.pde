@@ -14,7 +14,7 @@ int snapFrameCounter=0;//counter for the frames
 int snapFrames=100;//number of frames before auto saving a snap, in theory at 600 it should save every 10 seconds or so and populate the 100 deep buffer at 16 minutes of continuous drawing
 //experimentation showes that 100 frames while drawing is about 4 seconds or so due to frame lag, and should fill the buffer in 8 minutes
 //finds the largest number, and the smallest number given to it and returns the number between the two
-
+ PrintWriter output;
 //finds the largest number and the smallest number given to it, then returns the number between the other number
 float range(float a, float b, float c){
 	float minV=min(a,b,c);
@@ -40,7 +40,7 @@ void settings()
   
 }
 void setup(){//setup the window
-  //output = createWriter("log.txt");//not sure we need a log file right now
+  output = createWriter("log.txt");//not sure we need a log file right now
 	frameRate(60);
 
 	EMStack stack=new EMStack();//get the stack ready

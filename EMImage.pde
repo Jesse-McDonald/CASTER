@@ -30,7 +30,10 @@ class EMImage {
     layer=0;
     prevLayer=0;
 		img=stack;
-		brush=new Brush(color(255, 0, 0, 50),this,9);//create generic brush
+//set brush color
+//		brush=new Brush(color(255, 0, 0, 50),this,9);//create generic brush
+      //brush=new Brush(color(0, 255, 0, 75),this,9);//color blind mode
+      brush=new Brush(color(26, 140, 255, 75),this,9);//color blind mode
     meta=stack.meta;
     overlay=stack.overlay;
     overlay.uuid=uuid;

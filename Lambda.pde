@@ -142,13 +142,18 @@ public class BlankButton extends Lambda{//blank button for testing, hyjack all y
 
 }
 public class Create3D extends Lambda{
-
+  boolean window=false;
   Visulization3D view=new Visulization3D();
   String[] args={""};
   Create3D(){}
   void run(){
     view.cloud=img.overlay;
-    PApplet.runSketch(args,view);
+    if(!window){
+      PApplet.runSketch(args,view);
+      window=true;
+    }else{
+      view.prep();
+    }
   }
   
 }
