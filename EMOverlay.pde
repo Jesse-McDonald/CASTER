@@ -229,6 +229,7 @@ class EMOverlay{
   }
   //update to JEMO v.1
 	EMOverlay load(InputStream file) throws IOException{//load overlay from JEMO file
+
 		byte[] temp=new byte[4];
 		file.read(temp);
 		width=ByteBuffer.wrap(temp).getInt();//get the width, height, and depth
@@ -274,7 +275,9 @@ class EMOverlay{
       layerCount++;
 			//Overlay.add(fromByteArray(temp,width,height));//read all pixels of layer i
 		}
+
     //overlay=tOverlay;
+    lastLayer=-1;//reset layer cache by making the program think we just changed layers
 		return this;
 	}
 	

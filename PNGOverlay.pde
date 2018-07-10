@@ -1,7 +1,9 @@
 import java.nio.ByteBuffer;
 class PNGOverlay extends PNGImage{
  HashMap<Integer,Integer> paletteMap;
+
  PNGOverlay(int w, int h){
+
    width=w;
    height=h;
    palette=new ArrayList<Integer>();
@@ -9,6 +11,7 @@ class PNGOverlay extends PNGImage{
    mode=2;
  }
  PNGOverlay(int w, int h, ArrayList<Integer> p, HashMap<Integer,Integer> pM){
+   
    this(w,h);
    palette=p;
    paletteMap=pM;
@@ -124,7 +127,9 @@ class PNGOverlay extends PNGImage{
      file.read(byteC);
      file.read(byte2);
      color c=palette.get(unwrapNBytes(byteC));    
-     int count=(ByteBuffer.wrap(byte2).getShort()&0xffffffff);//damn it java, why do I have to do this to get an unsigned short
+     int count=(ByteBuffer.wrap(byte2).getShort()&0x0000ffff);//damn it java, why do I have to do this to get an unsigned short
+
+
      if(count==0&&c==0){
        run=false; //stop when we hit the layer terminator
      }else{
@@ -134,9 +139,9 @@ class PNGOverlay extends PNGImage{
        set(index,c);
        index++;
      }
-     
+    
    }
-   
+    
    return fileTerminator;//is this layer the file terminator
  }
  OutputStream toJEMOv1(int colorSize,OutputStream file) throws IOException{//we throw an exception because this is not the first step in writing and previous layers are already handeling io exceptions so I dont feel like handeling it here
