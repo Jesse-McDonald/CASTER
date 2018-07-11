@@ -13,7 +13,18 @@ class Ui_Panel extends Ui_Element{
 	Ui_Panel(int x, int y, String imgPath){//create panel by loading image
 		this(x,y,loadImage(imgPath));
 	}
-	
+	Ui_Panel(float rX, float rY, float rS, PImage img){
+      this(round(rX*PPI),round(rY*PPI),img);
+      scale=(PPI/img.width)*rS;
+}
+Ui_Panel(float x, float y, float w, float h, color c){
+  this(x,y,1,createImage(round(w*PPI),round(h*PPI),ARGB));
+   for(int i=0;i<tile.width;i++){
+      for (int j=0;j<tile.height;j++){
+        tile.set(i,j,c); //color in image
+      }
+    }
+}
 	Ui_Panel(int x, int y, int w, int h, color c){//create panel with flat color
 		this(x, y, createImage(w,h,ARGB));
 		for(int i=0;i<w;i++){

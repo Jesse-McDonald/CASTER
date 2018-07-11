@@ -22,7 +22,7 @@ class Ui_Button extends Ui_Element{
 	Lambda whileDeactive;//run this objects .run() every draw when the button is off
 	Lambda dummy=new Lambda();//a blank empty lambda to  increase speed in certain situations
 	Ui_Button(){super();}//default constructor only exists so it can be inherited by Ui_MomentaryButton
-	
+	/*I am stealing this constructor, hence forth this shall be inch measures
 	Ui_Button(float rX,float rY,float rS,PImage img){//use this constructor if you want the button to self scale
 		this(round(rX*displayWidth),round(rY*displayHeight),img);//we over ride most of what this constructor does anyway so it does not matter that is is the no scale one
 		relativeX=rX;
@@ -31,7 +31,11 @@ class Ui_Button extends Ui_Element{
 		autoReposition=true;
 		//this.draw();//What kind of idiot (apparently me btw) would call draw from a constructor? thats just asking for trouble
 	}
-
+*/
+Ui_Button(float rX,float rY,float rS,PImage img){//use this constructor if you want the button to self scale
+    this(round(rX*PPI),round(rY*PPI),img);
+    scale=(PPI/img.width)*rS;
+}
 	Ui_Button(int x, int y, PImage img){//use this constructor if you dont want the button to self scale
 		posX=x;
 		posY=y;
@@ -87,6 +91,7 @@ class Ui_Button extends Ui_Element{
     return ceil(posY+scale*tile.height);
   }
 	public Ui_Button draw(){//draw the button
+
 		dm.pushMatrix();//prep matrix
 		if(autoReposition){//do magic scaling stuff if this button is auto scaling
 			scale=displayHeight*relativeScale/ (float)tile.height;

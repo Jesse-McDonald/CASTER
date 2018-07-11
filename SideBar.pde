@@ -2,7 +2,7 @@ class SideBar extends PApplet{
   int reqWidth,reqHeight;
   public Ui ui;
   void settings(){
-    size(100,100);
+    size(200,1000);
 
   }
 
@@ -19,7 +19,7 @@ class SideBar extends PApplet{
     reqHeight=ui.calcHeight();
     if(width!=reqWidth||height!=reqHeight){
 
-      reqWidth=max(100,reqWidth);
+      reqWidth=max(200,reqWidth);
       reqHeight=max(0,reqHeight);
       stablizeTimer=0;
       surface.setSize(reqWidth,reqHeight); 

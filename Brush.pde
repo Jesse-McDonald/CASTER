@@ -17,10 +17,11 @@ class Brush{
 	protected PImage shape;//used to track the current brush shape
 	protected color c;//used to track current brush color
 	public boolean erase=false;//if true a bush should generally erase instead of fill during paint()
+  public float pressure;//pressure from a wacom tablet, if not used set to 0
 	EMImage img;
         public Brush(){
             this(color(0,0,0,0), (EMImage)null,9);//please never try to use this constructor, java just instits we have it so here is something
-        
+            pressure=0;
         }
 	public Brush(color col,EMImage image,int s){
                 this.img=image;
@@ -67,7 +68,10 @@ class Brush{
 	public Brush decrease(int n){//decreases brush size by n, note that n should be even so that size always remains odd
 		return setSize(size-n);
 	}
-
+  public Brush sendPressure(float in){
+    //handle pressure input later, not entirely sure what do do with it
+    return this;
+  }
 	public Brush update(){//updates the shape of the brush, this should only be called when there is a reasonable certainty that the brush has changed in some way
 		//as it can be a computationally complex operation
                  shape=createImage(1,1,ARGB);//incase no shape is created for a brush in specific it will still have an image, shockingly this does need to be 1,1 not 0,0

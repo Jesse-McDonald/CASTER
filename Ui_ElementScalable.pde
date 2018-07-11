@@ -10,14 +10,11 @@ class Ui_ElementScalable extends Ui_Element{
   float relativeScale;//used for self scaling, relative to height
   float scale=1;//current scale
   Ui_ElementScalable(){super();}//default constructor only exists so it can be inherited by Ui_MomentaryButton
-  
+  //replace this later
   Ui_ElementScalable(float rX,float rY,float rS,PImage img){//use this constructor if you want the button to self scale
-    this(round(rX*displayWidth),round(rY*displayHeight),img);//we over ride most of what this constructor does anyway so it does not matter that is is the no scale one
-    relativeX=rX;
-    relativeY=rY;
-    relativeScale=rS;
-    autoReposition=true;
-    //this.draw();//What kind of idiot (apparently me btw) would call draw from a constructor? thats just asking for trouble
+    this(round(rX*PPI),round(rY*PPI),img);
+    scale=(PPI/img.width)*rS;
+
   }
 
   Ui_ElementScalable(int x, int y, PImage img){//use this constructor if you dont want the button to self scale

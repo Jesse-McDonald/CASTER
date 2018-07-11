@@ -214,8 +214,12 @@ class Visulization3D extends PApplet{
            }
          }
        }
+       if(index1>0){
        append.add(new Triangle(vertex,self,connected.get(index1)));
-       append.add(new Triangle(vertex,self,connected.get(index2)));
+         if(index2>0){
+         append.add(new Triangle(vertex,self,connected.get(index2)));
+         }
+       }
      }
      return append;
    }
@@ -270,8 +274,8 @@ class Visulization3D extends PApplet{
      minY=min(miny,minY);
      minZ=min(minz,minZ);
      grid=new byte[xext][yext][zext];
-     println(grid.length+" "+grid[0].length+" "+grid[0][0].length);
-     println(minz+" "+minx+" "+miny);
+     //println(grid.length+" "+grid[0].length+" "+grid[0][0].length);
+    // println(minz+" "+minx+" "+miny);
      for(int z=0;z<grid[0][0].length;z++){
        if(cloud.exists(z+minz)){
          for(int x=0;x<grid.length;x++){
@@ -407,7 +411,9 @@ class Visulization3D extends PApplet{
 
    frameRate(60);
   }
+  boolean STOP=false;
   void prep(){
+    STOP=true;
    strip();
    web=new ArrayList<Web>();
    for(int i=1;i<cloud.palette.size();i++){
@@ -415,11 +421,12 @@ class Visulization3D extends PApplet{
      web.get(i-1).map();
      web.get(i-1).bufferTriangles();
    } 
-
+    STOP=false;
   }
   float rad=0;
   float rotX,rotY,posX,posY,posZ;
   void draw(){
+    if(!STOP){
       background(0);
     lights();
     fill(255);
@@ -470,6 +477,7 @@ class Visulization3D extends PApplet{
     //}
     //web.antiCursionFrame();
     popMatrix();
+    }
    
   }
   void mouseWheel(MouseEvent event){//mouse scrole handler
