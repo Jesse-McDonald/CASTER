@@ -5,10 +5,8 @@ export project file button
 verify project import
 migrate edgeFinder toolbar to 2nd window
 
-external 3d viewer/display lists
 server based landmark allignment
-make the ui (look) great again
-add multiple segmentation layers (Colors) (3rd window?)
+add multiple segmentation layers (Colors) (3rd window?) (user addable, not just debug)(although the debug did teach me quite a bit)
 
 
 

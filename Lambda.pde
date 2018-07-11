@@ -68,6 +68,17 @@ class ClearBrush extends Lambda{//allows for clear brush button that is tuned to
 		img.brush.clearBrush(n);
 	}
 }*/
+class LColor extends Lambda{
+ color col;
+ LColor(){this(0);}
+ LColor(color c){
+   col=c;
+ }
+ void run(){
+   img.brush.c=col;
+   img.brush.update();
+ }
+}
 class ClearBrush extends Lambda{//allows for clear brush button that is tuned to specific brush via constructor
   ClearBrush(){}
   ClearBrush(int in){}//we no longer care which brush it is, that ship has been fixed and retired to a museum

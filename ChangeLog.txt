@@ -68,3 +68,16 @@ INDEV-18w28a
 *fixed off by one error in PNGImage.get bound checking that could cause the program to crash in certain cercumstances 
 *isolatated cause of crash on 168 of PNGImage.fastGet
 *corrected error in JEMO format docs where a 32 byte header had 42 bytes listed (uuid listed as 32 not 16 bytes)
+
+INDEV-18w28b
+*added support for wacom pen tablets
+	*currently we support drawing
+	*errasing
+	*moving
+	*zoming
+	*all with the pen 
+	*and changing brush size
+	*and changing layer now have key bindings for the tablet to use
+*added debug color pallete
+*fixed UI (should scale better too)
+*3d visulalizer can now be ran twice

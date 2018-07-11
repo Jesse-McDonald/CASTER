@@ -470,21 +470,18 @@ String[] args = {"Edge Outlining Tools"}; // I don't understand why this is need
       {
        if(black[i][j] == c)//if it is membrane
        {
-         if(this.img.overlay.get(this.img.layer, oldPix.x+i-size, oldPix.y+j-size) == c)//a probably unecessary check to make sure the pixel is membrane
-         {
-          /*This just displays the pixel of membrane that is being looked at. It is helpful in debuging.
-          color[][] blank = new color[size*2][size*2];
-          blank[size][size] = c;
-          membraneToOverlay(blank, newPix, color(0,255,255,100));
-          */
-          float currentDistance = (sqrt(pow(newPix.x - oldPix.x+i-size, 2) + pow(newPix.y - oldPix.y+j-size, 2)));//Calculate the distance between that point and the sent out point
-          
-          if (currentDistance > smallestDistance)//and if it is smaller than the previously known smallest distanace
-          {
-            smallestDistance = currentDistance;//Save that distance and hold onto that pixel
-            holding = new Pixel (oldPix.x+i-size, oldPix.y+j-size, c);
-          }  
-         }
+        /*This just displays the pixel of membrane that is being looked at. It is helpful in debuging.
+        color[][] blank = new color[size*2][size*2];
+        blank[size][size] = c;
+        membraneToOverlay(blank, newPix, color(0,255,255,100));
+        */
+        float currentDistance = (sqrt(pow(newPix.x - oldPix.x+i-size, 2) + pow(newPix.y - oldPix.y+j-size, 2)));//Calculate the distance between that point and the sent out point
+        
+        if (currentDistance > smallestDistance)//and if it is smaller than the previously known smallest distanace
+        {
+          smallestDistance = currentDistance;//Save that distance and hold onto that pixel
+          holding = new Pixel (oldPix.x+i-size, oldPix.y+j-size, c);
+        }  
        }
      }
     }
