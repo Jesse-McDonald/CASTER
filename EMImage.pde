@@ -62,6 +62,7 @@ class EMImage {
       //overlay.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the overlay OVER that
       brush.draw();//draw the brush on top
     }
+
     return this;
   }
 	public EMImage draw() {

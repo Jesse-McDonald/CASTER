@@ -1,5 +1,7 @@
 This is just my plan for the next steps of CASTER
 
+add scale slider to 3d view
+add measure tool
 Export 3d
 export project file button
 verify project import

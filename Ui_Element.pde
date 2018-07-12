@@ -19,7 +19,7 @@ abstract class Ui_Element{
   public Ui_Element(int x, int y, PImage img){this();}//construction for placing element with image at position
   public Ui_Element hide(){return this;}//this is here expressly for Ui_RadioButton inside Ui_PopupPanel incase the element needs to do something special when hidden, such as turn off, or hide others
   public Ui_Element getId(final String s){if(s.equals(id)){return this;}else{return null;}}//by default this returns the this element if id matches s, can be overloaded to check sub elements too
-   public int calcWidth(){
+  public int calcWidth(){
     return ceil(posX+scale*tile.width);
   }
   public int calcHeight(){
