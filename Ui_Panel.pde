@@ -39,7 +39,12 @@ Ui_Panel(float x, float y, float w, float h, color c){
 		boolean ret=(dm.mouseX>=posX&&dm.mouseY>=posY)&&(dm.mouseX<=posX+tile.width&&dm.mouseY<=posY+tile.height)&&tile.get(dm.mouseX-posX,dm.mouseY-posY)!=color(0,0,0,0);    
 		return ret;
 	}
-	
+	public int calcWidth(){
+    return ceil(posX+tile.width);
+  }
+  public int calcHeight(){
+    return ceil(posY+tile.height);
+  }
 	public Ui_Panel draw(){
 		dm.image(tile,posX,posY);//draw panel to screen
 		return this;

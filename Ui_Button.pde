@@ -8,6 +8,7 @@ also depends on boolean mousePressed, int mouseButton, LEFT, PImage loadImage(St
 class Ui_Button extends Ui_Element{
 	private boolean MOUSE_STATE;//previous mouse state
 	public BitSet state;//current button state, bit 0, pressed/not, bit 1 mouse on/off, bit 2 button active/not
+  public PImage background;//background of button, not used but left avaliable
 	public PImage highlighted;//an image overlayed over button when it is moused over
 	public PImage pressed;//an image displayed when button is pressed
 	public PImage dissabled;//an image overlayed over the button when it is dissabled
@@ -37,6 +38,7 @@ Ui_Button(float rX,float rY,float rS,PImage img){//use this constructor if you w
     scale=(PPI/img.width)*rS;
 }
 	Ui_Button(int x, int y, PImage img){//use this constructor if you dont want the button to self scale
+    background=new PImage(1,1,ARGB);
 		posX=x;
 		posY=y;
 		tile=img;//usual initilization
@@ -106,6 +108,7 @@ Ui_Button(float rX,float rY,float rS,PImage img){//use this constructor if you w
 		prevState=state.get(0);//update previous state
 		mouseOn();//run mouseOn again because it also handles click processing and kinda needs to get ran
 		//this is the reason that mouseOn and detectClick have been optimised, they can be expected to run twice in each frame so have to be lite
+    dm.image(background,0,0);
 		if(state.get(0)){//button is active
 			dm.image(pressed,0,0);//the matrix handles the positioning
 			whileActive.run();//run lambda for while deactive

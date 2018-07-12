@@ -81,3 +81,13 @@ INDEV-18w28b
 *added debug color pallete
 *fixed UI (should scale better too)
 *3d visulalizer can now be ran twice
+
+INDEV-18w28c (first version number with a c :)  )
+*added colored brush buttons
+*changed buttons to be transparrent where previously colored
+*curent brush color now shows up on each brush button that uses a color
+*fixed calcWidth and calcHeight on ui_panel
+*added Black Hole Brush (flood fill erraser)
+*added black hole brush ui
+*added black hole brush icon
+*added layer thickness on keybinding (no slider yet)

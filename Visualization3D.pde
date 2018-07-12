@@ -1,5 +1,6 @@
 import java.util.Arrays;
 class Visulization3D extends PApplet{
+  int layerThickness=1;//number of pixels thick each layer is
   void exit(){ this.dispose(); 
      this.noLoop();
      surface.stopThread();
@@ -63,15 +64,15 @@ class Visulization3D extends PApplet{
      return this;
    }
    Vertex mark(PShape target){
-     target.vertex(x*10,y*10,z*10); 
+     target.vertex(x*10,y*10,z*10*layerThickness); 
      return this;
    }
    Vertex mark(){
-     vertex(x*10,y*10,z*10); 
+     vertex(x*10,y*10,z*10*layerThickness); 
      return this;
    }
    Vertex draw(){
-     point(x*10,y*10,z*10); 
+     point(x*10,y*10,z*10*layerThickness); 
      return this;
    }
    String toString(){
@@ -377,6 +378,7 @@ class Visulization3D extends PApplet{
       return this;
     }
     Web bufferTriangles(){
+      triangleBuffer=createShape(GROUP);
       for(int i=0;i<triangles.size();i++){
         PShape temp=createShape();
          temp.setFill(color(red(col),green(col),blue(col)));
@@ -477,6 +479,8 @@ class Visulization3D extends PApplet{
     //}
     //web.antiCursionFrame();
     popMatrix();
+    }else{
+      background(255); 
     }
    
   }
@@ -499,5 +503,22 @@ class Visulization3D extends PApplet{
       posY-=pmouseY-mouseY;
     }
   }
-
+  void keyTyped(){//key type handler, for wacom tablet ease of resizing and layer change and redo
+    if (key=='+'){
+      layerThickness++;
+      for(int i=0;i<web.size();i++){
+        //web.get(i).triangles();
+        web.get(i).bufferTriangles();
+      }
+    }else if(key=='-'){
+      layerThickness--;
+      if (layerThickness<1){
+        layerThickness=1;
+      }
+      for(int i=0;i<web.size();i++){
+        //web.get(i).triangles();
+        web.get(i).bufferTriangles();
+      }
+    }
+  }
 }

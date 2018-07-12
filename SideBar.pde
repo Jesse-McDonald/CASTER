@@ -14,7 +14,6 @@ class SideBar extends PApplet{
   }
   int stablizeTimer=0;
   void draw(){
-
     reqWidth=ui.calcWidth();
     reqHeight=ui.calcHeight();
     if(width!=reqWidth||height!=reqHeight){
@@ -38,4 +37,5 @@ class SideBar extends PApplet{
     }
     stablizeTimer--;
   }
+
 }

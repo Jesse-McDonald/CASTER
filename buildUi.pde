@@ -3,7 +3,7 @@
 Ui buildUi(PApplet dm){  
   Ui ui=new Ui(dm);//prep ui
   float numButtons=5;//a arbitrary number to help size the the buttons,it is really quite missnamed
-  
+  PImage mask=loadImage("buttonColorMap.png");
   float spacing=1/((numButtons+.5)*2.5);//more sizing stuff
   numButtons*=2.5;//and more arbitrary constants
   Ui_PopupPanel brushPannel=new Ui_PopupPanel();
@@ -11,11 +11,14 @@ Ui buildUi(PApplet dm){
   {//this is a huge reason the { should always be on the same line as the thing it is extending, other wise there is the confusion of if this is a function called ui.add or something
     //or just the code block it is
     Ui_RadioButton buildRadio=new Ui_RadioButton(1);//prep radio button for brush buttons
-    brushPannel.add(new Ui_Panel(1.2,1,1.1,5.6,color(240,240,240,200)));//add the panel to the popout  
+    brushPannel.add(new Ui_Panel(1.2,1,1.1,6.7,color(240,240,240,200)));//add the panel to the popout  
     {//add buttons to radio button
-      Ui_Button build=new Ui_Button(1.2,1.1,1,"paintBrushRound.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,1.1,1,"paintBrushRound.png");
+      
       build.setPressedImg("paintBrushRoundActive.png");
       build.setHighlightedImg("highlight.png");
+      build.c=0;
+      build.mask=mask;
       build.onActivate=new CircleBrush();
       build.onDeactivate=new ClearBrush(1);//incase you are wonding why this is here, onDeactivate has to be some sort of lambda
       //but it does not need to do something.  All of these where already clearBrush, so I left it clear brush, but now clearBrush does
@@ -23,34 +26,49 @@ Ui buildUi(PApplet dm){
       buildRadio.add(build);
     }//round brush button
     {//add buttons to radio button
-      Ui_Button build=new Ui_Button(1.2,2.2,1,"paintBrushSquare.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,2.2,1,"paintBrushSquare.png");
       build.setPressedImg("paintBrushSquareActive.png");
       build.setHighlightedImg("highlight.png");
+      build.c=0;
+      build.mask=mask;
       build.onActivate=new SquareBrush();
       build.onDeactivate=new ClearBrush(2);
       buildRadio.add(build);
     }//square brush button
     {//add buttons to radio button
-      Ui_Button build=new Ui_Button(1.2,3.3,1,"paintBrushDiamond.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,3.3,1,"paintBrushDiamond.png");
       build.setPressedImg("paintBrushDiamondActive.png");
       build.setHighlightedImg("highlight.png");
+      build.c=0;
+      build.mask=mask;
       build.onActivate=new DiamondBrush();
       build.onDeactivate=new ClearBrush(3);
       buildRadio.add(build);
     }//diamond brush button
     {//add buttons to radio button
-      Ui_Button build=new Ui_Button(1.2,4.4,1,"paintCan.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,4.4,1,"blackHoleBrush.png");
+      build.setPressedImg("blackHoleBrushActive.png");
+      build.setHighlightedImg("highlight.png");
+      build.c=0;
+      build.mask=mask;
+      build.onActivate=new BlackHoleBrush();
+      build.onDeactivate=new ClearBrush(4);
+      buildRadio.add(build);
+    }//paint brush button
+    {//add buttons to radio button
+      Ui_PaintButton build=new Ui_PaintButton(1.2,5.5,1,"paintCan.png");
       build.setPressedImg("paintCanActive.png");
       build.setHighlightedImg("highlight.png");
+      build.c=0;
+      build.mask=mask;
       build.onActivate=new FloodBrush();
       build.onDeactivate=new ClearBrush(4);
       buildRadio.add(build);
     }//paint brush button
-
     brushPannel.add(buildRadio);//add the radio button (and all sub buttons) to the ui
   }
   {//add eraser button directly to brushPannel
-    Ui_Button build=new Ui_Button(1.2,5.5,1,"eraser.png");
+    Ui_Button build=new Ui_Button(1.2,6.6,1,"eraser.png");
     build.setPressedImg("eraserActive.png");
     build.setHighlightedImg("highlight.png");
     build.onActivate=new EraserBrush(true);
@@ -67,17 +85,21 @@ Ui buildUi(PApplet dm){
     Ui_RadioButton buildRadio=new Ui_RadioButton(1);//prep radio button for brush buttons
    semiAuto.add(new Ui_Panel(1.2,1,1.2,2.3,color(240,240,240,200)));//add the panel to the popout  
     {//add buttons to radio button
-      Ui_Button build=new Ui_Button(1.2,1.1,1,"rayCastBrush.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,1.1,1,"rayCastBrush.png");
       build.setPressedImg("rayCastBrushActive.png");
       build.setHighlightedImg("highlight.png");
+      build.c=0;
+      build.mask=mask;
       build.onActivate=new RayCastBrush();
       build.onDeactivate=new ClearBrush(6);
       buildRadio.add(build);
     }//ray cast brush button
     {//add buttons to radio button
-      Ui_Button build=new Ui_Button(1.2,2.2,1,"edgeFollower.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,2.2,1,"edgeFollower.png");
       build.setPressedImg("edgeFollowerActive.png");
       build.setHighlightedImg("highlight.png");
+      build.c=0;
+      build.mask=mask;
       build.onActivate=new EdgeFollowingBrush();
       build.onDeactivate=new EdgeFollowingBrushDestroy();
       

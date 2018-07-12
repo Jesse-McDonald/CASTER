@@ -53,6 +53,14 @@ class FloodBrush extends Lambda{//allows for flood fill button
     
 	}
 }
+class BlackHoleBrush extends Lambda{//allows for flood fill button
+  void run(){
+         
+    img.brush= new BrushBlackHole(img.brush.c,img.brush.img,img.brush.size);
+                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+    
+  }
+}
 /* posibly out dated with new polymorphic Brushes
 class ClearBrush extends Lambda{//allows for clear brush button that is tuned to specific brush via constructor
 	int n;
@@ -148,7 +156,8 @@ public class BlankButton extends Lambda{//blank button for testing, hyjack all y
   public void run(){
     //img.alignLandmarks(5);//hyjacked for stack alignment
     //LayerSeeded.seedFromPrev(img);//hyjack for seeding
-    img.saveProject(new File("D:\\project.json"));//hyjack for saving project
+    //img.saveProject(new File("D:\\project.json"));//hyjack for saving project
+    //img.brush=new BrushBlackHole(img.brush.c,img.brush.img,img.brush.size);
   }
 
 }
