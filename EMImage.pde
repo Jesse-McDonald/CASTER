@@ -116,6 +116,7 @@ class EMImage {
 	public Pixel getPixel(int screenX, int screenY) {//gets the img pixel at a screen cord
 		int x, y;
 		color c;
+
 		x=int((screenX-offsetX)/zoom);//+meta.get(layer).offsetX;
 		y=int((screenY-offsetY)/zoom);//+meta.get(layer).offsetY;
 		c=img.get(layer, x, y);
@@ -253,7 +254,12 @@ class EMImage {
   		return true;
    
 	}  
-  
+  int screenX(Pixel p){
+    return round((p.x)*zoom+offsetX+zoom/2.);
+  }
+  int screenY(Pixel p){
+    return round((p.y)*zoom+offsetY+zoom/2.);
+  }
   float greyVal(color c){//this averages the RGB values of a given color to determine its grayscale value
     return ((c >> 16 & 0xFF) + (c >> 8 & 0xFF) + (c & 0xFF))/3.0;//extract and average rgb values
   }

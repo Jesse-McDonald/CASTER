@@ -1,6 +1,8 @@
 class BrushFill extends Brush{
-      public BrushFill(color col,EMImage image,int s){
+    public BrushFill(color col,EMImage image,int s){
       super(col,image,s);
+      shape=loadImage("bucket.png");//load up the bucket encase of flood fill
+      shape.resize(128,128);
     }
   ArrayList<Pixel> floodFillBackup=new ArrayList<Pixel>();//used to store pixels for processes taking more than 1 frame
   public Brush draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process
@@ -40,7 +42,7 @@ class BrushFill extends Brush{
       pixels.remove(0);
       if (this.img.overlay.get(this.img.layer,p.x,p.y)!=c){
         this.img.overlay.set(this.img.layer,p.x,p.y,c);
-
+        
         pixels.add(new Pixel(p.x+1*int(p.x<this.img.overlay.width-1),p.y,c));//don’t worry, pixel is never checked for color anyway so we can get away with this short cut
         pixels.add(new Pixel(p.x-1*int(p.x>0),p.y,c));
         pixels.add(new Pixel(p.x,p.y+1*int(p.y<this.img.overlay.height-1),c));
@@ -54,8 +56,7 @@ class BrushFill extends Brush{
 
   public BrushFill update(){//updates the shape of the brush, this should only be called when there is a reasonable certainty that the brush has changed in some way
     //as it can be a computationally complex operation
-    shape=loadImage("bucket.png");//load up the bucket encase of flood fill
-    shape.resize(128,128);
+
     return this;
   }
        public Brush eStop(){//clear the list in an emergency

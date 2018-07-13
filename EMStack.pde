@@ -32,8 +32,8 @@ class EMStack{
       hash+=img.get(i).hashCode();
            
     }
-    println(hash);
-    println(depth);
+    //println(hash);
+    //println(depth);
     return (int)hash;
   }
 	EMStack(File base){//new EMStack seeded from picture file

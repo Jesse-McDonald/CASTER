@@ -16,8 +16,7 @@ public class SecondApplet extends PApplet
     float repeats;
    
     public void settings() {
-      size(900, 130);//Set the size of the pop up window
-      
+      size(600, 130);//Set the size of the pop up window
       // init them: (xPos, yPos, width, height)
       colorRangeSliders[0] = new Colors(80, 20, 40, 20, 65, 255); //and the location, width, and height of each slider and button
       colorRangeSliders[1] = new Colors(80, 60, 40, 20, 75, 255);

@@ -309,17 +309,18 @@ String[] args = {"Edge Outlining Tools"}; // I don't understand why this is need
   {     
     ArrayList<Pixel> pixels = new ArrayList<Pixel>();//create storage for markers of known membrane peices
     pixels.add(onMembrane);//and add the one peice that we know is membrane (based on user click)
+    onMembrane.c = color(0,0,0,255);
     while(!pixels.isEmpty())//As long as there is still a peice of membrane who's neighbors haven't been checked...
     {
       Pixel p = pixels.get(0);//Select and remove one pixel from storage and mark it with a special color
       pixels.remove(0);
-      temp[p.x][p.y]=color(0,0,0,255);
       //Then for each pixel around the one being checked (staying within the current area as well)
       if (p.x+1 < size*2)
       {
         //If that pixel has not already been checked, and it is an object
         if ((temp[p.x+1][p.y] != color(0,0,0,255)) && (white[p.x+1][p.y] == color(0,0,0,0)))
         {
+          temp[p.x+1][p.y]=color(0,0,0,255);
           pixels.add(new Pixel(p.x+1*int(p.x<2*size),p.y,c)); //Add that pixel to the storage of peices to be checked
         }
       }
@@ -327,6 +328,7 @@ String[] args = {"Edge Outlining Tools"}; // I don't understand why this is need
       {
         if ((temp[p.x-1][p.y] != color(0,0,0,255)) && (white[p.x-1][p.y] == color(0,0,0,0)))
         {
+          temp[p.x-1][p.y]=color(0,0,0,255);
           pixels.add(new Pixel(p.x-1*int(p.x>0),p.y,c));
         }
       }
@@ -334,6 +336,7 @@ String[] args = {"Edge Outlining Tools"}; // I don't understand why this is need
       {
         if ((temp[p.x][p.y+1] != color(0,0,0,255)) && (white[p.x][p.y+1] == color(0,0,0,0)))
         {
+          temp[p.x][p.y+1]=color(0,0,0,255);
           pixels.add(new Pixel(p.x,p.y+1*int(p.y<2*size),c));
         }
       }
@@ -341,6 +344,7 @@ String[] args = {"Edge Outlining Tools"}; // I don't understand why this is need
       {   
         if((temp[p.x][p.y-1] != color(0,0,0,255)) && (white[p.x][p.y-1] == color(0,0,0,0)))
         {
+          temp[p.x][p.y-1]=color(0,0,0,255);
           pixels.add(new Pixel(p.x,p.y-1*int(p.y>0),c));
         }
       }

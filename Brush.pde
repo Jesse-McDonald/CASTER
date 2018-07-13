@@ -36,10 +36,10 @@ class Brush{
 		return this; 
 	}
 
-        Pixel brushPosition(){//calculates the offset to the top left corner of the image based on the pixel under the mouse
-          float zoom=this.img.getZoom();
-          return this.img.getPixel(int(mouseX-shape.width/2.0*zoom+zoom/2),int(mouseY-shape.width/2.0*zoom+zoom/2));
-        }
+  Pixel brushPosition(){//calculates the offset to the top left corner of the image based on the pixel under the mouse
+    float zoom=this.img.getZoom();
+    return this.img.getPixel(int(mouseX-shape.width/2.0*zoom+zoom/2),int(mouseY-shape.width/2.0*zoom+zoom/2));
+  }
 
 	float greyVal(color c){//this averages the RGB values of a given color to determine its grayscale value
 		return ((c >> 16 & 0xFF) + (c >> 8 & 0xFF) + (c & 0xFF))/3.0;//extract and average rgb values
