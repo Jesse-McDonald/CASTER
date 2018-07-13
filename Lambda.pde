@@ -158,6 +158,8 @@ public class BlankButton extends Lambda{//blank button for testing, hyjack all y
     //LayerSeeded.seedFromPrev(img);//hyjack for seeding
     //img.saveProject(new File("D:\\project.json"));//hyjack for saving project
     //img.brush=new BrushBlackHole(img.brush.c,img.brush.img,img.brush.size);
+    img.brush=new BrushRuler(img.brush.c,img.brush.img,img.brush.size);
+
   }
 
 }

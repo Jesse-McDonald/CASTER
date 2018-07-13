@@ -77,6 +77,7 @@ void draw(){
   }
 	img.draw(this);//draw the image
 	stroke(0,0,255,100);//set stroke to blue
+  strokeWeight(1);
 	line(width/2,0,width/2,height);//draw center lines
 	line(width,height/2,0,height/2); 
 	//ui.draw();//draw ui on top
@@ -183,6 +184,8 @@ void mouseReleased(){//mouse pressed handler
   //}
   if(usingPenErraser){
     img.brush.erase=false;
+    usingPenErraser=false;
+    ((Ui_Button)sidebar.ui.getId("eraser")).state.set(0,false);
   }
   
 

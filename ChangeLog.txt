@@ -91,3 +91,9 @@ INDEV-18w28c (first version number with a c :)  )
 *added black hole brush ui
 *added black hole brush icon
 *added layer thickness on keybinding (no slider yet)
+
+INDEV-18w28d
+*decreased membrain jumping of edge follower brush
+*increased edge following performance
+*added measure tool
+*fixed bug with stylus clearing eraser state when triggered by ui
