@@ -1,5 +1,6 @@
 This is just my plan for the next steps of CASTER
 
+build Ui_ColorSlider
 add scale slider to 3d view
 add measure tool to ui
 Export 3d

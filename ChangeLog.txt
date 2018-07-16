@@ -97,3 +97,6 @@ INDEV-18w28d
 *increased edge following performance
 *added measure tool
 *fixed bug with stylus clearing eraser state when triggered by ui
+
+INDEV-18w29a
+*added Ui_Slider class

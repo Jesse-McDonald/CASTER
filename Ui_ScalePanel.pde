@@ -38,7 +38,7 @@ class Ui_ScalePanel extends Ui_Element{
 	}
 
 	public boolean mouseOn(){//calculate if mouse is in shape and not on a transparent pixel
-		boolean ret=(mouseX>=posX)&&(mouseY>=posY)&&(mouseX<=posX+tile.width*scale)&&(mouseY<=posY+tile.height*scale)&&tile.get(round(mouseX-posX),round(mouseY-posY))!=color(0,0,0,0);
+		boolean ret=(mouseX>=posX)&&(mouseY>=posY)&&(mouseX<=posX+tile.width*scale)&&(mouseY<=posY+tile.height*scale)&&tile.get(round(mouseX-posX),round(mouseY-posY))!=tColor(0,0,0,0);
 		return ret;
 	}
 
