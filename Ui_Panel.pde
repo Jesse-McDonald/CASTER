@@ -33,7 +33,7 @@ Ui_Panel(float x, float y, float w, float h, color c){
 			}
 		}
 	}
-	Ui_Panel(){this(0,0,0,0,color(0,0,0,0));}//default constructor sets up invisible panel with no size
+	Ui_Panel(){this(0,0,0,0,tColor(0,0,0,0));}//default constructor sets up invisible panel with no size
 	
 	public boolean mouseOn(){//detects if the mouse would be over the panel where it was not transparent
 		boolean ret=(dm.mouseX>=posX&&dm.mouseY>=posY)&&(dm.mouseX<=posX+tile.width&&dm.mouseY<=posY+tile.height)&&tile.get(dm.mouseX-posX,dm.mouseY-posY)!=color(0,0,0,0);    

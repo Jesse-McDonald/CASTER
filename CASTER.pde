@@ -1,11 +1,16 @@
+import codeanticode.tablet.*;
+
 /** base program to run test_environment
 this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-//version: INDEV-18w28b
+//version: INDEV-18w29a
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
+}
+int tColor(int r,int g,int b){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
+  return tColor(r,g,b,255);
 }
 import codeanticode.tablet.*;
 float PPI=100;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point
@@ -44,6 +49,7 @@ void settings()
   size(2000,1000);//window size
   noSmooth();//without this line, the picture will be smoothed as we zoom in, great for zooming pictures and not having them get pixilated.... but we want pixilated
 }
+
 void setup(){//setup the window
   //output = createWriter("log.txt");//not sure we need a log file right now
 	frameRate(60);

@@ -49,9 +49,9 @@ Ui_Button(float rX,float rY,float rS,PImage img){//use this constructor if you w
 		dissabled=createImage(img.width,img.height,ARGB);
 		for(int i=0;i<img.width;i++){
 			for (int j=0;j<img.height;j++){
-				highlighted.set(i,j,color(135,206,250,100));
-				pressed.set(i,j,color(100,100,100,50));//set each of the created images to a unique color incase we never get an image to base on
-				dissabled.set(i,j,color(100,100,100,100));
+				highlighted.set(i,j,tColor(135,206,250,100));
+				pressed.set(i,j,tColor(100,100,100,50));//set each of the created images to a unique color incase we never get an image to base on
+				dissabled.set(i,j,tColor(100,100,100,100));
 			}
 		}
 		onActivate=new Lambda();//set all Lambdas to blank incase we dont recieve one later
