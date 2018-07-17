@@ -1,9 +1,9 @@
 This is just my plan for the next steps of CASTER
 
+Export 3d
 build Ui_ColorSlider
 add scale slider to 3d view
 add measure tool to ui
-Export 3d
 export project file button
 verify project import
 migrate edgeFinder toolbar to 2nd window
@@ -18,4 +18,4 @@ add Decision tree classifier
 add handling of non png file types (like tif)
 add import/export of track em projects
 add .dm3 file handling
-
+remove processing color as a dependancy, it is not thread safe, tColor should be a 1-1 replacement that is thread safe
