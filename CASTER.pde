@@ -5,7 +5,8 @@ this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-//version: INDEV-18w29a
+//version: INDEV-18w29b
+String VERSION="INDEV-18w29b";
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
 }
@@ -21,6 +22,7 @@ EMImage img;//global because so many things need it
 boolean PAINTING=false;
 boolean usingPenErraser=false;
 SideBar sidebar;
+Visulization3D view3D;
 int snapFrameCounter=0;//counter for the frames
 int snapFrames=100;//number of frames before auto saving a snap, in theory at 600 it should save every 10 seconds or so and populate the 100 deep buffer at 16 minutes of continuous drawing
 //experimentation showes that 100 frames while drawing is about 4 seconds or so due to frame lag, and should fill the buffer in 8 minutes
@@ -36,7 +38,11 @@ float range(float a, float b, float c){
 	return ret;
 
 }
-
+void objSavePasser(File pass){
+   if (pass != null) {
+    view3D.saveHandler(pass);
+   }
+}
 void load(File selection){// this is the handler for the load event
 	if(selection!=null){
 		img=new EMImage(new EMStack(selection.getAbsolutePath()));
