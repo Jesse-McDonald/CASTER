@@ -1,5 +1,5 @@
 import java.util.Arrays;
-class Visulization3D extends PApplet{
+public class Visulization3D extends PApplet{
   int layerThickness=10;//number of pixels thick each layer is
   void exit(){ this.dispose(); 
      this.noLoop();
@@ -77,6 +77,9 @@ class Visulization3D extends PApplet{
    }
    String toString(){
      return "("+x+","+y+","+z+")"; 
+   }
+   String toObj(){
+     return x+" "+y+" "+z; 
    }
   }
   class Triangle{
@@ -225,8 +228,11 @@ class Visulization3D extends PApplet{
      }
      return append;
    }
+   String toObj(){
+     return vertex.toObj(); 
+   }
    String toString(){
-     return vertex.toString(); 
+     return vertex.toString();
    }
   }
   float minX=Float.MAX_VALUE,minY=Float.MAX_VALUE,minZ=Float.MAX_VALUE,maxX=Float.MIN_VALUE,maxY=Float.MIN_VALUE,maxZ=Float.MIN_VALUE;
@@ -399,15 +405,17 @@ class Visulization3D extends PApplet{
       for(int i=0;i<nodes.size();i++){
         nodeKey.put(nodes.get(i).toString(),i);
       }
-      for(Triangle t :triangles){
-        ret+="f "+(vertexOffset+nodeKey.get(t.p1.toString()))+" "+(vertexOffset+nodeKey.get(t.p2.toString()))+" "+(vertexOffset+nodeKey.get(t.p3.toString()))+"/n"; 
+      for(Triangle t : triangles){
+
+        ret+="f "+(vertexOffset+nodeKey.get(t.p1.toString()))+" "+(vertexOffset+nodeKey.get(t.p2.toString()))+" "+(vertexOffset+nodeKey.get(t.p3.toString()))+"\n"; 
+     
       }
       return ret;
     }
     String stringVerteces(){
       String ret="";
       for(Node n : nodes){
-        ret+="v "+n.toString()+"/n";
+        ret+="v "+n.toObj()+"\n";
       }
       return ret;
     }
@@ -446,7 +454,7 @@ class Visulization3D extends PApplet{
        web.get(i-1).bufferTriangles();
     } 
     STOP=false;
-    selectFolder("Select a directory to save to","objSavePasser");//trigger stack load
+    selectFolder("Select a directory to save to","saveHandler");//trigger stack load
   }
   
   float rad=0;
@@ -546,7 +554,7 @@ class Visulization3D extends PApplet{
     }
   }
   String rgbToMtl(color c){
-    return"/n";
+    return"\n";
   }
   public void saveHandler(File folder){
     
@@ -555,7 +563,6 @@ class Visulization3D extends PApplet{
     PrintWriter mtl =createWriter(folder.getAbsolutePath()+"\\"+fileName+".mtl");
 
     PrintWriter obj =createWriter(folder.getAbsolutePath()+"\\"+fileName+".obj");
-
     obj.println("#CASTER v"+VERSION+" https://github.com/Jesse-McDonald");
     obj.println("#3D recreation of cell or cells with a layer pixel thickness of "+layerThickness);
     obj.println("mtllib "+fileName+".mtl");
@@ -563,7 +570,7 @@ class Visulization3D extends PApplet{
        obj.print(web.get(i).stringVerteces());
     }
    
-    int vertexOffset=0;//as we move down the images we can refer to the vertices by web internal order, but only if we track how many total verteces there are before the start of the file
+    int vertexOffset=1;//as we move down the images we can refer to the vertices by web internal order, but only if we track how many total verteces there are before the start of the file
     for(int i=0;i<web.size();i++){
       mtl.println("newmtl Material."+(i+1));
       mtl.print(rgbToMtl(web.get(i).col));
@@ -572,6 +579,7 @@ class Visulization3D extends PApplet{
       obj.print(web.get(i).stringTriangles(vertexOffset));
       vertexOffset+=web.get(i).nodes.size();
     }
+    println("save finished");
 
   }
 }
