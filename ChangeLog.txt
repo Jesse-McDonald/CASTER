@@ -100,3 +100,10 @@ INDEV-18w28d
 
 INDEV-18w29a
 *added Ui_Slider class
+*added obj export
+
+INDEV-18w29b
+*Optimized obj export to use less memory
+*flood fill now only fills the color you clicked on
+*added color picker brush (not on ui yet)
+*updated future version numbering plan

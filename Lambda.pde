@@ -127,24 +127,19 @@ public class Load extends Lambda{//allow for overlay load button
 		img.loadOverlay(f);
 	}
 }
-public class EdgeFollowingBrush extends Lambda{//blank button for testing, hyjack all you want
+public class EdgeFollowingBrush extends Lambda{//Edgefollowing trigger
   public void run(){
-    //img.alignLandmarks(5);//hyjacked for stack alignment
-    //LayerSeeded.seedFromPrev(img);//hyjack for seeding
-    
+
     img.brush= new BrushEdgeFollowing(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+    img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
   
     
     
   }
  
 }
-public class EdgeFollowingBrushDestroy extends Lambda{//blank button for testing, hyjack all you want
+public class EdgeFollowingBrushDestroy extends Lambda{//I am guessing anti edgefollowing trigger, but I dont know
   public void run(){
-    //img.alignLandmarks(5);//hyjacked for stack alignment
-    //LayerSeeded.seedFromPrev(img);//hyjack for seeding
-    
     ((BrushEdgeFollowing)img.brush).close();
     img.brush= new Brush(img.brush.c,img.brush.img,img.brush.size);
     
