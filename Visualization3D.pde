@@ -79,7 +79,7 @@ public class Visulization3D extends PApplet{
      return "("+x+","+y+","+z+")"; 
    }
    String toObj(){
-     return x+" "+y+" "+z; 
+     return x+" "+y+" "+z*layerThickness; 
    }
   }
   class Triangle{
@@ -399,25 +399,42 @@ public class Visulization3D extends PApplet{
       }
       return this;
     }
-    String stringTriangles(int vertexOffset){
-      String ret="";
-      HashMap<String,Integer> nodeKey=new HashMap<String,Integer>();
+    Web trianglesToFile(PrintWriter obj, PrintWriter mtl, int vertexOffset ){
+     
+       HashMap<String,Integer> nodeKey=new HashMap<String,Integer>();
       for(int i=0;i<nodes.size();i++){
         nodeKey.put(nodes.get(i).toString(),i);
       }
+      String buffer="";
       for(Triangle t : triangles){
 
-        ret+="f "+(vertexOffset+nodeKey.get(t.p1.toString()))+" "+(vertexOffset+nodeKey.get(t.p2.toString()))+" "+(vertexOffset+nodeKey.get(t.p3.toString()))+"\n"; 
-     
+        buffer+="f "+(vertexOffset+nodeKey.get(t.p1.toString()))+" "+(vertexOffset+nodeKey.get(t.p2.toString()))+" "+(vertexOffset+nodeKey.get(t.p3.toString()))+"\n"; 
+        if(buffer.length()>100){
+          obj.print(buffer); 
+          buffer="";
+          obj.flush();
+        }
+        
       }
-      return ret;
+      obj.print(buffer);
+      obj.flush();
+      return this;
     }
-    String stringVerteces(){
-      String ret="";
+    
+     
+    Web vertecesToFile(PrintWriter obj){
+      String buffer="";
       for(Node n : nodes){
-        ret+="v "+n.toObj()+"\n";
+        buffer+="v "+n.toObj()+"\n";
       }
-      return ret;
+      if(buffer.length()>100){
+          obj.print(buffer); 
+          buffer="";
+          obj.flush();
+        }
+      obj.print(buffer);
+      obj.flush();
+      return this;
     }
   }
    ArrayList<Web> web;
@@ -563,22 +580,30 @@ public class Visulization3D extends PApplet{
     PrintWriter mtl =createWriter(folder.getAbsolutePath()+"\\"+fileName+".mtl");
 
     PrintWriter obj =createWriter(folder.getAbsolutePath()+"\\"+fileName+".obj");
+    println("write started");
     obj.println("#CASTER v"+VERSION+" https://github.com/Jesse-McDonald");
     obj.println("#3D recreation of cell or cells with a layer pixel thickness of "+layerThickness);
     obj.println("mtllib "+fileName+".mtl");
+    println("starting verteces");
     for(int i=0;i<web.size();i++){
-       obj.print(web.get(i).stringVerteces());
+       web.get(i).vertecesToFile(obj);
     }
-   
+    obj.flush();
+    println("Verteces finished\nstarting triangles");
     int vertexOffset=1;//as we move down the images we can refer to the vertices by web internal order, but only if we track how many total verteces there are before the start of the file
     for(int i=0;i<web.size();i++){
       mtl.println("newmtl Material."+(i+1));
       mtl.print(rgbToMtl(web.get(i).col));
       obj.println("usemtl Material."+(i+1));
       obj.println("s off");
-      obj.print(web.get(i).stringTriangles(vertexOffset));
+      web.get(i).trianglesToFile(obj,mtl,vertexOffset);
       vertexOffset+=web.get(i).nodes.size();
     }
+    println("triangles Finished\nfinishing");
+    obj.flush();
+    mtl.flush();
+    obj.close();
+    mtl.close();
     println("save finished");
 
   }
