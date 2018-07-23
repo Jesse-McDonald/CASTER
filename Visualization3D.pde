@@ -425,6 +425,7 @@ public class Visulization3D extends PApplet{
      
     Web vertecesToFile(PrintWriter obj){
       String buffer="";
+
       for(int i=0;i<nodes.size();i++){
         buffer+="v "+nodes.get(i).toObj()+"\n";
         if(buffer.length()>1000){
@@ -433,8 +434,9 @@ public class Visulization3D extends PApplet{
           buffer="";
         }
       }
+
       obj.print(buffer);
-      obj.flush();
+      //obj.flush();
       return this;
     }
   }
