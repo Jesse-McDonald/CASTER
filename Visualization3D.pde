@@ -406,13 +406,14 @@ public class Visulization3D extends PApplet{
         nodeKey.put(nodes.get(i).toString(),i);
       }
       String buffer="";
-      for(Triangle t : triangles){
+      for(int i=0;i<triangles.size();i++){
 
-        buffer+="f "+(vertexOffset+nodeKey.get(t.p1.toString()))+" "+(vertexOffset+nodeKey.get(t.p2.toString()))+" "+(vertexOffset+nodeKey.get(t.p3.toString()))+"\n"; 
+        buffer+="f "+(vertexOffset+nodeKey.get(triangles.get(i).p1.toString()))+" "+(vertexOffset+nodeKey.get(triangles.get(i).p2.toString()))+" "+(vertexOffset+nodeKey.get(triangles.get(i).p3.toString()))+"\n"; 
         if(buffer.length()>1000){
+          //println(i+" of "+triangles.size()+" triangles");
           obj.print(buffer); 
           buffer="";
-          //obj.flush();
+
         }
         
       }
@@ -424,15 +425,16 @@ public class Visulization3D extends PApplet{
      
     Web vertecesToFile(PrintWriter obj){
       String buffer="";
-      for(Node n : nodes){
-        buffer+="v "+n.toObj()+"\n";
-        if(buffer.length()>100){
+
+      for(int i=0;i<nodes.size();i++){
+        buffer+="v "+nodes.get(i).toObj()+"\n";
+        if(buffer.length()>1000){
+          //println(i+" of "+nodes.size()+" nodes");
           obj.print(buffer); 
           buffer="";
-          //obj.flush();
         }
       }
-      
+
       obj.print(buffer);
       //obj.flush();
       return this;
@@ -472,7 +474,15 @@ public class Visulization3D extends PApplet{
        web.get(i-1).bufferTriangles();
     } 
     STOP=false;
+    //odly not only does saveHandler have to be public, but it also has to be part of a public class
     selectFolder("Select a directory to save to","saveHandler");//trigger stack load
+    //im not entirely sure how this works, I assumed that the Sidebar thread starts the 3d thread, then the 3d thread starts a file io thread, which calles saveHandler when a file is selected
+    //how ever, that would mean that no existing threads would be locked up by the load thread called by file io thread, so maybe it calls back to the previous thread and uses it for the load
+    //except, that would lockup 3d visulizer... which does not lock up, which makes me think it instead has its on thread.... but there is a problem with that too,
+    //the side bar thread is locked up on save... which is the first ish thread in the chain, to make things worse it does not block the CASTER main thread which called the sidebar thread
+    //so I have no idea what is going on
+    //to further complicate things, the side bar does not lock durring the rest of prep, only when we receive the callback from selctFolder, but 3d does lock except for not locking on the callback... so I am verry confused about which thread this goes in
+    //TLDR: this callback thing is confusing on so many levels
   }
   
   float rad=0;
@@ -585,7 +595,7 @@ public class Visulization3D extends PApplet{
     obj.println("#CASTER v"+VERSION+" https://github.com/Jesse-McDonald");
     obj.println("#3D recreation of cell or cells with a layer pixel thickness of "+layerThickness);
     obj.println("mtllib "+fileName+".mtl");
-    println("starting verteces");
+    //println("starting verteces");
     for(int i=0;i<web.size();i++){
        web.get(i).vertecesToFile(obj);
     }
@@ -600,12 +610,12 @@ public class Visulization3D extends PApplet{
       web.get(i).trianglesToFile(obj,mtl,vertexOffset);
       vertexOffset+=web.get(i).nodes.size();
     }
-    println("triangles Finished\nfinishing");
+    //println("triangles Finished\nfinishing");
     obj.flush();
     mtl.flush();
     obj.close();
     mtl.close();
-    println("save finished");
+    //println("save finished");
 
   }
 }
