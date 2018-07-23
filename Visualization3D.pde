@@ -409,10 +409,10 @@ public class Visulization3D extends PApplet{
       for(Triangle t : triangles){
 
         buffer+="f "+(vertexOffset+nodeKey.get(t.p1.toString()))+" "+(vertexOffset+nodeKey.get(t.p2.toString()))+" "+(vertexOffset+nodeKey.get(t.p3.toString()))+"\n"; 
-        if(buffer.length()>100){
+        if(buffer.length()>1000){
           obj.print(buffer); 
           buffer="";
-          obj.flush();
+          //obj.flush();
         }
         
       }
@@ -426,14 +426,15 @@ public class Visulization3D extends PApplet{
       String buffer="";
       for(Node n : nodes){
         buffer+="v "+n.toObj()+"\n";
-      }
-      if(buffer.length()>100){
+        if(buffer.length()>100){
           obj.print(buffer); 
           buffer="";
-          obj.flush();
+          //obj.flush();
         }
+      }
+      
       obj.print(buffer);
-      obj.flush();
+      //obj.flush();
       return this;
     }
   }
@@ -580,7 +581,7 @@ public class Visulization3D extends PApplet{
     PrintWriter mtl =createWriter(folder.getAbsolutePath()+"\\"+fileName+".mtl");
 
     PrintWriter obj =createWriter(folder.getAbsolutePath()+"\\"+fileName+".obj");
-    println("write started");
+    //println("write started");
     obj.println("#CASTER v"+VERSION+" https://github.com/Jesse-McDonald");
     obj.println("#3D recreation of cell or cells with a layer pixel thickness of "+layerThickness);
     obj.println("mtllib "+fileName+".mtl");
@@ -589,7 +590,7 @@ public class Visulization3D extends PApplet{
        web.get(i).vertecesToFile(obj);
     }
     obj.flush();
-    println("Verteces finished\nstarting triangles");
+    //println("Verteces finished\nstarting triangles");
     int vertexOffset=1;//as we move down the images we can refer to the vertices by web internal order, but only if we track how many total verteces there are before the start of the file
     for(int i=0;i<web.size();i++){
       mtl.println("newmtl Material."+(i+1));
