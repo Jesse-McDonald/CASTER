@@ -16,7 +16,7 @@ also depends on "bucket.png" in program dir
 import javax.swing.JFrame;//This is needed to make and display new frames
 
 class BrushEdgeFollowing extends Brush{
-  SecondApplet second = new SecondApplet();//This crates the frame that will show the tools for the outliner
+  
 //ThirdApplet third = new ThirdApplet();//This creates the frame that will show the outline in 3D moved to CASTER
 //EMOverlay[] overlayCopies = new EMOverlay[10]; //This is to make the undo button work properly, but it's not working just yet
 //Pixel[] overlayCenters = new Pixel[10];
@@ -25,7 +25,12 @@ String[] args = {"Edge Outlining Tools"}; // I don't understand why this is need
   float rayCastAngle=0;
   public BrushEdgeFollowing(color col,EMImage image,int s){
       super(col,image,s);
-      PApplet.runSketch(args, second);//Load and display the second pop up box, 
+      if(!BrushEdgeSettigns){
+        second = new SecondApplet();//This crates the frame that will show the tools for the outliner
+        BrushEdgeSettigns=true;
+    
+        PApplet.runSketch(args, second);//Load and display the second pop up box, 
+      }
   }
   
   public BrushEdgeFollowing draw(){//this draws the shape of the BrushEdgeFollowing to the screen, generally should not update overlay unless there is a multi-frame process
@@ -864,6 +869,7 @@ String[] args = {"Edge Outlining Tools"}; // I don't understand why this is need
         int variation = (int) parameters[1];
         int repeats = (int) parameters[2];
         outlineStarter( 0, k, lightest, variation, repeats);//Then call the BrushEdgeFollowing to start outlining.
+        img.snap();//we have done so much we might as well set a history save
       //}
     return this;
   }
