@@ -5,9 +5,12 @@ class Ui_Slider extends Ui_Element{
   public float minV;
   public float pos;
   public int value;
+  private int oldValue;
   public boolean textValue;
   private boolean dragging;
   private boolean off=false;
+  public VariableLambda onChange;
+  Ui_Slider(){super();}//I hate this about java, why do I need a default constructor, figure it out from the parrent
   Ui_Slider(float rX,float rY,float rS,PImage img){//use this constructor if you want the button to self scale
     this(round(rX*PPI),round(rY*PPI),img);
     scale=(PPI/img.width)*rS;
@@ -54,11 +57,11 @@ class Ui_Slider extends Ui_Element{
     dm.scale(scale);//prep scale
     dm.image(tile,0,0);
     dm.scale(1/scale);//undo scale for the upcomming translate
-    dm.translate(10,tile.height/2*scale-track.height);
+    dm.translate(track.height*scale,tile.height/2*scale-track.height);
     dm.scale(scale);//prep scale
     
     dm.image(track,0,0);
-    dm.translate((pos-3*slider.width/4),-slider.height/4);
+    dm.translate((pos-slider.width/2),-slider.height/4);
     dm.image(slider,0,0);
     if(textValue){
       //dm.stroke(0);
@@ -66,6 +69,10 @@ class Ui_Slider extends Ui_Element{
       dm.translate(slider.width/4,3*slider.height/4);
       dm.fill(0);
       dm.text(str(value),0,0); 
+    }
+    if(oldValue!=value){
+      oldValue=value;
+      onChange.run(value);
     }
     dm.popMatrix();
     return this;

@@ -162,6 +162,35 @@ class PNGImage{
    return this;
  }
  PImage fastGet(int sX, int sY, int eX, int eY){//start xy, end xy
+
+   int px=(eX-sX)*(eY-sY);
+   int cn=ceil(sqrt(px/(float)programSettings.maxPixelCache));//if we process more than 700,000 pixles we start to lag our machines, so limit processing to a total of 700,000, but lets let the user decide
+   
+   if(cn<1) cn=1;
+
+   //println(cn);
+   //PImage ret=createImage(width,height,ARGB);
+   PImage ret=createImage(width/cn,height/cn,ARGB);
+   //I found the error, deep in the source is a line int[width*height], so if width*height>Integer.MAX_VALUE it tries to create a badly sized array
+    //but I still dont have a good fix, the last one I tried broke everything and I hade a huge crash
+        for(int y=max(0,sY);y<min(height,eY)+cn;y+=cn){
+             for(int x=max(0,sX);x<min(width,eX)+cn;x+=cn){//x inc is better for speed... I think
+              ret.set(x/cn,y/cn,this.get(x,y));
+              if(x/cn>ret.width) break;
+
+            }
+            if(y/cn>ret.height) break;
+       }
+       ret.updatePixels();
+   //temp.resize(width,height);
+   //ret=temp;
+   //if(cn>1){
+     //ret.resize(width,height);
+   //}
+   return ret;
+ }
+ /*
+ PImage fastGet(int sX, int sY, int eX, int eY){//start xy, end xy
  //this might not actually work how I think it does... which is sad, because I wrote it
    int px=(eX-sX)*(eY-sY);
    int cn=ceil(sqrt(px/700000.));//if we process more than 700,000 pixles we start to lag our machines, so limit processing to a total of 700,000
@@ -176,7 +205,7 @@ class PNGImage{
         }
    }
    return ret;
- }
+ }*/
  PImage primeImage(){
    return createImage(this.width,this.height,ARGB);
  }

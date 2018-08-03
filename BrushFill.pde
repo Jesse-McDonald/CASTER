@@ -1,4 +1,5 @@
 class BrushFill extends Brush{
+  int undoFrames=0;
   color target;
     public BrushFill(color col,EMImage image,int s){
       super(col,image,s);
@@ -48,10 +49,18 @@ class BrushFill extends Brush{
   }
 
   public BrushFill floodFillUpdate(){//expand the flood fill
+
     if(target==c){//I have had so many problems with this that I am saying "Screw it" if we ever enter this condition for any reason, drop the entire flood fill emediatly
       floodFillBackup=new ArrayList<Pixel>();
-    }//I should also probiably dump on color change, but this is just so fun to leave
+    }//I should also probiably dump on color change in general, but this is just so fun to use, so I am going to leave it
     ArrayList<Pixel> pixels=floodFillBackup;
+    if(!pixels.isEmpty()){
+       undoFrames++;
+       if(undoFrames>100){
+         img.snap(); 
+         undoFrames=0;
+       }
+    }
     int ittr=0;
     int startNum=pixels.size();
     while(!pixels.isEmpty()&ittr<startNum){//flood fill ends when there are no non c colored pixels to spread to
@@ -80,6 +89,7 @@ class BrushFill extends Brush{
   }
        public Brush eStop(){//clear the list in an emergency
           floodFillBackup=new ArrayList<Pixel>();
+          img.snap();//commit changes to undo record
           return this; 
         }
 }

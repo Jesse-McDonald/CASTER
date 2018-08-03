@@ -1,4 +1,5 @@
 class BrushBlackHole extends Brush{
+    int undoFrames=0;
       public BrushBlackHole(color col,EMImage image,int s){
         super(col,image,s);
         shape=loadImage("blackHoleIcon.png");//load up the bucket incase of flood fill
@@ -37,6 +38,13 @@ class BrushBlackHole extends Brush{
   public BrushBlackHole floodFillUpdate(){//expand the flood fill
     ArrayList<Pixel> pixels=floodFillBackup;
     int ittr=0;
+    if(!pixels.isEmpty()){
+       undoFrames++;
+       if(undoFrames>100){
+         img.snap(); 
+         undoFrames=0;
+       }
+    }
     while(!pixels.isEmpty()&ittr<pixels.size()){//flood fill ends when there are no non c colored pixels to spread to
       Pixel p=pixels.get(0);
       pixels.remove(0);
@@ -61,6 +69,7 @@ class BrushBlackHole extends Brush{
   }
        public Brush eStop(){//clear the list in an emergency
           floodFillBackup=new ArrayList<Pixel>();
+          img.snap();//commit changes to undo record
           return this; 
         }
 }

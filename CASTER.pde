@@ -14,6 +14,8 @@ int tColor(int r,int g,int b){//processings color function is not thread safe, n
   return tColor(r,g,b,255);
 }
 import codeanticode.tablet.*;
+SecondApplet second;//TODO Remove this hack
+boolean BrushEdgeSettigns;
 float PPI=100;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point
 Tablet tablet;
 //https://github.com/Jesse-McDonald/CASTER
@@ -29,6 +31,7 @@ int snapFrames=100;//number of frames before auto saving a snap, in theory at 60
 //finds the largest number, and the smallest number given to it and returns the number between the two
  //PrintWriter output;
 //finds the largest number and the smallest number given to it, then returns the number between the other number
+ProgramSettings programSettings;
 float range(float a, float b, float c){
 	float minV=min(a,b,c);
 	float maxV=max(a,b,c);
@@ -52,6 +55,9 @@ void load(File selection){// this is the handler for the load event
 //PrintWriter output;
 void settings()
 {
+
+  programSettings =new ProgramSettings("settings.json");
+  PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
   size(2000,1000);//window size
   noSmooth();//without this line, the picture will be smoothed as we zoom in, great for zooming pictures and not having them get pixilated.... but we want pixilated
 }
@@ -229,8 +235,9 @@ void keyReleased(){//key release handler
 
 void mouseWheel(MouseEvent event){//mouse scrole handler
 	if(event.isControlDown()){//there is this handy function already build for detecting controle pressed :) how nice
- 
+     
 		img.brush.changeSize(int(2*event.getAmount()));//change shape size, and rember, keep it even
+    
 	}else{
 		img.changeLayer(event.getAmount());//change layer
 	}

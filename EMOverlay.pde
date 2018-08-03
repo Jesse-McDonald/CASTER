@@ -20,7 +20,9 @@ class EMOverlay{
 	int depth;//number of PImages in overlay
   public byte[] uuid;
   PImage drawCache;
+  PImage fastCache;
   PImage cached;
+  Pixel lastStart,lastEnd;
   int lastLayer=-1;
   PNGThread pthread; //this is a c joke ;)
   //public ArrayList<EMMeta> meta;//meta data for a given layer
@@ -40,8 +42,10 @@ class EMOverlay{
 			addLayer();
 		}
     pthread=new PNGThread();
-    history=new FBuffer<HistorySnap>(new HistorySnap[100]);
+    history=new FBuffer<HistorySnap>(new HistorySnap[programSettings.undoDepth]);
     fHistory=new HistorySnap();
+    lastStart=new Pixel(0,0,0);
+    lastEnd=lastStart;
 	}
   boolean exists(int layer){
     return key.containsKey(layer); 
@@ -114,7 +118,7 @@ class EMOverlay{
     return this;
   }
 	EMOverlay draw(EMImage p,Pixel p0, Pixel pe){
- 
+    boolean forceCache=false;
     if(key.containsKey(p.layer)){
         if(p.layer!=lastLayer){
           if(pthread.alive){
@@ -134,6 +138,7 @@ class EMOverlay{
           pthread.retv=cached;
           new Thread(pthread).start();
           lastLayer=p.layer;
+          forceCache=true;
           drawCache=createImage(width,height,ARGB);
           pushHistory(lastLayer);
         }
@@ -149,10 +154,21 @@ class EMOverlay{
           if(pthread.retv!=null){
            cached=pthread.retv; 
           }
-          PImage temp=overlay.get(key.get(p.layer)).fastGet(p0.x,p0.y,pe.x,pe.y);
-          image(temp,p.offsetX+p0.x*p.zoom+p.meta.get(p.layer).offsetX*p.zoom+.5,p.offsetY+p0.y*p.zoom+p.meta.get(p.layer).offsetY*p.zoom+.5,(pe.x-p0.x+1)*p.zoom,(pe.y-p0.y+1)*p.zoom);//this line took a loooooooot of trial an error, trust that it is right
-          //never the less, it is off by less than 1 screen pixel).... not sure how to fix it
+          if(p0.x!=lastStart.x||p0.y!=lastStart.y||pe.x!=lastEnd.x||pe.y!=lastEnd.y||forceCache){
+            fastCache=overlay.get(key.get(p.layer)).fastGet(p0.x,p0.y,pe.x,pe.y);
+            //drawCache=merge(fastCache,drawCache);
+          }
           
+          //this is not ideal, but it is easier than trying to merge them
+          image(fastCache,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
+          image(drawCache,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
+          //image(temp,p.offsetX+p0.x*p.zoom+p.meta.get(p.layer).offsetX*p.zoom+.5,p.offsetY+p0.y*p.zoom+p.meta.get(p.layer).offsetY*p.zoom+.5,(pe.x-p0.x+1)*p.zoom,(pe.y-p0.y+1)*p.zoom);//this line took a loooooooot of trial an error, trust that it is right
+          //never the less, it is off by less than 1 screen pixel).... not sure how to fix it
+          lastStart=p0;
+          lastEnd=pe;
+          //PImage temp=overlay.get(key.get(p.layer)).fastGet(p0.x,p0.y,pe.x,pe.y);
+          //image(temp,p.offsetX+p0.x*p.zoom+p.meta.get(p.layer).offsetX*p.zoom+.5,p.offsetY+p0.y*p.zoom+p.meta.get(p.layer).offsetY*p.zoom+.5,(pe.x-p0.x+1)*p.zoom,(pe.y-p0.y+1)*p.zoom);//this line took a loooooooot of trial an error, trust that it is right
+          //never the less, it is off by less than 1 screen pixel).... not sure how to fix it  
         }
     }
     return this;

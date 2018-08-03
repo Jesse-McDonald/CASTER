@@ -13,6 +13,8 @@ class EMStack{
   String extension;
   int progress;
   PImage cached;
+  PImage fastCache;
+  Pixel lastStart,lastEnd;
   int lastLayer=-1;
   ThreadStack ts;
   PNGThread pthread; //this is a c joke ;)
@@ -21,7 +23,9 @@ class EMStack{
 	EMStack(){//new empty EMStack
 		img=new ArrayList<PNGImage>();
     overlay=new EMOverlay(0, 0, 0);//create a overlay for the stack
-    meta=new ArrayList<EMMeta>();;
+    meta=new ArrayList<EMMeta>();
+    lastStart=new Pixel(0,0,0);
+    lastEnd=lastStart;
 	}
 	EMStack(String dir){//new EMStack seeded from picture file by path
 		this(new File(dir)); 
@@ -110,6 +114,7 @@ class EMStack{
     //println("updating meta");
 	}
   EMStack draw(EMImage p,Pixel p0, Pixel pe){
+    boolean forceCache=false;
     if(img.size()>p.layer){
       if(p.layer!=lastLayer){
         if(pthread.alive){
@@ -128,6 +133,7 @@ class EMStack{
         pthread.retv=cached;
         new Thread(pthread).start();
         lastLayer=p.layer;
+        forceCache=true;//we have just set last layer to current layer, so any further tests of last layer in this function must rely on this instead
       }
       if(cached!=null){
           
@@ -136,11 +142,15 @@ class EMStack{
         if(pthread.retv!=null){
          cached=pthread.retv; 
         }
-        PImage temp=img.get(p.layer).fastGet(p0.x,p0.y,pe.x,pe.y);
-        
-        image(temp,p.offsetX+p0.x*p.zoom+p.meta.get(p.layer).offsetX*p.zoom+.5,p.offsetY+p0.y*p.zoom+p.meta.get(p.layer).offsetY*p.zoom+.5,(pe.x-p0.x+1)*p.zoom,(pe.y-p0.y+1)*p.zoom);//this line took a loooooooot of trial an error, trust that it is right
+        if(p0.x!=lastStart.x||p0.y!=lastStart.y||pe.x!=lastEnd.x||pe.y!=lastEnd.y||forceCache){
+          fastCache=img.get(p.layer).fastGet(p0.x,p0.y,pe.x,pe.y);
+    
+        }
+        image(fastCache,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
+        //image(temp,p.offsetX+p0.x*p.zoom+p.meta.get(p.layer).offsetX*p.zoom+.5,p.offsetY+p0.y*p.zoom+p.meta.get(p.layer).offsetY*p.zoom+.5,(pe.x-p0.x+1)*p.zoom,(pe.y-p0.y+1)*p.zoom);//this line took a loooooooot of trial an error, trust that it is right
         //never the less, it is off by less than 1 screen pixel).... not sure how to fix it
-        
+        lastStart=p0;
+        lastEnd=pe;
       }
     }
     return this;

@@ -12,4 +12,5 @@ public class Pixel{
 		this.y=y;
 		this.c=c;
 	}
+
 }

@@ -279,8 +279,11 @@ Ui buildUi(PApplet dm){
       tImg.pixels[i]=tColor(150,150,100); 
     }
     tImg.updatePixels();
-    Ui_Slider build=new Ui_Slider(.3,0,2, tImg);
-    //ui.add(build);//we are only testign the slider, we dont want it actually on the ui yet
+    Ui_Slider build=new Ui_Slider(.3,7.7,2, tImg);
+    build.onChange=new SizeSlider();
+    build.minV=0;
+    build.maxV=100;
+    ui.add(build);//we are only testign the slider, we dont want it actually on the ui yet
   }
   
   ui.setDM(dm);
