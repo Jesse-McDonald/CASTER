@@ -41,10 +41,12 @@ class EMImage {
   }
   
   EMImage undo(){
+    brush.eStop();//we need this to be safe, just imagin undoing a floodfill and it keeps going after the undo
     overlay.undo(this);
     return this;
   }
   EMImage redo(){
+    brush.eStop();
     overlay.redo(this);
     return this;
   }

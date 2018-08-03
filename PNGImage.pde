@@ -164,8 +164,10 @@ class PNGImage{
  PImage fastGet(int sX, int sY, int eX, int eY){//start xy, end xy
 
    int px=(eX-sX)*(eY-sY);
-   int cn=ceil(sqrt(px/700000.));//if we process more than 700,000 pixles we start to lag our machines, so limit processing to a total of 700,000
-   if(cn<1)cn=1;
+   int cn=ceil(sqrt(px/(float)programSettings.maxPixelCache));//if we process more than 700,000 pixles we start to lag our machines, so limit processing to a total of 700,000, but lets let the user decide
+   
+   if(cn<1) cn=1;
+
    //println(cn);
    //PImage ret=createImage(width,height,ARGB);
    PImage ret=createImage(width/cn,height/cn,ARGB);
@@ -173,13 +175,18 @@ class PNGImage{
     //but I still dont have a good fix, the last one I tried broke everything and I hade a huge crash
         for(int y=max(0,sY);y<min(height,eY)+cn;y+=cn){
              for(int x=max(0,sX);x<min(width,eX)+cn;x+=cn){//x inc is better for speed... I think
+              ret.set(x/cn,y/cn,this.get(x,y));
+              if(x/cn>ret.width) break;
 
-          ret.set(x/cn,y/cn,this.get(x,y));
-        }
-   }
+            }
+            if(y/cn>ret.height) break;
+       }
+       ret.updatePixels();
    //temp.resize(width,height);
    //ret=temp;
-   ret.resize(width,height);
+   //if(cn>1){
+     //ret.resize(width,height);
+   //}
    return ret;
  }
  /*

@@ -29,6 +29,7 @@ int snapFrames=100;//number of frames before auto saving a snap, in theory at 60
 //finds the largest number, and the smallest number given to it and returns the number between the two
  //PrintWriter output;
 //finds the largest number and the smallest number given to it, then returns the number between the other number
+ProgramSettings programSettings;
 float range(float a, float b, float c){
 	float minV=min(a,b,c);
 	float maxV=max(a,b,c);
@@ -52,6 +53,9 @@ void load(File selection){// this is the handler for the load event
 //PrintWriter output;
 void settings()
 {
+
+  programSettings =new ProgramSettings("settings.json");
+  PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
   size(2000,1000);//window size
   noSmooth();//without this line, the picture will be smoothed as we zoom in, great for zooming pictures and not having them get pixilated.... but we want pixilated
 }
