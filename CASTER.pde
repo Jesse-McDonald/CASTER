@@ -235,8 +235,9 @@ void keyReleased(){//key release handler
 
 void mouseWheel(MouseEvent event){//mouse scrole handler
 	if(event.isControlDown()){//there is this handy function already build for detecting controle pressed :) how nice
- 
+     
 		img.brush.changeSize(int(2*event.getAmount()));//change shape size, and rember, keep it even
+    
 	}else{
 		img.changeLayer(event.getAmount());//change layer
 	}

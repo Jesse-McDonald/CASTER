@@ -9,7 +9,16 @@ class Lambda{
 	Lambda(){}//all lambda objects will have a default constructor and run()
 	public void run(){}
 }
-
+class VariableLambda extends Lambda{
+  VariableLambda(){}//all lambda objects will have a default constructor and run()
+  public void run(int variable){}
+  
+}
+class SizeSlider extends VariableLambda{
+  public void run(int x){
+    img.brush.setSize(x*2+1);
+  }
+}
 class CircleBrush extends Lambda{//allows for circle brush button
 	void run(){
    
