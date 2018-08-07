@@ -9,6 +9,7 @@ class Ui_Slider extends Ui_Element{
   public boolean textValue;
   private boolean dragging;
   private boolean off=false;
+  boolean valChanged;
   public VariableLambda onChange;
   Ui_Slider(){super();}//I hate this about java, why do I need a default constructor, figure it out from the parrent
   Ui_Slider(float rX,float rY,float rS,PImage img){//use this constructor if you want the button to self scale
@@ -51,13 +52,14 @@ class Ui_Slider extends Ui_Element{
 
   }//function that is used to detect wether the mouse is on the Ui_Element
   public Ui_Slider draw(){
+    valChanged=false;
     click();
     dm.pushMatrix();
     dm.translate(posX,posY);//prep translation
     dm.scale(scale);//prep scale
     dm.image(tile,0,0);
     dm.scale(1/scale);//undo scale for the upcomming translate
-    dm.translate(track.height*scale,tile.height/2*scale-track.height);
+    dm.translate(track.height*scale,(tile.height-track.height)*scale/2.);
     dm.scale(scale);//prep scale
     
     dm.image(track,0,0);
@@ -72,11 +74,17 @@ class Ui_Slider extends Ui_Element{
     }
     if(oldValue!=value){
       oldValue=value;
+      valChanged=true;
       onChange.run(value);
     }
     dm.popMatrix();
     return this;
   }//draws the element to the screen
+  public Ui_Slider setValue(int x){
+    //float valueCalc=pos/((float)track.width);
+    pos=(x-minV)/(maxV-minV)*track.width;
+    return this;
+  }
   public Ui_Slider click(){
     if(dm.mousePressed&&dm.mouseButton==LEFT){
       if(dragging||mouseOn()){
@@ -107,7 +115,7 @@ class Ui_Slider extends Ui_Element{
   }
   public int calcWidth(){
     return ceil(posX+scale*tile.width);
-  }//I am on the fence about wether these should assume tile cantains slider and track, or if I should use the max of all 3
+  }//I am on the fence about wether these should assume tile contains slider and track, or if I should use the max of all 3
   public int calcHeight(){
     return ceil(posY+scale*tile.height);
   }

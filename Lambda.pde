@@ -6,8 +6,8 @@ collectively all implemented lambda functions depend on access to global EMImage
 these also depend on void selectInput(String path, String function, Object this) and void selectOutput(String path, String function,Object this) from processing
 */
 class Lambda{
-	Lambda(){}//all lambda objects will have a default constructor and run()
-	public void run(){}
+  Lambda(){}//all lambda objects will have a default constructor and run()
+  public void run(){}
 }
 class VariableLambda extends Lambda{
   VariableLambda(){}//all lambda objects will have a default constructor and run()
@@ -19,23 +19,26 @@ class SizeSlider extends VariableLambda{
     img.brush.setSize(x*2+1);
   }
 }
+class EdgeFinderThreshold extends VariableLambda{
+  
+}
 class CircleBrush extends Lambda{//allows for circle brush button
-	void run(){
+  void run(){
    
-		img.brush= new BrushCircle(img.brush.c,img.brush.img,img.brush.size);
+    img.brush= new BrushCircle(img.brush.c,img.brush.img,img.brush.size);
                 img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
      
-	}
+  }
 }
 
 class SquareBrush extends Lambda{//allows for square brush button
-	void run(){
+  void run(){
   
             
-		img.brush= new BrushSquare(img.brush.c,img.brush.img,img.brush.size);
+    img.brush= new BrushSquare(img.brush.c,img.brush.img,img.brush.size);
                 img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
      
-	}
+  }
 }
 class RayCastBrush extends Lambda{//allows for raycast brush button
   void run(){
@@ -46,21 +49,21 @@ class RayCastBrush extends Lambda{//allows for raycast brush button
   }
 }
 class DiamondBrush extends Lambda{//allows for diamond brush button
-	void run(){
+  void run(){
     
-		img.brush= new BrushDiamond(img.brush.c,img.brush.img,img.brush.size);
+    img.brush= new BrushDiamond(img.brush.c,img.brush.img,img.brush.size);
                 img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
       
-	}
+  }
 }
 
 class FloodBrush extends Lambda{//allows for flood fill button
-	void run(){
+  void run(){
          
-		img.brush= new BrushFill(img.brush.c,img.brush.img,img.brush.size);
+    img.brush= new BrushFill(img.brush.c,img.brush.img,img.brush.size);
                 img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
     
-	}
+  }
 }
 class BlackHoleBrush extends Lambda{//allows for flood fill button
   void run(){
@@ -72,18 +75,18 @@ class BlackHoleBrush extends Lambda{//allows for flood fill button
 }
 /* posibly out dated with new polymorphic Brushes
 class ClearBrush extends Lambda{//allows for clear brush button that is tuned to specific brush via constructor
-	int n;
-	ClearBrush(){//just to be safe
-		n=0; 
-	}
-	
-	ClearBrush(int in){//allow specification of brush to clear, helps prevent radio button errors
-		n=in;
-	}
-	
-	void run(){
-		img.brush.clearBrush(n);
-	}
+  int n;
+  ClearBrush(){//just to be safe
+    n=0; 
+  }
+  
+  ClearBrush(int in){//allow specification of brush to clear, helps prevent radio button errors
+    n=in;
+  }
+  
+  void run(){
+    img.brush.clearBrush(n);
+  }
 }*/
 class LColor extends Lambda{
  color col;
@@ -102,46 +105,53 @@ class ClearBrush extends Lambda{//allows for clear brush button that is tuned to
   void run(){img.brush= new Brush(img.brush.c,img.brush.img,img.brush.size);}
 }
 class EraserBrush extends Lambda{//allows for erase mode button
-	boolean state;
-	EraserBrush(boolean b){
-		state=b;
-	}
-	
-	void run(){
-		img.brush.erase=state;
+  boolean state;
+  EraserBrush(boolean b){
+    state=b;
+  }
+  
+  void run(){
+    img.brush.erase=state;
 
-	}
+  }
 }
 
 public class Save extends Lambda{//allows for overlay save button
         public void run(){
-        	selectOutput("Select file to save overlay","handler",new File(""),this);
+          selectOutput("Select file to save overlay","handler",new File(""),this);
         
         }
-	
-	public void handler(File f){//this gets called by selectOutput when the output is selected
-		if(f!=null){
-		  img.saveOverlay(f); 
+  
+  public void handler(File f){//this gets called by selectOutput when the output is selected
+    if(f!=null){
+      img.saveOverlay(f); 
       
-		} 
-	}
+    } 
+  }
 }
 
 public class Load extends Lambda{//allow for overlay load button 
-	public void run(){
-		selectInput("Select file to load","handler",new File(""),this);
-	}
+  public void run(){
+    selectInput("Select file to load","handler",new File(""),this);
+  }
 
-	public void handler(File f){//this gets called by selectInput when the input is selected
-		img.loadOverlay(f);
-	}
+  public void handler(File f){//this gets called by selectInput when the input is selected
+    img.loadOverlay(f);
+  }
 }
 public class EdgeFollowingBrush extends Lambda{//Edgefollowing trigger
+  BrushEdgeFollowing brush;
+  boolean first=true;
   public void run(){
-
-    img.brush= new BrushEdgeFollowing(img.brush.c,img.brush.img,img.brush.size);
+    if(first){
+      brush=new BrushEdgeFollowing(img.brush.c,img.brush.img,img.brush.size);
+    }
+    first=false;
+    brush.c=img.brush.c;
+    brush.size=img.brush.size;
+    img.brush= brush;
     img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
-  
+    
     
     
   }
@@ -149,7 +159,6 @@ public class EdgeFollowingBrush extends Lambda{//Edgefollowing trigger
 }
 public class EdgeFollowingBrushDestroy extends Lambda{//I am guessing anti edgefollowing trigger, but I dont know
   public void run(){
-    ((BrushEdgeFollowing)img.brush).close();
     img.brush= new Brush(img.brush.c,img.brush.img,img.brush.size);
     
     

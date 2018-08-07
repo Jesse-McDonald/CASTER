@@ -21,16 +21,13 @@ class BrushEdgeFollowing extends Brush{
 //EMOverlay[] overlayCopies = new EMOverlay[10]; //This is to make the undo button work properly, but it's not working just yet
 //Pixel[] overlayCenters = new Pixel[10];
 String[] args = {"Edge Outlining Tools"}; // I don't understand why this is needed, I just know that it is.
-
+EdgeFinderSettings second;
   float rayCastAngle=0;
   public BrushEdgeFollowing(color col,EMImage image,int s){
       super(col,image,s);
-      if(!BrushEdgeSettigns){
-        second = new SecondApplet();//This crates the frame that will show the tools for the outliner
-        BrushEdgeSettigns=true;
-    
-        PApplet.runSketch(args, second);//Load and display the second pop up box, 
-      }
+      second = new EdgeFinderSettings();//This crates the frame that will show the tools for the outliner
+  
+      PApplet.runSketch(args, second);//Load and display the second pop up box, 
   }
   
   public BrushEdgeFollowing draw(){//this draws the shape of the BrushEdgeFollowing to the screen, generally should not update overlay unless there is a multi-frame process
@@ -886,19 +883,15 @@ String[] args = {"Edge Outlining Tools"}; // I don't understand why this is need
         for(int y=0;y<shape.height;y++){
           color myColor = color(144, 237, 255, 50);
           shape.set(x,y,myColor);
-      shape.set(0,y,c);
-      shape.set(shape.width-1,y,c);
+          shape.set(0,y,c);
+          shape.set(shape.width-1,y,c);
         }
-    shape.set(x,0,c);
-    shape.set(x,shape.height-1,c);
+        shape.set(x,0,c);
+        shape.set(x,shape.height-1,c);
       }
     
     
     return this;
   }
-  BrushEdgeFollowing close(){
-    second.exit();
-
-    return this;
-  }
+  
 }
