@@ -14,8 +14,7 @@ int tColor(int r,int g,int b){//processings color function is not thread safe, n
   return tColor(r,g,b,255);
 }
 import codeanticode.tablet.*;
-SecondApplet second;//TODO Remove this hack
-boolean BrushEdgeSettigns;
+
 float PPI=100;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point
 Tablet tablet;
 //https://github.com/Jesse-McDonald/CASTER

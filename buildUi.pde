@@ -83,7 +83,7 @@ Ui buildUi(PApplet dm){
     {//this is a huge reason the { should always be on the same line as the thing it is extending, other wise there is the confusion of if this is a function called ui.add or something
     //or just the code block it is
     Ui_RadioButton buildRadio=new Ui_RadioButton(1);//prep radio button for brush buttons
-   semiAuto.add(new Ui_Panel(1.2,1,1.2,2.3,color(240,240,240,200)));//add the panel to the popout  
+   semiAuto.add(new Ui_Panel(1.2,1,1.1,2.3,color(240,240,240,200)));//add the panel to the popout  
     {//add buttons to radio button
       Ui_PaintButton build=new Ui_PaintButton(1.2,1.1,1,"rayCastBrush.png");
       build.setPressedImg("rayCastBrushActive.png");
