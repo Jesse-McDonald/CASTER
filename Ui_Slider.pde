@@ -59,7 +59,7 @@ class Ui_Slider extends Ui_Element{
     dm.scale(scale);//prep scale
     dm.image(tile,0,0);
     dm.scale(1/scale);//undo scale for the upcomming translate
-    dm.translate(track.height*scale,tile.height/2*scale-track.height);
+    dm.translate(track.height*scale,(tile.height-track.height)*scale/2.);
     dm.scale(scale);//prep scale
     
     dm.image(track,0,0);
@@ -80,6 +80,11 @@ class Ui_Slider extends Ui_Element{
     dm.popMatrix();
     return this;
   }//draws the element to the screen
+  public Ui_Slider setValue(int x){
+    //float valueCalc=pos/((float)track.width);
+    pos=(x-minV)/(maxV-minV)*track.width;
+    return this;
+  }
   public Ui_Slider click(){
     if(dm.mousePressed&&dm.mouseButton==LEFT){
       if(dragging||mouseOn()){

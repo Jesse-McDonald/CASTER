@@ -141,10 +141,12 @@ public class Load extends Lambda{//allow for overlay load button
 }
 public class EdgeFollowingBrush extends Lambda{//Edgefollowing trigger
   BrushEdgeFollowing brush;
-  EdgeFollowingBrush(){
-    brush=new BrushEdgeFollowing(img.brush.c,img.brush.img,img.brush.size);
-  }
+  boolean first=true;
   public void run(){
+    if(first){
+      brush=new BrushEdgeFollowing(img.brush.c,img.brush.img,img.brush.size);
+    }
+    first=false;
     brush.c=img.brush.c;
     brush.size=img.brush.size;
     img.brush= brush;
