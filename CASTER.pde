@@ -5,8 +5,8 @@ this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-//version: INDEV-18w32a
-String VERSION="INDEV-18w32a";
+//version: INDEV-18w32b
+String VERSION="INDEV-18w32b";
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
 }
@@ -14,7 +14,7 @@ int tColor(int r,int g,int b){//processings color function is not thread safe, n
   return tColor(r,g,b,255);
 }
 import codeanticode.tablet.*;
-
+Binding<Integer> sizeSlider;
 float PPI=100;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point
 Tablet tablet;
 //https://github.com/Jesse-McDonald/CASTER
@@ -68,13 +68,13 @@ void setup(){//setup the window
 	EMStack stack=new EMStack();//get the stack ready
 	//stack.add(createImage(0,0,ARGB));//get ANYTHING on that stack before we try to draw it
 	img=new EMImage(stack);//build an EMImage around that stack
-  
 	surface.setResizable(true);//allow the window to be resized
 	selectInput("Select an image in the Stack","load");//trigger stack load
   //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
   img.img.launch();//start thread stack
 	//ui=buildUi(this);
   String[] args={""};
+  sizeSlider=new Binding<Integer>(9);
   sidebar=new SideBar();
   PApplet.runSketch(args,sidebar);
   
@@ -146,9 +146,11 @@ boolean SHIFT_DOWN;
 boolean CTRL_DOWN;
 void keyTyped(){//key type handler, for wacom tablet ease of resizing and layer change and redo
 	if (key=='-'){
-		img.brush.decrease(2);
+    sizeSlider.set(sizeSlider.stored-1);
+		//img.brush.decrease(2);
 	}else if(key=='+'){
-		img.brush.increase(2);
+    sizeSlider.set(sizeSlider.stored+1);
+		//img.brush.increase(2);
   
 //ok, riddle me this... if the ctrl key is not pressed, pressing z give 'z' (122) and 'Z' (90) if shift is also pressed
 //yet if I press the ctrl key pressing z gives 26 regardless of if shift is also pressed...
@@ -234,8 +236,8 @@ void keyReleased(){//key release handler
 
 void mouseWheel(MouseEvent event){//mouse scrole handler
 	if(event.isControlDown()){//there is this handy function already build for detecting controle pressed :) how nice
-     
-		img.brush.changeSize(int(2*event.getAmount()));//change shape size, and rember, keep it even
+    sizeSlider.set(int(event.getAmount())+sizeSlider.stored);
+		//img.brush.changeSize(int(2*event.getAmount()));//change shape size, and rember, keep it even
     
 	}else{
 		img.changeLayer(event.getAmount());//change layer

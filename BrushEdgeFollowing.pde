@@ -20,22 +20,28 @@ class BrushEdgeFollowing extends Brush{
 //ThirdApplet third = new ThirdApplet();//This creates the frame that will show the outline in 3D moved to CASTER
 //EMOverlay[] overlayCopies = new EMOverlay[10]; //This is to make the undo button work properly, but it's not working just yet
 //Pixel[] overlayCenters = new Pixel[10];
-String[] args = {"Edge Outlining Tools"}; // I don't understand why this is needed, I just know that it is.
-EdgeFinderSettings second;
+  String[] args = {"Edge Outlining Tools"}; // I don't understand why this is needed, I just know that it is.
+  EdgeFinderSettings second;
+  ColorPickerPointer colorPicker;
   float rayCastAngle=0;
   public BrushEdgeFollowing(color col,EMImage image,int s){
       super(col,image,s);
       second = new EdgeFinderSettings();//This crates the frame that will show the tools for the outliner
-  
+      colorPicker=new ColorPickerPointer();
       PApplet.runSketch(args, second);//Load and display the second pop up box, 
   }
-  
+
   public BrushEdgeFollowing draw(){//this draws the shape of the BrushEdgeFollowing to the screen, generally should not update overlay unless there is a multi-frame process
     //this should be called every frame
   
     float zoom=this.img.getZoom();
     Pixel pixel = brushPosition();
-        image(shape,(pixel.x*zoom+this.img.offsetX),(pixel.y*zoom+this.img.offsetY),shape.width*zoom,shape.height*zoom); 
+    if(second.picker==0){
+      image(shape,(pixel.x*zoom+this.img.offsetX),(pixel.y*zoom+this.img.offsetY),shape.width*zoom,shape.height*zoom); 
+    }else{
+      colorPicker.updateMask(img.getPixel(mouseX,mouseY).c);
+      colorPicker.draw((mouseX),(mouseY));
+    }
     return this; 
   }
   
@@ -114,14 +120,14 @@ EdgeFinderSettings second;
       for (int j=-size; j<size; j++)
       {
         Pixel pix = img.get(int(p.x+i),int(p.y+j));
-        if (greyVal(pix.c) < Min)
+        if (grayVal(pix.c) < Min)
         {
-         Min = (int) greyVal(pix.c);//If the pixel is darker than the previous darkest pixel, replace it
+         Min = (int) grayVal(pix.c);//If the pixel is darker than the previous darkest pixel, replace it
         }
       }
      }
-    if (Min > greyVal(lightest)){//Make sure that the darkest pixel isn't too light!
-      Min = (int) greyVal(lightest);
+    if (Min > grayVal(lightest)){//Make sure that the darkest pixel isn't too light!
+      Min = (int) grayVal(lightest);
     }
     return Min;//And return the darkest pixel
   }
@@ -140,7 +146,7 @@ EdgeFinderSettings second;
     for (int i=-size; i<size; i++){//Check each pixel within the current box
       for (int j=-size; j<size; j++){
          Pixel pix=img.get(p.x+i, p.y+j); 
-         if (Min+variation >= greyVal(pix.c)){ //and if it's color is within the acceptable range
+         if (Min+variation >= grayVal(pix.c)){ //and if it's color is within the acceptable range
              temp[i+size][j+size]=c;//color in the pixel for storage
          }else{
             temp[i+size][j+size]=color(0,0,0,0);//otherwise set it to blank
@@ -248,7 +254,7 @@ EdgeFinderSettings second;
       for(int j = -size; j <= size; j++)
       {
         Pixel pix = img.get(int(p.x+i),(p.y+j));
-        if (greyVal(pix.c) > greyVal(lightest) + greyVal(variation))//If that pixel is outside of the acceptable color range
+        if (grayVal(pix.c) > grayVal(lightest) + grayVal(variation))//If that pixel is outside of the acceptable color range
         {
           black[i+size][j+size] = color(0,0,0,0);//unmark it
         }
@@ -288,7 +294,7 @@ EdgeFinderSettings second;
     for (int i=-size; i<=size; i++){//for each pixel in a given area
       for (int j=-size; j<=size; j++){
          Pixel pix=img.get(p.x+i, p.y+j);
-         if (Min + variation + (variation/3.0) < greyVal(pix.c)){//if the pixel's color is too light, mark it
+         if (Min + variation + (variation/3.0) < grayVal(pix.c)){//if the pixel's color is too light, mark it
              white[i+size][j+size]=c;
          
          }  
@@ -860,13 +866,22 @@ EdgeFinderSettings second;
     //Pixel pixel= brushPosition();//apparently we dont use this ever, but oh well, we dont actually need it with pixel k
       //if (mousePressed){
         Pixel k = this.img.getPixel(mouseX,mouseY); //Obtain pixel of membrane the user clicked on
-        float[] parameters = second.getParameters();//Retrieve parameters from the Edge Finder Tools box
-        //NOTE: a good starting lightest is 65, and a good starting variation is 75. Repeats is much more flexible.
-        color lightest = color(parameters[0]);
-        int variation = (int) parameters[1];
-        int repeats = (int) parameters[2];
-        outlineStarter( 0, k, lightest, variation, repeats);//Then call the BrushEdgeFollowing to start outlining.
-        img.snap();//we have done so much we might as well set a history save
+        if(second.picker==0){
+          float[] parameters = second.getParameters();//Retrieve parameters from the Edge Finder Tools box
+          //NOTE: a good starting lightest is 65, and a good starting variation is 75. Repeats is much more flexible.
+          color lightest = color(parameters[0]);
+          int variation = (int) parameters[1];
+          int repeats = (int) parameters[2];
+          outlineStarter( 0, k, lightest, variation, repeats);//Then call the BrushEdgeFollowing to start outlining.
+          img.snap();//we have done so much we might as well set a history save
+        }else{
+          if(second.picker==1){
+            second.lightnessValue.set(round(grayVal(k.c)));
+          }else if(second.picker==2){
+            second.variationValue.set(round(grayVal(k.c)));
+          }
+          second.picker=0;
+        }
       //}
     return this;
   }
