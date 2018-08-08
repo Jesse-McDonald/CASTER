@@ -5,6 +5,8 @@ this has been implemented to allow clickable buttons
 collectively all implemented lambda functions depend on access to global EMImage img, Brush img.brush, int img.brush, void img.brush.update(), void img.brush.clearBrush(), void img.save(), void img.load()
 these also depend on void selectInput(String path, String function, Object this) and void selectOutput(String path, String function,Object this) from processing
 */
+
+
 class Lambda{
   Lambda(){}//all lambda objects will have a default constructor and run()
   public void run(){}

@@ -28,8 +28,8 @@ class BrushGradFill extends Brush{
   }
   protected boolean gradMatch(Pixel temp,Pixel p){//determins if 2 pixels have enough of a gradient to them
     float threshold=32;//arbitrary threshold for comparison 32 seems to work well for ray cast
-    float _1=greyVal(temp.c);
-    float _2=greyVal(p.c);
+    float _1=grayVal(temp.c);
+    float _2=grayVal(p.c);
     return (_1-_2)*(_1-_2)*3>threshold*threshold;
   }
   public BrushGradFill gradientFloodUpdate(){//updates ongoing flood fill (didnt work, depercated)

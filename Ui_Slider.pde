@@ -5,6 +5,7 @@ class Ui_Slider extends Ui_Element{
   public float minV;
   public float pos;
   public int value;
+  public Binding<Integer> boundValue;
   private int oldValue;
   public boolean textValue;
   private boolean dragging;
@@ -52,6 +53,10 @@ class Ui_Slider extends Ui_Element{
 
   }//function that is used to detect wether the mouse is on the Ui_Element
   public Ui_Slider draw(){
+    if(!dragging&&boundValue!=null){
+      setValue(boundValue.stored);
+      
+    }
     valChanged=false;
     click();
     dm.pushMatrix();
@@ -78,10 +83,26 @@ class Ui_Slider extends Ui_Element{
       onChange.run(value);
     }
     dm.popMatrix();
+    if(boundValue!=null){
+      boundValue.stored=value; 
+    }
     return this;
   }//draws the element to the screen
+  public Ui_Slider setValue(int x, boolean changeLimit){
+    if(changeLimit){
+     if(x>maxV){
+        maxV=x;
+     }
+     if(x<minV){
+       minV=x; 
+     }
+    }
+    //float valueCalc=pos/((float)track.width);
+    return setValue(x);
+  }
   public Ui_Slider setValue(int x){
     //float valueCalc=pos/((float)track.width);
+    x=round(range(x,minV,maxV));
     pos=(x-minV)/(maxV-minV)*track.width;
     return this;
   }

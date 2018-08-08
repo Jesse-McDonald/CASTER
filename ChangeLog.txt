@@ -107,3 +107,29 @@ INDEV-18w29b
 *flood fill now only fills the color you clicked on
 *added color picker brush (not on ui yet)
 *updated future version numbering plan
+
+INDEV-18w31a
+*Bug fixes
+*fixed undo for the flood fill bruhes
+*fixes some issures with the edgefinder brush settings pannel
+these changes rather hacked together
+*fixed layer caching error while zoomed out and changing layers
+*we now have a slider that controles brush size, but the 2 other ways we have to change size do not update the slider.  This is in preperation for migrading the 3 slider window
+*added settings.json for CASTER
+
+INDEV-18w32a
+*moved edgefinder settings to own file
+*migrated to EdgeFinderSettings
+*removed legacy global edgefinder settings tracker and merged them with the edgeFinder lambda
+*added Color Slider
+*migrated existing edgefinder settings ui to use Ui_Sliders rather than raw sliders
+*refactored Ui_Slider Draw to be more consistant at many sizes
+*Removed now legacy otherWindows.pde
+
+INDEV-18w32b
+*Added Bindings
+*Added Ui_TextPannel
+*connected all (all user, not internal) methods of changing brush size to change the slider position too
+*Added Lables to EdgeFinder Brush Sliders
+*added color changing color picker icon
+*background work for EdgeFollower color picker, we just have to tie it to the ui... I think

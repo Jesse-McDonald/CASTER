@@ -283,7 +283,8 @@ Ui buildUi(PApplet dm){
     build.onChange=new SizeSlider();
     build.minV=0;
     build.maxV=100;
-    ui.add(build);//we are only testign the slider, we dont want it actually on the ui yet
+    build.boundValue=sizeSlider;
+    ui.add(build);//we are only testing the slider, we dont want it actually on the ui yet
   }
   
   ui.setDM(dm);
