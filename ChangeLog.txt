@@ -133,3 +133,5 @@ INDEV-18w32b
 *Added Lables to EdgeFinder Brush Sliders
 *added color changing color picker icon
 *background work for EdgeFollower color picker, we just have to tie it to the ui... I think
+
+INDEV-18w32c
