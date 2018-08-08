@@ -42,6 +42,15 @@ class SquareBrush extends Lambda{//allows for square brush button
      
   }
 }
+class PickerBrush extends Lambda{//allows for color picker brush button
+  void run(){
+  
+            
+    img.brush= new BrushPicker(img.brush.c,img.brush.img,img.brush.size);
+                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+     
+  }
+}
 class RayCastBrush extends Lambda{//allows for raycast brush button
   void run(){
  

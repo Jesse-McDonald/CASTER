@@ -13,6 +13,10 @@ int tColor(int r,int g,int b, int a){//processings color function is not thread 
 int tColor(int r,int g,int b){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return tColor(r,g,b,255);
 }
+PImage imgFromFile(String path){//this exists for 1 and only 1 reason.  The idiots behind processing made it in such a way that loadImage only works if it is ran from the parrent PApplet, all other usages fail
+//so, if I call it from anywhere else it just does not work.  This wraper exists so I can call it from any where without it not working
+  return loadImage(path); 
+}
 import codeanticode.tablet.*;
 Binding<Integer> sizeSlider;
 float PPI=100;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point

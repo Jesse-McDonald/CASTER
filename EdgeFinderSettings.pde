@@ -1,19 +1,21 @@
 public class EdgeFinderSettings extends PApplet 
   {
     Ui ui;
-    int picker=1;
+    int picker=0;
     float lightest;
     float variation;
     float repeats;
     Binding<Integer> lightnessValue;
     Binding<Integer> variationValue;
     public void settings() {
-      size(600, 130);//Set the size of the pop up window
+      
       ui=new Ui();
       // init them: (xPos, yPos, width, height)
-      ui=edgeFinderUiBuild(this);
       lightnessValue=new Binding<Integer>(65);
       variationValue=new Binding<Integer>(75);
+      ui=edgeFinderUiBuild(this);
+      
+      size(600, 130);//Set the size of the pop up window
       //colorRangeSliders[0] = new Colors(80, 20, 40, 20, 65, 255); //and the location, width, and height of each slider and button
       //colorRangeSliders[1] = new Colors(80, 60, 40, 20, 75, 255);
       //repeatSliders[0] = new Repeats(80, 100, 40, 20);
@@ -52,7 +54,15 @@ public class EdgeFinderSettings extends PApplet
       repeats=x; 
     }
   }
-  
+  class PickerLambda extends Lambda{
+    int target;
+    PickerLambda(int x){
+      target=x;
+    }
+    void run(){
+       picker=target;
+    }
+  }
   Ui edgeFinderUiBuild(PApplet dm){  
     Ui ui=new Ui(dm);//prep ui
      PImage tImg=new PImage(500,30,ARGB);
@@ -63,11 +73,12 @@ public class EdgeFinderSettings extends PApplet
       tImg.updatePixels();
     {//lightness slider,
      
-      Ui_Slider build=new Ui_ColorSlider(1.3,0.1,6, tImg);
+      Ui_Slider build=new Ui_ColorSlider(1.3,0.1,5.65, tImg);
       build.onChange=new LightestSlider();
-      build.boundValue=lightnessValue;
+      
       build.setValue(65);
       build.slider.resize(round(build.slider.width*2.2),build.slider.height);
+      build.boundValue=lightnessValue;
       ui.add(build);
     }
     {
@@ -81,12 +92,12 @@ public class EdgeFinderSettings extends PApplet
     }
     {//variation slider,
 
-      Ui_Slider build=new Ui_ColorSlider(1.3,.5,6, tImg);
+      Ui_Slider build=new Ui_ColorSlider(1.3,.5,5.65, tImg);
       build.onChange=new VariationSlider();
-      build.boundValue=variationValue;
+     
       build.setValue(75);
       build.slider.resize(round(build.slider.width*2.2),build.slider.height);
-      
+      build.boundValue=variationValue;
       ui.add(build);
     }
     {
@@ -115,7 +126,37 @@ public class EdgeFinderSettings extends PApplet
       build.offsetX=.1;
       ui.add(build);
     }
+    {
+      PImage mask=loadImage("buttonColorMap.png");//... ok processing... I have had enough of you....., what the frick do you call this!
+      
+      Ui_RadioButton buildRadio=new Ui_RadioButton(1);//prep radio button for pickers
+      buildRadio.id="pickers";
+      {//add buttons to radio button
+          Ui_Button build=new Ui_Button(7.25,0.1,.33,"colorPicker.png");
+          build.setPressedImg("colorPickerActive.png");
+          build.setHighlightedImg("highlight.png");
+          //build.c=0;
+          build.background=mask;
+          build.onActivate=new PickerLambda(1);
+          build.onDeactivate=new PickerLambda(0);
+          buildRadio.add(build);
+      }//lightness color picker
+      {//add buttons to radio button
+          Ui_Button build=new Ui_Button(7.25,0.5,.33,"colorPicker.png");
+          build.setPressedImg("colorPickerActive.png");
+          build.setHighlightedImg("highlight.png");
+          //build.c=0;
+          build.background=mask;
+          build.onActivate=new PickerLambda(2);
+          build.onDeactivate=new PickerLambda(0);
+          buildRadio.add(build);
+      }//variation color picker
+      ui.add(buildRadio);//add the radio button (and all sub buttons) to the ui
+    }
     ui.setDM(dm);
     return ui;
+  }
+  PImage loadImage(String path){//because WHY NOT!!!! >:(
+   return imgFromFile(path); 
   }
 }

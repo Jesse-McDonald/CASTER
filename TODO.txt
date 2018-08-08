@@ -1,5 +1,7 @@
 This is just my plan for the next steps of CASTER
 
+add bindings to button to allow picker to clear all brushes and vice versa
+add binding to radio button too
 add scale slider to 3d view
 add measure tool to ui
 export project file button

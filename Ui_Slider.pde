@@ -55,16 +55,15 @@ class Ui_Slider extends Ui_Element{
   public Ui_Slider draw(){
     if(!dragging&&boundValue!=null){
       setValue(boundValue.stored);
-      
     }
     valChanged=false;
     click();
     dm.pushMatrix();
     dm.translate(posX,posY);//prep translation
     dm.scale(scale);//prep scale
-    dm.image(tile,0,0);
+    dm.image(tile,0,0,track.width+slider.width,tile.height);
     dm.scale(1/scale);//undo scale for the upcomming translate
-    dm.translate(track.height*scale,(tile.height-track.height)*scale/2.);
+    dm.translate(slider.width/2*scale,(tile.height-track.height)*scale/2.);
     dm.scale(scale);//prep scale
     
     dm.image(track,0,0);
@@ -73,7 +72,7 @@ class Ui_Slider extends Ui_Element{
     if(textValue){
       //dm.stroke(0);
      // dm.fill(00);
-      dm.translate(slider.width/4,3*slider.height/4);
+      dm.translate(programSettings.monitorPPI*.02,3*slider.height/4);
       dm.fill(0);
       dm.text(str(value),0,0); 
     }
