@@ -249,7 +249,7 @@ Ui buildUi(PApplet dm){
       tImg.set(0,0,color(0,0,200));
       build.pressed=(tImg);
       build.highlighted=(highlight);
-      build.onActivate=new LColor(color(0,0,255,75));;
+      build.onActivate=new LColor(tColor(26, 140, 255, 75));
       build.onDeactivate=new LColor(0);//incase you are wonding why this is here, onDeactivate has to be some sort of lambda
       //but it does not need to do something.  All of these where already clearBrush, so I left it clear brush, but now clearBrush does
       //not DO anything, so this line is bascially a do nothing line
@@ -263,7 +263,7 @@ Ui buildUi(PApplet dm){
       tImg.set(0,0,color(200,0,200));
       build.pressed=(tImg);
       build.highlighted=(highlight);
-      build.onActivate=new LColor(color(255,0,255,75));;
+      build.onActivate=new LColor(tColor(255,0,255,75));;
       build.onDeactivate=new LColor(0);//incase you are wonding why this is here, onDeactivate has to be some sort of lambda
       //but it does not need to do something.  All of these where already clearBrush, so I left it clear brush, but now clearBrush does
       //not DO anything, so this line is bascially a do nothing line
@@ -271,6 +271,18 @@ Ui buildUi(PApplet dm){
     }
     
     ui.add(buildRadio);
+  }
+  {
+    {//add semi automation pannel trigger
+      Ui_PaintButton build=new Ui_PaintButton(2.3,7.7,1,"colorPicker.png");
+      build.setPressedImg("colorPickerActive.png");
+      build.setHighlightedImg("highlight.png");
+      build.c=0;
+      build.mask=mask;
+      build.onActivate=new PickerBrush();
+      build.onDeactivate=new ClearBrush(6);
+      ui.add(build);
+    }
   }
   {//testing slider,
     PImage tImg=new PImage(100,40,ARGB);

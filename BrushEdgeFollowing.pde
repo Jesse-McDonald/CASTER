@@ -20,6 +20,7 @@ class BrushEdgeFollowing extends Brush{
 //ThirdApplet third = new ThirdApplet();//This creates the frame that will show the outline in 3D moved to CASTER
 //EMOverlay[] overlayCopies = new EMOverlay[10]; //This is to make the undo button work properly, but it's not working just yet
 //Pixel[] overlayCenters = new Pixel[10];
+  boolean paintLock;
   String[] args = {"Edge Outlining Tools"}; // I don't understand why this is needed, I just know that it is.
   EdgeFinderSettings second;
   ColorPickerPointer colorPicker;
@@ -33,7 +34,7 @@ class BrushEdgeFollowing extends Brush{
 
   public BrushEdgeFollowing draw(){//this draws the shape of the BrushEdgeFollowing to the screen, generally should not update overlay unless there is a multi-frame process
     //this should be called every frame
-  
+    if(paintLock&&!mousePressed) paintLock=false;
     float zoom=this.img.getZoom();
     Pixel pixel = brushPosition();
     if(second.picker==0){
@@ -866,23 +867,27 @@ class BrushEdgeFollowing extends Brush{
     //Pixel pixel= brushPosition();//apparently we dont use this ever, but oh well, we dont actually need it with pixel k
       //if (mousePressed){
         Pixel k = this.img.getPixel(mouseX,mouseY); //Obtain pixel of membrane the user clicked on
-        if(second.picker==0){
-          float[] parameters = second.getParameters();//Retrieve parameters from the Edge Finder Tools box
-          //NOTE: a good starting lightest is 65, and a good starting variation is 75. Repeats is much more flexible.
-          color lightest = color(parameters[0]);
-          int variation = (int) parameters[1];
-          int repeats = (int) parameters[2];
-          outlineStarter( 0, k, lightest, variation, repeats);//Then call the BrushEdgeFollowing to start outlining.
-          img.snap();//we have done so much we might as well set a history save
-        }else{
-          if(second.picker==1){
-            second.lightnessValue.set(round(grayVal(k.c)));
-          }else if(second.picker==2){
-            second.variationValue.set(round(grayVal(k.c)));
+        if(!paintLock){
+          if(second.picker==0){
+            float[] parameters = second.getParameters();//Retrieve parameters from the Edge Finder Tools box
+            //NOTE: a good starting lightest is 65, and a good starting variation is 75. Repeats is much more flexible.
+            color lightest = color(parameters[0]);
+            int variation = (int) parameters[1];
+            int repeats = (int) parameters[2];
+            outlineStarter( 0, k, lightest, variation, repeats);//Then call the BrushEdgeFollowing to start outlining.
+            img.snap();//we have done so much we might as well set a history save
+          }else{
+            paintLock=true;
+            if(second.picker==1){
+              second.lightnessValue.set(round(grayVal(k.c)));
+            }else if(second.picker==2){
+              second.variationValue.set(round(grayVal(k.c)));
+            }
+            ((Ui_RadioButton)second.ui.getId("pickers")).hide();;
+            //second.picker=0;
           }
-          second.picker=0;
         }
-      //}
+
     return this;
   }
 

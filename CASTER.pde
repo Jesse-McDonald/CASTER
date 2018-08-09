@@ -5,13 +5,17 @@ this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-//version: INDEV-18w32b
-String VERSION="INDEV-18w32b";
+//version: INDEV-18w32c
+String VERSION="INDEV-18w32c";
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
 }
 int tColor(int r,int g,int b){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return tColor(r,g,b,255);
+}
+PImage imgFromFile(String path){//this exists for 1 and only 1 reason.  The idiots behind processing made it in such a way that loadImage only works if it is ran from the parrent PApplet, all other usages fail
+//so, if I call it from anywhere else it just does not work.  This wraper exists so I can call it from any where without it not working
+  return loadImage(path); 
 }
 import codeanticode.tablet.*;
 Binding<Integer> sizeSlider;
