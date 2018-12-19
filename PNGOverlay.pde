@@ -31,7 +31,7 @@ class PNGOverlay extends PNGImage{
    return set(int(index%width),int(index/width),c); 
  }
  PNGOverlay set(int x, int y, color c){
-   if(x<0||y<0||x>width||y>height){return this;}//handle x and y out of range
+   if(x<0||y<0||x>=width||y>=height){return this;}//handle x and y out of range
    if(mode==4){
      colorArray[x][y]=c;
    }else{ 

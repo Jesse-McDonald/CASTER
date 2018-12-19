@@ -11,8 +11,8 @@ public class EdgeFinderSettings extends PApplet
       
       ui=new Ui();
       // init them: (xPos, yPos, width, height)
-      lightnessValue=new Binding<Integer>(65);
-      variationValue=new Binding<Integer>(75);
+      lightnessValue=new Binding<Integer>(80);
+      variationValue=new Binding<Integer>(190);
       ui=edgeFinderUiBuild(this);
       
       size(600, 130);//Set the size of the pop up window
@@ -85,7 +85,7 @@ public class EdgeFinderSettings extends PApplet
       Ui_TextPanel build =new Ui_TextPanel(0.3,0.1,.9,.35,tColor(150,150,150));
       build.textColor=0;
       build.size=16;
-      build.lable="Lightest:";
+      build.lable="Average:";
       build.offsetY=.5;
       build.offsetX=.1;
       ui.add(build);
@@ -112,8 +112,8 @@ public class EdgeFinderSettings extends PApplet
     {//reapeats slider,
       Ui_Slider build=new Ui_Slider(1.3,.9,6, tImg);
       build.onChange=new RepeatsSlider();
-      build.minV=0;
-      build.maxV=1000;
+      build.minV=4;
+      build.maxV=100;
       build.slider.resize(round(build.slider.width*2.2),build.slider.height);
       ui.add(build);
     }
