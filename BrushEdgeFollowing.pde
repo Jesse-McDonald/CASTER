@@ -63,15 +63,14 @@ class BrushEdgeFollowing extends Brush{
   //This is where the EdgeFinderBrushEdgeFollowing starts working
   public BrushEdgeFollowing outlineStarter(int counts, Pixel p, color lightest, int variation, int repeats)//Send this up, down, left, and right only in outline starter? 
   {
-   
     
     color Min = MinColor(p, lightest); //Finds the darkest pixel in the current area
     color[][] temp = FindPossibleMembrane(p, Min, lightest, variation); //Finds all pixles that are dark enough to be an object in the area
     color[][] white = FindNotMembrane(p, Min, variation, temp);//Identifies what is not an object in the area being searched
     color[][] black = GetMembrane(temp, white, p, lightest, variation);//Identifies the object that we are trying to locate
     membraneToOverlay(black, p, c); // Display the identified object
-    if(repeats>0){
-  
+    if(repeats>0)
+    {
       double radians = linearRegression(black, size); // Find the angle in radians of the line of best fit (based on what is the outlined object and what is not)
       for(int i = 0; i < 8; i++)
       { 
@@ -82,10 +81,14 @@ class BrushEdgeFollowing extends Brush{
         section = SectionFinder(degree, section);//and select the correct section based on the degree
         Pixel p2 = FindPixelForRecursion(radians, p, black, section, size, lightest, variation);//Locate a pixel in the direction being moved that is on the membrane (usually)
         int membraneCount = testArea(p2, lightest, variation);
-        if (membraneCount >= 50)
+        //print("Membrane count is: " + membraneCount + ".\n");
+        if (membraneCount >= 10)
         {
           counts++;//Increment counts for our repeater
-          outlineBase(p2, counts, section, lightest, variation, radians, repeats);//Abd call the main repeating function
+          
+          ConnectTheDots(p, p2, black);
+          
+          outlineBase(p2, counts, section, lightest, variation, radians, repeats);//And call the main repeating function
         }
       }
     }
@@ -95,6 +98,7 @@ class BrushEdgeFollowing extends Brush{
   //This is the main function of the Edge Finder Brush
   public BrushEdgeFollowing outlineBase(Pixel p, int counts, int prevSect, color lightest, int variation, double prevRadians, int repeats)
   {
+    //print("The repeater is working.");
     color Min = MinColor(p, lightest);//Find the darkest pixel in the given area
     color[][] temp = FindPossibleMembrane(p, Min, lightest, variation);//Find objects in the given area
     color[][] white = FindNotMembrane(p, Min, variation, temp);//Find what is not objects in the given area
@@ -108,6 +112,7 @@ class BrushEdgeFollowing extends Brush{
     radians = Math.toRadians(degree);//Convert degrees to radians
     int section = SectionFinder(degree, prevSect);//Find the section being moved into
     Pixel p2 = FindPixelForRecursion(radians, p, black, section, size, lightest, variation);//And locate a pixel in the direction we are moving that is on the membrane
+    ConnectTheDots(p, p2, black);
     outlineRepeater(p2, counts, section, lightest, variation, radians, repeats);//Call the function to be repeated
     return this;
   }
@@ -446,7 +451,12 @@ class BrushEdgeFollowing extends Brush{
           p2 = right;
         }
       } 
-      p2 = PixelChecker(p2, p, section);//Then if all else fails, force move the pixel in the direction being moved
+      //STAR
+      int n = testArea(p2, lightest, variation);
+      if (n < 5)
+      {
+        p2 = PixelChecker(p2, p, section);//Then if all else fails, force move the pixel in the direction being moved
+      }
     }
     return p2;
   }
@@ -498,10 +508,11 @@ class BrushEdgeFollowing extends Brush{
        }
      }
     }
-    /*This just dispays the pixel that was settled upon. Its useful for debuging.
+    //This just dispays the pixel that was settled upon. Its useful for debuging.
+    /*
     color[][] blank = new color[size*2][size*2];
     blank[size][size] = c;
-    membraneToOverlay(blank, holding, color(0,255,100,100));
+    membraneToOverlay(blank, holding, color(0,255,100,255));
     */
     holding=this.img.get(holding.x,holding.y);//relate the final pixel to the image
     return holding;
@@ -512,6 +523,7 @@ class BrushEdgeFollowing extends Brush{
   {
     if (p2.x == p.x && p2.y == p.y)//If the center of the new box is the same as the center of the old box
     {
+      //print("Force moving the box\n");
       //Force move the center of the new box according to the direction given by the line of best fit
       if (section == 1)
       {
@@ -861,6 +873,107 @@ class BrushEdgeFollowing extends Brush{
       }
     }
     return this;
+  }
+  
+  public color[][] ConnectTheDots(Pixel p, Pixel p2, color[][] black)
+  {
+    //print("Starting to connect the dots\n");
+    int count = size * 2;
+    int xMoves = 0;
+    int yMoves = 0;
+    int[] distance = Distance(p, xMoves, yMoves, p2);
+    xMoves = distance[1];
+    yMoves = distance[0];
+    //print("p is at location (" + p.x + ", " + p.y + ")\n");
+    //print("p2 is at location (" + p2.x + ", " + p2.y);
+    //print("Moves x is: " + xMoves + " and Moves y is: " + yMoves + "\n");
+    
+    int xMoved = 0;
+    int yMoved = 0;
+    //print("So far our actual moves x is: " + xMoved + " and our actual moves y is: " + yMoved + "\n\n");
+    while((p.x + xMoved != p2.x) && (p.y + yMoved != p2.y) && count > 0)
+    {
+      if (abs(xMoves) >= abs(yMoves))
+      {  
+        //print("There are more x moves than y moves.");
+        //I need to see what is colored or not...
+        if(black[xMoved + size][yMoved + size] == c)
+        {
+          //print("Is already colored.");
+        }
+        else if (yMoved + 1 <= size*2)
+        {
+          if(black[xMoved + size][yMoved + 1 + size] == c)
+          {
+            yMoved++;
+          }
+        }
+        else if (yMoved - 1 >= 0)
+        {
+          if (black[xMoved + size][yMoved - 1 + size] == c)
+          {
+            yMoved--;
+          }
+        }
+        else
+        {
+          black[xMoved + size][yMoved + size] = c;
+        }
+      }
+      else
+      {
+        //print("There are more y moves than x moves");
+        if(yMoves > 0)
+        {
+          if(black[xMoved + size][yMoved + size] == c)
+          {
+            //print("Is already colored.");
+          }
+          else if(xMoved + 1 <= size*2)
+          {
+            if(black[xMoved +1 + size][yMoved + size] ==c)
+            {
+              xMoved++;
+            }
+          }
+          else if (xMoved - 1 >= 0)
+          {
+            if (black[xMoved -1 + size][yMoved + size] == c)
+            {
+            xMoved--;
+            }
+          }
+          else
+          {
+            black[xMoved + size][yMoved + size] = c;
+          } 
+        }
+      }
+      
+      count--;
+      distance = Distance(p, xMoved, yMoved, p2);
+      xMoves = distance[1];
+      yMoves = distance[0];
+      //print("Moves x is: " + xMoves + " and Moves y is: " + yMoves + "\n");
+      //print("So far our actual moves x is: " + xMoved + " and our actual moves y is: " + yMoved + "\n\n\n");
+    }
+    
+    membraneToOverlay(black, p, c);
+    //This is just a check to see how this method is working
+    /*
+    color[][] blank = new color[size*2][size*2];
+    blank[size][size] = c;
+    membraneToOverlay(blank, p2, color(0,255,100,100));
+    */
+    return black;
+  }
+  
+  public int[] Distance(Pixel p, int xMoves, int yMoves, Pixel p2)
+  {
+    int y = (p2.y - (p.y + yMoves));
+    int x = (p2.x - (p.x + xMoves));
+    int[] spaces = {x, y};
+    return spaces;
   }
   
   public BrushEdgeFollowing paint(EMImage img){//this causes the BrushEdgeFollowing to lay down "ink" on the overlay and generally should only be called on mouse press or mouse drag
