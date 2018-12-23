@@ -17,7 +17,9 @@ class BrushCircle extends Brush{
         for (int y=0;y<this.img.overlay.width&&y<shape.width;y++){
           if(erase){//determine if ink is to be removed or layed down
             if(shape.get(x,y)!=color(0,0,0,0)){
-              this.img.overlay.set(this.img.layer,pixel.x+x,pixel.y+y,color(0,0,0,0));//note iff a pixel is non transparent it will remove set the overlay transparent
+              if(this.img.overlay.get(this.img.layer,pixel.x+x,pixel.y+y)==c){//only errase the color that the brush is
+                this.img.overlay.set(this.img.layer,pixel.x+x,pixel.y+y,color(0,0,0,0));//note iff a pixel is non transparent it will remove set the overlay transparent
+              }
             }
           }else{
             if(shape.get(x,y)!=color(0,0,0,0)){//this prevents brushes from having visible edges
