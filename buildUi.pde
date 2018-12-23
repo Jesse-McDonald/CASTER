@@ -68,9 +68,11 @@ Ui buildUi(PApplet dm){
     brushPannel.add(buildRadio);//add the radio button (and all sub buttons) to the ui
   }
   {//add eraser button directly to brushPannel
-    Ui_Button build=new Ui_Button(1.2,6.6,1,"eraser.png");
+    Ui_PaintButton build=new Ui_PaintButton(1.2,6.6,1,"eraser.png");
     build.setPressedImg("eraserActive.png");
     build.setHighlightedImg("highlight.png");
+	  build.c=0;
+    build.mask=mask;
     build.onActivate=new EraserBrush(true);
     build.onDeactivate=new EraserBrush(false);
     build.id="eraser";
