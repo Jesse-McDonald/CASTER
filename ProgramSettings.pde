@@ -17,6 +17,9 @@ class ProgramSettings{
   maxProgramRam=settingsJSON.getInt("maxProgramRam");
   monitorPPI=settingsJSON.getInt("monitorPPI");
   undoDepth=settingsJSON.getInt("undoDepth"); 
+  if(monitorPPI==-1){
+   monitorPPI=Toolkit.getDefaultToolkit().getScreenResolution();//this does not get true dpi, but it gets the dpi according to the os so good enought
+  }
   return this;
  }
 }

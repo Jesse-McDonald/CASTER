@@ -1,4 +1,5 @@
 import codeanticode.tablet.*;//if there is an error on this line go to sketch->import Library...->add library then do a search for Tablet
+import java.awt.Toolkit;
 //you want the library called "Tablet" by Andres Colubri
 
 /** base program to run test_environment
@@ -56,10 +57,11 @@ void load(File selection){// this is the handler for the load event
     img.img.launch();//start thread stack
 	}
 }
+import javafx.stage.Screen ;
 //PrintWriter output;
 void settings()
 {
-
+  
   programSettings =new ProgramSettings("settings.json");
   PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
   size(2000,1000);//window size
@@ -67,7 +69,7 @@ void settings()
 }
 
 void setup(){//setup the window
-  //output = createWriter("log.txt");//not sure we need a log file right now
+ //output = createWriter("log.txt");//not sure we need a log file right now
 	frameRate(60);
   tablet = new Tablet(this);
 	EMStack stack=new EMStack();//get the stack ready
