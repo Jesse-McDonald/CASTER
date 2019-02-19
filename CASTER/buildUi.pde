@@ -3,7 +3,7 @@
 Ui buildUi(PApplet dm){  
   Ui ui=new Ui(dm);//prep ui
   float numButtons=5;//a arbitrary number to help size the the buttons,it is really quite missnamed
-  PImage mask=loadImage("buttonColorMap.png");
+  PImage mask=loadImage("ui/buttonColorMap.png");
   float spacing=1/((numButtons+.5)*2.5);//more sizing stuff
   numButtons*=2.5;//and more arbitrary constants
   Ui_PopupPanel brushPannel=new Ui_PopupPanel();
@@ -13,10 +13,10 @@ Ui buildUi(PApplet dm){
     Ui_RadioButton buildRadio=new Ui_RadioButton(1);//prep radio button for brush buttons
     brushPannel.add(new Ui_Panel(1.2,1,1.1,6.7,color(240,240,240,200)));//add the panel to the popout  
     {//add buttons to radio button
-      Ui_PaintButton build=new Ui_PaintButton(1.2,1.1,1,"paintBrushRound.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,1.1,1,"ui/paintBrushRound.png");
       
-      build.setPressedImg("paintBrushRoundActive.png");
-      build.setHighlightedImg("highlight.png");
+      build.setPressedImg("ui/paintBrushRoundActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       build.c=0;
       build.mask=mask;
       build.onActivate=new CircleBrush();
@@ -26,9 +26,9 @@ Ui buildUi(PApplet dm){
       buildRadio.add(build);
     }//round brush button
     {//add buttons to radio button
-      Ui_PaintButton build=new Ui_PaintButton(1.2,2.2,1,"paintBrushSquare.png");
-      build.setPressedImg("paintBrushSquareActive.png");
-      build.setHighlightedImg("highlight.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,2.2,1,"ui/paintBrushSquare.png");
+      build.setPressedImg("ui/paintBrushSquareActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       build.c=0;
       build.mask=mask;
       build.onActivate=new SquareBrush();
@@ -36,9 +36,9 @@ Ui buildUi(PApplet dm){
       buildRadio.add(build);
     }//square brush button
     {//add buttons to radio button
-      Ui_PaintButton build=new Ui_PaintButton(1.2,3.3,1,"paintBrushDiamond.png");
-      build.setPressedImg("paintBrushDiamondActive.png");
-      build.setHighlightedImg("highlight.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,3.3,1,"ui/paintBrushDiamond.png");
+      build.setPressedImg("ui/paintBrushDiamondActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       build.c=0;
       build.mask=mask;
       build.onActivate=new DiamondBrush();
@@ -46,9 +46,9 @@ Ui buildUi(PApplet dm){
       buildRadio.add(build);
     }//diamond brush button
     {//add buttons to radio button
-      Ui_PaintButton build=new Ui_PaintButton(1.2,4.4,1,"blackHoleBrush.png");
-      build.setPressedImg("blackHoleBrushActive.png");
-      build.setHighlightedImg("highlight.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,4.4,1,"ui/blackHoleBrush.png");
+      build.setPressedImg("ui/blackHoleBrushActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       build.c=0;
       build.mask=mask;
       build.onActivate=new BlackHoleBrush();
@@ -56,9 +56,9 @@ Ui buildUi(PApplet dm){
       buildRadio.add(build);
     }//paint brush button
     {//add buttons to radio button
-      Ui_PaintButton build=new Ui_PaintButton(1.2,5.5,1,"paintCan.png");
-      build.setPressedImg("paintCanActive.png");
-      build.setHighlightedImg("highlight.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,5.5,1,"ui/paintCan.png");
+      build.setPressedImg("ui/paintCanActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       build.c=0;
       build.mask=mask;
       build.onActivate=new FloodBrush();
@@ -68,9 +68,9 @@ Ui buildUi(PApplet dm){
     brushPannel.add(buildRadio);//add the radio button (and all sub buttons) to the ui
   }
   {//add eraser button directly to brushPannel
-    Ui_PaintButton build=new Ui_PaintButton(1.2,6.6,1,"eraser.png");
-    build.setPressedImg("eraserActive.png");
-    build.setHighlightedImg("highlight.png");
+    Ui_PaintButton build=new Ui_PaintButton(1.2,6.6,1,"ui/eraser.png");
+    build.setPressedImg("ui/eraserActive.png");
+    build.setHighlightedImg("ui/highlight.png");
 	  build.c=0;
     build.mask=mask;
     build.onActivate=new EraserBrush(true);
@@ -87,9 +87,9 @@ Ui buildUi(PApplet dm){
     Ui_RadioButton buildRadio=new Ui_RadioButton(1);//prep radio button for brush buttons
    semiAuto.add(new Ui_Panel(1.2,1,1.1,2.3,color(240,240,240,200)));//add the panel to the popout  
     {//add buttons to radio button
-      Ui_PaintButton build=new Ui_PaintButton(1.2,1.1,1,"rayCastBrush.png");
-      build.setPressedImg("rayCastBrushActive.png");
-      build.setHighlightedImg("highlight.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,1.1,1,"ui/rayCastBrush.png");
+      build.setPressedImg("ui/rayCastBrushActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       build.c=0;
       build.mask=mask;
       build.onActivate=new RayCastBrush();
@@ -97,9 +97,9 @@ Ui buildUi(PApplet dm){
       buildRadio.add(build);
     }//ray cast brush button
     {//add buttons to radio button
-      Ui_PaintButton build=new Ui_PaintButton(1.2,2.2,1,"edgeFollower.png");
-      build.setPressedImg("edgeFollowerActive.png");
-      build.setHighlightedImg("highlight.png");
+      Ui_PaintButton build=new Ui_PaintButton(1.2,2.2,1,"ui/edgeFollower.png");
+      build.setPressedImg("ui/edgeFollowerActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       build.c=0;
       build.mask=mask;
       build.onActivate=new EdgeFollowingBrush();
@@ -113,17 +113,17 @@ Ui buildUi(PApplet dm){
   {
     Ui_RadioControler buildRadio=new Ui_RadioControler(1);//prep radio button for panels
     {//add Brush pannel trigger to radio button
-      Ui_Button build=new Ui_Button(.1,1.1,1,"paintBrush.png");
-      build.setPressedImg("paintBrushActive.png");
-      build.setHighlightedImg("highlight.png");
+      Ui_Button build=new Ui_Button(.1,1.1,1,"ui/paintBrush.png");
+      build.setPressedImg("ui/paintBrushActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       brushPannel.changeTrigger(build);
 
       buildRadio.add(build);
     }
     {//add semi automation pannel trigger
-      Ui_Button build=new Ui_Button(0.1,2.2,1,"semiAuto.png");
-      build.setPressedImg("SemiAutoActive.png");
-      build.setHighlightedImg("highlight.png");
+      Ui_Button build=new Ui_Button(0.1,2.2,1,"ui/semiAuto.png");
+      build.setPressedImg("ui/SemiAutoActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       semiAuto.changeTrigger(build);
 
       buildRadio.add(build);
@@ -131,20 +131,20 @@ Ui buildUi(PApplet dm){
     ui.add(buildRadio);
   }//popup window controler
   {//add 3d button
-    Ui_Button build=new Ui_MomentaryButton(0.1,3.3,1,"3d.png");
-    build.setPressedImg("3dActive.png");
-    build.setHighlightedImg("highlight.png");
+    Ui_Button build=new Ui_MomentaryButton(0.1,3.3,1,"ui/3d.png");
+    build.setPressedImg("ui/3dActive.png");
+    build.setHighlightedImg("ui/highlight.png");
     build.onActivate=new Create3D();
 
     ui.add(build);
     
   }// 3d button
   {//add a blank button for testing
-    //Ui_Button build=new Ui_Button(.005,6/numButtons,spacing,"blank.png");
-   Ui_Button build=new Ui_Button(0.1,6.6,1,"blank.png");
+    //Ui_Button build=new Ui_Button(.005,6/numButtons,spacing,"ui/blank.png");
+   Ui_Button build=new Ui_Button(0.1,6.6,1,"ui/blank.png");
    
-    build.setPressedImg("blankActive.png");
-    build.setHighlightedImg("highlight.png");
+    build.setPressedImg("ui/blankActive.png");
+    build.setHighlightedImg("ui/highlight.png");
     build.onActivate=new BlankButton();
 
     ui.add(build);
@@ -154,17 +154,17 @@ Ui buildUi(PApplet dm){
   ui.add(brushPannel);
   ui.add(semiAuto);
   {//add save button 
-    Ui_Button build=new Ui_MomentaryButton(.1,0,1,"save.png");
-    build.setPressedImg("saveActive.png");
-    build.setHighlightedImg("highlight.png");
+    Ui_Button build=new Ui_MomentaryButton(.1,0,1,"ui/save.png");
+    build.setPressedImg("ui/saveActive.png");
+    build.setHighlightedImg("ui/highlight.png");
     build.onActivate=new Save();
 
     ui.add(build);
   }//save button
   {//add load button
-  Ui_Button build=new Ui_MomentaryButton(1.2,0,1,"load.png");
-  build.setPressedImg("loadActive.png");
-  build.setHighlightedImg("highlight.png");
+  Ui_Button build=new Ui_MomentaryButton(1.2,0,1,"ui/load.png");
+  build.setPressedImg("ui/loadActive.png");
+  build.setHighlightedImg("ui/highlight.png");
   build.onActivate=new Load();
 
   ui.add(build);
@@ -276,9 +276,9 @@ Ui buildUi(PApplet dm){
   }
   {
     {//add semi automation pannel trigger
-      Ui_PaintButton build=new Ui_PaintButton(2.3,7.7,1,"colorPicker.png");
-      build.setPressedImg("colorPickerActive.png");
-      build.setHighlightedImg("highlight.png");
+      Ui_PaintButton build=new Ui_PaintButton(2.3,7.7,1,"ui/colorPicker.png");
+      build.setPressedImg("ui/colorPickerActive.png");
+      build.setHighlightedImg("ui/highlight.png");
       build.c=0;
       build.mask=mask;
       build.onActivate=new PickerBrush();

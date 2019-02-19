@@ -2,5 +2,6 @@
   "maxPixelCache":1400000,
   "monitorPPI":-1,
   "maxProgramRam":120000,
-  "undoDepth":100
+  "undoDepth":100,
+  "autoOpen":true
 }

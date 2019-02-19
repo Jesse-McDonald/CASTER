@@ -53,15 +53,26 @@ void objSavePasser(File pass){
 }
 void load(File selection){// this is the handler for the load event
 	if(selection!=null){
-		img=new EMImage(new EMStack(selection.getAbsolutePath()));
-    img.img.launch();//start thread stack
+    selection.getAbsolutePath();
 	}
+}
+void load(String path){
+    String ext=path.substring(path.lastIndexOf('.') ,path.length()).toLowerCase();
+    if(ext.equals(".png")){
+      img.changeStack(new EMStack(path));
+      img.img.launch();//start thread stack 
+    }else if(ext.equals(".caster")){
+      img.project=new EMProject(path);
+     
+       //open project file 
+    }else if(ext.equals(".jemo")){
+      //open overlay file
+    }
 }
 import javafx.stage.Screen ;
 //PrintWriter output;
 void settings()
 {
-  
   programSettings =new ProgramSettings("settings.json");
   PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
   size(2000,1000);//window size
@@ -72,13 +83,12 @@ void setup(){//setup the window
  //output = createWriter("log.txt");//not sure we need a log file right now
 	frameRate(60);
   tablet = new Tablet(this);
-	EMStack stack=new EMStack();//get the stack ready
-	//stack.add(createImage(0,0,ARGB));//get ANYTHING on that stack before we try to draw it
-	img=new EMImage(stack);//build an EMImage around that stack
+	img=new EMImage();//build an EMImage
 	surface.setResizable(true);//allow the window to be resized
-	selectInput("Select an image in the Stack","load");//trigger stack load
+	if(programSettings.autoOpen){
+    
+  }//selectInput("Select an image in the Stack","load");//trigger stack load
   //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
-  img.img.launch();//start thread stack
 	//ui=buildUi(this);
   String[] args={""};
   sizeSlider=new Binding<Integer>(9);

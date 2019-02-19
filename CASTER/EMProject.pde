@@ -3,6 +3,7 @@ import java.security.SecureRandom;//because I wanted full random for uuid, dont 
 import javax.xml.bind.DatatypeConverter;
 class EMProject{
   //these are used to verify that the stack is still the same stack
+
   int numFiles;//number of files in the dir incase some are not .(extension)
   String stackPath;//check if exists, speculate arround if it does not
   String stackTopName;//name of the top image in the stack
@@ -16,6 +17,9 @@ class EMProject{
   //some conditions about the project when it was saved
   ArrayList<EMMeta> meta;
   EMProject(){uuid=createUUID();}
+  EMProject(String path){
+    importJson(loadJSONObject(path)); 
+  }
   
   JSONObject exportJSON(){
 

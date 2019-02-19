@@ -24,22 +24,26 @@ class EMImage {
   public EMProject project;
 
   
-	public EMImage(EMStack stack) {//expect the stack to be given to you, theoretically EMImage can deal with making the stack, but currently the loading happens outside for this
+	public EMImage() {
 		project=new EMProject();
     uuid=project.uuid;
     layer=0;
     prevLayer=0;
-		img=stack;
+		changeStack(new EMStack());
 //set brush color
 //		brush=new Brush(color(255, 0, 0, 50),this,9);//create generic brush
       //brush=new Brush(color(0, 255, 0, 75),this,9);//color blind mode
       brush=new Brush(color(26, 140, 255, 75),this,9);//color blind mode
-    meta=stack.meta;
-    overlay=stack.overlay;
-    overlay.uuid=uuid;
+    
 		this.update();//call update... apparently update does not actually do anything right now..... not sure what it was going to do	
   }
-  
+  EMImage changeStack(EMStack stack){
+    img=stack;
+    meta=img.meta;
+    overlay=img.overlay;
+    overlay.uuid=uuid;
+    return this;
+  }
   EMImage undo(){
     brush.eStop();//we need this to be safe, just imagin undoing a floodfill and it keeps going after the undo
     overlay.undo(this);
