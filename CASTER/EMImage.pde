@@ -165,7 +165,7 @@ class EMImage {
     }
     return conv;
   }
-  public boolean saveProject(File file){
+  public boolean saveProject(String file){
     boolean ret=false;
     project.height=img.height;
     project.width=img.width;
@@ -174,15 +174,21 @@ class EMImage {
     if(img.img.size()>0){
       project.stackTopHash=this.img.img.get(0).hashCode();
     }
-    try {
-        PrintWriter pw = new PrintWriter(file);
-        ret=project.exportJSON().write(pw);
-        
-        pw.close();
-    } catch (FileNotFoundException e) {}
+    if(!file.equals("")){
+      project.path=file; 
+    }
+    project.save();
+    
     return ret;
   }
 	public boolean saveOverlay(File fileName){//saves current layout to JEMO format
+  String path=fileName.getAbsolutePath();
+      
+  String ext=path.substring(path.lastIndexOf('.') ,path.length()).toLowerCase();
+  if(!ext.equals(".jemo")){
+      path+=".jemo";
+  }
+  fileName=new File(path);
     try{
 			OutputStream file= new BufferedOutputStream(new FileOutputStream(fileName));
 			file.write('J'); //setup header

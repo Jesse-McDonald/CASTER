@@ -7,8 +7,9 @@ this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-//version: INDEV-18w52a
-String VERSION="INDEV-18w52a";
+//version: INDEV-19w08a
+String VERSION="INDEV-19w08a";
+
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
 }
@@ -19,6 +20,7 @@ PImage imgFromFile(String path){//this exists for 1 and only 1 reason.  The idio
 //so, if I call it from anywhere else it just does not work.  This wraper exists so I can call it from any where without it not working
   return loadImage(path); 
 }
+
 import codeanticode.tablet.*;
 Binding<Integer> sizeSlider;
 float PPI=93;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point
@@ -52,8 +54,8 @@ void objSavePasser(File pass){
    }
 }
 void load(File selection){// this is the handler for the load event
-	if(selection!=null){
-    selection.getAbsolutePath();
+  if(selection!=null){
+    load(selection.getAbsolutePath());
 	}
 }
 void load(String path){
@@ -63,14 +65,24 @@ void load(String path){
       img.img.launch();//start thread stack 
     }else if(ext.equals(".caster")){
       img.project=new EMProject(path);
-     
        //open project file 
+       programSettings.lastProject=path;
+       programSettings.save();
+       //save it for auto load
     }else if(ext.equals(".jemo")){
+
       //open overlay file
     }
 }
 import javafx.stage.Screen ;
 //PrintWriter output;
+void autoSave(){//calls various autosaves, does not save overlay (I think) I may change it to write a change cache for recovery later
+  if(!img.project.path.equals("")){
+    img.saveProject(img.project.path); 
+  }
+  programSettings.lastProject=img.project.path;
+  programSettings.save();
+}
 void settings()
 {
   programSettings =new ProgramSettings("settings.json");

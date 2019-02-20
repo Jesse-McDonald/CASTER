@@ -129,26 +129,46 @@ class EraserBrush extends Lambda{//allows for erase mode button
 
 public class Save extends Lambda{//allows for overlay save button
         public void run(){
-          selectOutput("Select file to save overlay","handler",new File(""),this);
+          if(img.project.path.equals("")){
+             selectOutput("Select file to save Project","handler2",null,this);
+          }
+          selectOutput("Select file to save overlay","handler",null,this);
         
         }
   
   public void handler(File f){//this gets called by selectOutput when the output is selected
     if(f!=null){
+       
       img.saveOverlay(f); 
       
-    } 
+    }
+    
+  }
+  public void handler2(File f){//this gets called by selectOutput when the output is selected
+    if(f!=null){
+      String path=f.getAbsolutePath();
+      
+      String ext=path.substring(path.lastIndexOf('.') ,path.length()).toLowerCase();
+      if(!ext.equals(".caster")){
+        path+=".caster";
+      }
+      img.project.path=path;
+      programSettings.lastProject=img.project.path;
+      autoSave();
+    }
+    
   }
 }
 
 public class Load extends Lambda{//allow for overlay load button 
   public void run(){
-    selectInput("Select file to load","handler",new File(""),this);
+	  selectInput("Select a file to Load","load");
+    //selectInput("Select file to load","handler",new File(""),this);
   }
 
-  public void handler(File f){//this gets called by selectInput when the input is selected
-    img.loadOverlay(f);
-  }
+  //public void handler(File f){//this gets called by selectInput when the input is selected
+  //  img.loadOverlay(f);
+  //}
 }
 public class EdgeFollowingBrush extends Lambda{//Edgefollowing trigger
   BrushEdgeFollowing brush;
