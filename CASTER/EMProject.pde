@@ -4,9 +4,12 @@ import javax.xml.bind.DatatypeConverter;
 class EMProject{
   //these are used to verify that the stack is still the same stack
   String path="";
+  String savedBy;
+  int version;
   int numFiles;//number of files in the dir incase some are not .(extension)
   String stackPath;//check if exists, speculate arround if it does not
   String stackTopName;//name of the top image in the stack
+  String lastOverlay;
   int stackTopHash;//just the hash of the top
   int width,height;//image size
   boolean stackLoaded;//if we finished load so we can hash and count the stack before the project was saved
@@ -25,6 +28,7 @@ class EMProject{
   EMProject(String path){
     this();
     importJson(loadJSONObject(path)); 
+    this.path=path;
   }
   EMProject autoSave(){
    if(!path.equals("")){
@@ -56,7 +60,8 @@ class EMProject{
   JSONObject exportJSON(){
 
     JSONObject ret=new JSONObject();
-    
+    ret.setInt("version",1);
+    ret.setString("savedBy",VERSION);
     ret.setInt("numFiles",numFiles);
     ret.setString("stackPath",stackPath);
     ret.setString("topFileName",stackTopName);
@@ -64,6 +69,7 @@ class EMProject{
     ret.setInt("width",width);
     ret.setInt("height",height);
     ret.setBoolean("stackLoaded",stackLoaded);
+    ret.setString("lastOverlay",lastOverlay);
     if(stackLoaded){
       ret.setInt("stackSize",stackSize);
       ret.setInt("stackHash",stackHash);
@@ -80,6 +86,9 @@ class EMProject{
   }
   EMProject importJson(JSONObject in){
     int c=0;
+    lastOverlay=in.getString("lastOverlay");
+    version=in.getInt("version");
+    savedBy=in.getString("savedBy");
     numFiles=in.getInt("numFiles",numFiles);
     stackPath=in.getString("stackPath");
     stackTopName=in.getString("topFileName");

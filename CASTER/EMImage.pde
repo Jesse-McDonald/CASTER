@@ -188,6 +188,7 @@ class EMImage {
   if(!ext.equals(".jemo")){
       path+=".jemo";
   }
+  project.lastOverlay=path;
   fileName=new File(path);
     try{
 			OutputStream file= new BufferedOutputStream(new FileOutputStream(fileName));
@@ -204,11 +205,13 @@ class EMImage {
 		}catch(IOException ex){
 			return false; //very little reason the exception should ever be thrown
 		}
+    autoSave();
 		return true;
 	}
 	
 
 	public boolean loadOverlay(File fileName){//load JEMO file to overlay, replaces overlay
+
 		try{
 			InputStream file = new BufferedInputStream(new FileInputStream(fileName));
 			byte[] byte4=new byte[4];
@@ -263,6 +266,8 @@ class EMImage {
   			println("exception");
   			return false; 
   		}
+      project.lastOverlay=fileName.getAbsolutePath();
+      autoSave();
   		return true;
    
 	}  

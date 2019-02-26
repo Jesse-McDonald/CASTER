@@ -41,7 +41,8 @@ class ProgramSettings{
    raw.setInt("undoDepth",undoDepth); 
    raw.setBoolean("autoOpen",autoOpen);
    raw.setString("lastProject",lastProject);
-   saveJSONObject(raw,"settings.json");
+   println(raw.getString("lastProject"));
+   saveJSONObject(raw,"data/settings.json");//apparently data/ is only infered on load -_-
    return this;
  }
 }

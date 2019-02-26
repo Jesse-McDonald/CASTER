@@ -7,8 +7,8 @@ this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-//version: INDEV-19w08a
-String VERSION="INDEV-19w08a";
+//version: INDEV-19w09a
+String VERSION="INDEV-19w09a";
 
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
@@ -68,13 +68,20 @@ void load(String path){
        //open project file 
        programSettings.lastProject=path;
        programSettings.save();
+       
+       //save it for auto load
+       //auto load progress if possible
        File dir=new File(img.project.stackPath);
        if(dir.exists()){
          load(img.project.stackPath+"/"+img.project.stackTopName);
        }
-       //save it for auto load
+       println(img.project.lastOverlay);
+       File overlay=new File(img.project.lastOverlay);
+       if(overlay.exists()){
+          load(img.project.lastOverlay);
+       }
     }else if(ext.equals(".jemo")){
-
+      
       //open overlay file
     }
 }
@@ -103,6 +110,12 @@ void setup(){//setup the window
 	surface.setResizable(true);//allow the window to be resized
 	if(programSettings.autoOpen){
     
+    if(!programSettings.lastProject.equals("")){
+      File temp=new File(programSettings.lastProject);
+      if(temp.exists()){
+        load(programSettings.lastProject);
+      }
+    }
   }//selectInput("Select an image in the Stack","load");//trigger stack load
   //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
 	//ui=buildUi(this);
