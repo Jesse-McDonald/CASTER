@@ -68,6 +68,10 @@ void load(String path){
        //open project file 
        programSettings.lastProject=path;
        programSettings.save();
+       File dir=new File(img.project.stackPath);
+       if(dir.exists()){
+         load(img.project.stackPath+"/"+img.project.stackTopName);
+       }
        //save it for auto load
     }else if(ext.equals(".jemo")){
 

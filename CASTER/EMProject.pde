@@ -20,8 +20,10 @@ class EMProject{
     uuid=createUUID();
     stackPath="";
     stackTopName="";
+    meta=new ArrayList<EMMeta>();
   }
   EMProject(String path){
+    this();
     importJson(loadJSONObject(path)); 
   }
   EMProject autoSave(){
@@ -77,6 +79,7 @@ class EMProject{
     return ret;
   }
   EMProject importJson(JSONObject in){
+    int c=0;
     numFiles=in.getInt("numFiles",numFiles);
     stackPath=in.getString("stackPath");
     stackTopName=in.getString("topFileName");
@@ -90,9 +93,11 @@ class EMProject{
     }
     importUUID(in.getString("UUID"));
     JSONArray mData=in.getJSONArray("Meta");
+    
     for(int i=0;i<mData.size();i++){
       EMMeta Meta=new EMMeta();
-      meta.add(Meta.importJSON(mData.getJSONObject(i)));
+      Meta.importJSON(mData.getJSONObject(i));
+      meta.add(Meta);
     }
     return this;
   }
