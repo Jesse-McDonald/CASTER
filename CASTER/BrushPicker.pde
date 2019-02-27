@@ -1,9 +1,38 @@
 class BrushPicker extends Brush{//yah, not a real brush again, but it fits the slot so why not
+    PImage mask;
+    PImage map;
+    color maskColor;
     public BrushPicker(color col,EMImage image,int s){
       super(col,image,s);
-      shape=loadImage("bucket.png");//TODO: change icon
+      shape=loadImage("ui/picker.png");
       shape.resize(128,128);
+      mask=loadImage("ui/pickerMap.png");
+      mask.resize(128,128);
+      map=createImage(mask.width,mask.height,ARGB);
+      maskColor=0;
     }
+    public BrushPicker draw(float x, float y){
+     Pixel pixel= brushPosition();
+     image(shape,x,y-shape.height);
+    //image(map,x,y-mask.height);
+    
+    //updateMask(img.overlay.get(pixel.x,pixel.y,img.layer));
+    return this;
+  }
+  BrushPicker updateMask(color c){
+    if(maskColor !=c){
+       maskColor=c;
+       map.loadPixels();
+       mask.loadPixels();
+       for(int i=0;i<map.pixels.length;i++){
+         if(mask.pixels[i]==tColor(255,255,255)){
+           map.pixels[i]=c;
+         }
+       }
+       map.updatePixels();
+    }
+    return this;
+  }
   public BrushPicker paint(EMImage img){
     this.img=img;
     float zoom=this.img.getZoom();

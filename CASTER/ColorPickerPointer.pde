@@ -4,8 +4,8 @@ class ColorPickerPointer{
   PImage mask;
   color maskColor; 
   ColorPickerPointer(){
-      picker=loadImage("picker.png");
-      mask=loadImage("pickerMap.png");
+      picker=loadImage("ui/picker.png");
+      mask=loadImage("ui/pickerMap.png");
       map=createImage(mask.width,mask.height,ARGB);
   }
   ColorPickerPointer draw(float x, float y){

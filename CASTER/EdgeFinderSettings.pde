@@ -127,14 +127,14 @@ public class EdgeFinderSettings extends PApplet
       ui.add(build);
     }
     {
-      PImage mask=loadImage("buttonColorMap.png");//... ok processing... I have had enough of you....., what the frick do you call this!
-      
+      PImage mask=loadImage("ui/buttonColorMap.png");//... ok processing... I have had enough of you....., what the frick do you call this!
+      //why would need to load all images from the main thread????
       Ui_RadioButton buildRadio=new Ui_RadioButton(1);//prep radio button for pickers
       buildRadio.id="pickers";
       {//add buttons to radio button
-          Ui_Button build=new Ui_Button(7.25,0.1,.33,"colorPicker.png");
-          build.setPressedImg("colorPickerActive.png");
-          build.setHighlightedImg("highlight.png");
+          Ui_Button build=new Ui_Button(7.25,0.1,.33,"ui/colorPicker.png");
+          build.setPressedImg("ui/colorPickerActive.png");
+          build.setHighlightedImg("ui/highlight.png");
           //build.c=0;
           build.background=mask;
           build.onActivate=new PickerLambda(1);
@@ -142,9 +142,9 @@ public class EdgeFinderSettings extends PApplet
           buildRadio.add(build);
       }//lightness color picker
       {//add buttons to radio button
-          Ui_Button build=new Ui_Button(7.25,0.5,.33,"colorPicker.png");
-          build.setPressedImg("colorPickerActive.png");
-          build.setHighlightedImg("highlight.png");
+          Ui_Button build=new Ui_Button(7.25,0.5,.33,"ui/colorPicker.png");
+          build.setPressedImg("ui/colorPickerActive.png");
+          build.setHighlightedImg("ui/highlight.png");
           //build.c=0;
           build.background=mask;
           build.onActivate=new PickerLambda(2);

@@ -3,7 +3,7 @@ class BrushFill extends Brush{
   color target;
     public BrushFill(color col,EMImage image,int s){
       super(col,image,s);
-      shape=loadImage("bucket.png");//load up the bucket encase of flood fill
+      shape=loadImage("ui/bucket.png");//load up the bucket encase of flood fill
       shape.resize(128,128);
     }
   ArrayList<Pixel> floodFillBackup=new ArrayList<Pixel>();//used to store pixels for processes taking more than 1 frame

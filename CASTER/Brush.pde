@@ -9,7 +9,7 @@ float getZoom(), Pixel getPixel(int layer, int x, int y),color get(int layer, in
 void set(int layer,int x,int y,color), get(int layer,int x,int y) from EMOverlay
 
 Brush depends on color, PImage,       color g.strokeColor, float g.strokeWeight, color g.fillColorvoid, line(int x, int y, int x2, int y2), void ellipse(int x, int y, int width, int height), void PImage.resize(int w,int h), color PImage.get(int x, int y), void PImage.set(int x,int y, color), PImage createImage(int w, int h, int colorMode),PImage loadImage(String path), image(PImage this.img, int xPos, int yPos, int xScale, int yScale), image(PImage this.img, int xPos, int yPos), color(int red, int green, int blue, int alpha) from processing 
-also depends on "bucket.png" in program dir
+also depends on "ui/bucket.png" in program dir
 */
 //TODO: remove dependance on golbal this.img
 class Brush{

@@ -2,7 +2,7 @@ class BrushBlackHole extends Brush{
     int undoFrames=0;
       public BrushBlackHole(color col,EMImage image,int s){
         super(col,image,s);
-        shape=loadImage("blackHoleIcon.png");//load up the bucket incase of flood fill
+        shape=loadImage("ui/blackHoleIcon.png");//load up the bucket incase of flood fill
         shape.resize(128,128);
     }
   ArrayList<Pixel> floodFillBackup=new ArrayList<Pixel>();//used to store pixels for processes taking more than 1 frame

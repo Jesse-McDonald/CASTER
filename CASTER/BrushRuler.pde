@@ -7,7 +7,7 @@ class BrushRuler extends Brush{
   int clickToggle;
   public BrushRuler(color col,EMImage image,int s){
       super(col,image,s);
-      shape=loadImage("ruler.png");//load up the bucket encase of flood fill
+      shape=loadImage("ui/ruler.png");//load up the bucket encase of flood fill
       shape.resize(128,128);
       
   }
