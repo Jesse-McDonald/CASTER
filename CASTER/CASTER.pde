@@ -1,6 +1,6 @@
 import codeanticode.tablet.*;//if there is an error on this line go to sketch->import Library...->add library then do a search for Tablet
-import java.awt.Toolkit;
 //you want the library called "Tablet" by Andres Colubri
+import java.awt.Toolkit;
 
 /** base program to run CASTER
 this depends on all implimented functions of all implimented classes in some way
@@ -81,7 +81,7 @@ void load(String path){
           load(img.project.lastOverlay);
        }
     }else if(ext.equals(".jemo")){
-      
+      img.loadOverlay(path);
       //open overlay file
     }
 }

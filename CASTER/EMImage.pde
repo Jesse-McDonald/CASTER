@@ -182,14 +182,16 @@ class EMImage {
     return ret;
   }
 	public boolean saveOverlay(File fileName){//saves current layout to JEMO format
-  String path=fileName.getAbsolutePath();
-      
-  String ext=path.substring(path.lastIndexOf('.') ,path.length()).toLowerCase();
-  if(!ext.equals(".jemo")){
-      path+=".jemo";
+    return saveOverlay(fileName.getAbsolutePath());
   }
-  project.lastOverlay=path;
-  fileName=new File(path);
+  public boolean saveOverlay(String path){
+    File fileName;
+    String ext=path.substring(path.lastIndexOf('.') ,path.length()).toLowerCase();
+    if(!ext.equals(".jemo")){
+        path+=".jemo";
+    }
+    project.lastOverlay=path;
+    fileName=new File(path);
     try{
 			OutputStream file= new BufferedOutputStream(new FileOutputStream(fileName));
 			file.write('J'); //setup header
@@ -209,7 +211,9 @@ class EMImage {
 		return true;
 	}
 	
-
+  public boolean loadOverlay(String filename){
+   return loadOverlay(new File(filename)); 
+  }
 	public boolean loadOverlay(File fileName){//load JEMO file to overlay, replaces overlay
 
 		try{
