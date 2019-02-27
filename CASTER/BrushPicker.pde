@@ -11,12 +11,13 @@ class BrushPicker extends Brush{//yah, not a real brush again, but it fits the s
       map=createImage(mask.width,mask.height,ARGB);
       maskColor=0;
     }
-    public BrushPicker draw(float x, float y){
-     Pixel pixel= brushPosition();
+    public BrushPicker draw(){
+      int x=mouseX, y=mouseY;
+     Pixel pixel= this.img.getPixel(x,y);
      image(shape,x,y-shape.height);
-    //image(map,x,y-mask.height);
+    image(map,x,y-mask.height);
     
-    //updateMask(img.overlay.get(pixel.x,pixel.y,img.layer));
+    updateMask(img.overlay.get(img.layer,pixel.x,pixel.y));
     return this;
   }
   BrushPicker updateMask(color c){

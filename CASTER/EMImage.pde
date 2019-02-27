@@ -40,6 +40,7 @@ class EMImage {
   EMImage changeStack(EMStack stack){
     img=stack;
     meta=img.meta;
+    uuid=project.uuid;
     overlay=img.overlay;
     overlay.uuid=uuid;
     return this;
@@ -169,7 +170,7 @@ class EMImage {
     boolean ret=false;
     project.height=img.height;
     project.width=img.width;
-    project.uuid=uuid;
+    uuid=project.uuid;
     project.meta=meta;
     if(img.img.size()>0){
       project.stackTopHash=this.img.img.get(0).hashCode();
@@ -248,8 +249,9 @@ class EMImage {
         for(int i=0;i<16;i++){
            if(uuid[i]!=byte16[i]){
              //warn()
+             //println(project.uuid[i]+" "+byte16[i]);
              println("Warning, this file was saved from a different project");
-             break;
+            break;
            }
         }
         

@@ -75,7 +75,6 @@ void load(String path){
        if(dir.exists()){
          load(img.project.stackPath+"/"+img.project.stackTopName);
        }
-       println(img.project.lastOverlay);
        File overlay=new File(img.project.lastOverlay);
        if(overlay.exists()){
           load(img.project.lastOverlay);
