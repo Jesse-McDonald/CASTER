@@ -187,10 +187,15 @@ class EMImage {
   }
   public boolean saveOverlay(String path){
     File fileName;
-    String ext=path.substring(path.lastIndexOf('.') ,path.length()).toLowerCase();
+    int dot=path.lastIndexOf('.');
+    String ext="";
+    if(dot>=0){
+      ext=path.substring(dot ,path.length()).toLowerCase();
+    }
     if(!ext.equals(".jemo")){
         path+=".jemo";
     }
+    
     project.lastOverlay=path;
     fileName=new File(path);
     try{

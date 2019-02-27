@@ -148,7 +148,11 @@ public class Save extends Lambda{//allows for overlay save button
     if(f!=null){
       String path=f.getAbsolutePath();
       
-      String ext=path.substring(path.lastIndexOf('.') ,path.length()).toLowerCase();
+      String ext=""; 
+      int dot=path.lastIndexOf('.');
+      if(dot>=0){
+        ext=path.substring(dot,path.length()).toLowerCase();
+      }
       if(!ext.equals(".caster")){
         path+=".caster";
       }

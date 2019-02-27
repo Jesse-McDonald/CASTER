@@ -59,7 +59,11 @@ void load(File selection){// this is the handler for the load event
 	}
 }
 void load(String path){
-    String ext=path.substring(path.lastIndexOf('.') ,path.length()).toLowerCase();
+    int dot=path.lastIndexOf('.');
+    String ext="";
+    if(dot>=0){
+      ext=path.substring(dot ,path.length()).toLowerCase();
+    }
     if(ext.equals(".png")){
       img.changeStack(new EMStack(path));
       img.img.launch();//start thread stack 
