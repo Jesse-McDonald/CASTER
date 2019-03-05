@@ -11,9 +11,12 @@ class SideBar extends PApplet{
     surface.setTitle("Settings");
     ui=buildUi(this);
     surface.setAlwaysOnTop(true);
+    surface.setLocation(0,0);
   }
   int stablizeTimer=0;
+  
   void draw(){
+    
     reqWidth=ui.calcWidth();
     reqHeight=ui.calcHeight();
     if(width!=reqWidth||height!=reqHeight){

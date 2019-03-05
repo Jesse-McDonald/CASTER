@@ -7,8 +7,8 @@ this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-//version: INDEV-19w09a
-String VERSION="INDEV-19w09a";
+//version: INDEV-19w10a
+String VERSION="INDEV-19w10a";
 
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);

@@ -129,11 +129,11 @@ class EraserBrush extends Lambda{//allows for erase mode button
 
 public class Save extends Lambda{//allows for overlay save button
         public void run(){
+          
+          selectOutput("Select file to save overlay","handler",null,this);
           if(img.project.path.equals("")){
              selectOutput("Select file to save Project","handler2",null,this);
           }
-          selectOutput("Select file to save overlay","handler",null,this);
-        
         }
   
   public void handler(File f){//this gets called by selectOutput when the output is selected
