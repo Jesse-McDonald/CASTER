@@ -551,6 +551,6 @@ public class Tablet implements PenListener {
   }
   
   private void welcome() {
-    System.out.println("Tablet 2.0-alpha3 by Andres Colubri http://andrescolubri.net/");
+    //System.out.println("Tablet 2.0-alpha3 by Andres Colubri http://andrescolubri.net/");//we dont care and these keep showing up like errors, so shut it
   }
 }
