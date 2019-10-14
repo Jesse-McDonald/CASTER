@@ -63,9 +63,10 @@ class BrushFill extends Brush{
     }else if(undoFrames>0){
       img.snap(); 
       undoFrames=0;
+
     }
     int ittr=0;
-    int startNum=pixels.size();
+    int startNum=round(pixels.size()*size/5.);
     while(!pixels.isEmpty()&ittr<startNum){//flood fill ends when there are no non c colored pixels to spread to
       Pixel p=pixels.get(0);
       pixels.remove(0);
