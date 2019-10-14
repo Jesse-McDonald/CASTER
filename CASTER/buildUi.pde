@@ -286,7 +286,7 @@ Ui buildUi(PApplet dm){
       ui.add(build);
     }
   }
-  {//testing slider,
+  {//size slider,
     PImage tImg=new PImage(100,40,ARGB);
     tImg.loadPixels();
     for(int i=0;i<tImg.pixels.length;i++){
@@ -298,7 +298,7 @@ Ui buildUi(PApplet dm){
     build.minV=0;
     build.maxV=100;
     build.boundValue=sizeSlider;
-    ui.add(build);//we are only testing the slider, we dont want it actually on the ui yet
+    ui.add(build);
   }
   
   ui.setDM(dm);

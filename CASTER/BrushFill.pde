@@ -60,6 +60,9 @@ class BrushFill extends Brush{
          img.snap(); 
          undoFrames=0;
        }
+    }else if(undoFrames>0){
+      img.snap(); 
+      undoFrames=0;
     }
     int ittr=0;
     int startNum=pixels.size();
@@ -88,8 +91,11 @@ class BrushFill extends Brush{
     return this;
   }
        public Brush eStop(){//clear the list in an emergency
+          if(floodFillBackup.size()>0){
+            img.snap();//commit changes to undo record
+          }
           floodFillBackup=new ArrayList<Pixel>();
-          img.snap();//commit changes to undo record
+          
           return this; 
         }
 }
