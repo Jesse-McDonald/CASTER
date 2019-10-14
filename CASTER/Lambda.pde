@@ -6,7 +6,7 @@ collectively all implemented lambda functions depend on access to global EMImage
 these also depend on void selectInput(String path, String function, Object this) and void selectOutput(String path, String function,Object this) from processing
 */
 
-
+import static javax.swing.JOptionPane.*;
 class Lambda{
   Lambda(){}//all lambda objects will have a default constructor and run()
   public void run(){}
@@ -219,12 +219,14 @@ public class Create3D extends Lambda{
    view3D=new Visulization3D();
   }
   void run(){
-    view3D.cloud=img.overlay;
-    if(!window){
-      PApplet.runSketch(args,view3D);
-      window=true;
-    }else{
-      view3D.prep();
+    if(YES_OPTION==showConfirmDialog (null, "WARNING! 3D view is a slow process, Are you sure you want to continue? (Saving first is recomended)","Warning",YES_NO_OPTION)){
+      view3D.cloud=img.overlay;
+      if(!window){
+        PApplet.runSketch(args,view3D);
+        window=true;
+      }else{
+        view3D.prep();
+      }
     }
   }
   
