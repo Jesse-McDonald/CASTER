@@ -1,7 +1,7 @@
 import codeanticode.tablet.*;//if there is an error on this line go to sketch->import Library...->add library then do a search for Tablet
 //you want the library called "Tablet" by Andres Colubri
 import java.awt.Toolkit;
-
+import javafx.stage.Screen ;
 /** base program to run CASTER
 this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
@@ -39,6 +39,7 @@ int snapFrames=100;//number of frames before auto saving a snap, in theory at 60
  //PrintWriter output;
 //finds the largest number and the smallest number given to it, then returns the number between the other number
 ProgramSettings programSettings;
+//Ui_Slider stackPos;//I was going to put this inside EMStack, but I really, REALLY want to keep EMStack clean of my hacky UI 
 float range(float a, float b, float c){
 	float minV=min(a,b,c);
 	float maxV=max(a,b,c);
@@ -68,6 +69,7 @@ void load(String path){
       img.changeStack(new EMStack(path));
       img.img.launch();//start thread stack 
     }else if(ext.equals(".caster")){
+
       img.project=new EMProject(path);
        //open project file 
        programSettings.lastProject=path;
@@ -79,16 +81,18 @@ void load(String path){
        if(dir.exists()){
          load(img.project.stackPath+"/"+img.project.stackTopName);
        }
-       File overlay=new File(img.project.lastOverlay);
-       if(overlay.exists()){
-          load(img.project.lastOverlay);
+       if(img.project.lastOverlay!=null){
+         File overlay=new File(img.project.lastOverlay);
+         if(overlay.exists()){
+            load(img.project.lastOverlay);
+         }
        }
     }else if(ext.equals(".jemo")){
       img.loadOverlay(path);
       //open overlay file
     }
 }
-import javafx.stage.Screen ;
+
 //PrintWriter output;
 void autoSave(){//calls various autosaves, does not save overlay (I think) I may change it to write a change cache for recovery later
   if(!img.project.path.equals("")){
@@ -126,7 +130,21 @@ void setup(){//setup the window
   sizeSlider=new Binding<Integer>(9);
   sidebar=new SideBar();
   PApplet.runSketch(args,sidebar);
-  
+  //stackPos=new Ui_Slider();
+  {//pos slider,
+    PImage tImg=new PImage(100,40,ARGB);
+    tImg.loadPixels();
+    for(int i=0;i<tImg.pixels.length;i++){
+      tImg.pixels[i]=tColor(150,150,100); 
+    }
+    tImg.updatePixels();
+    Ui_Slider build=new Ui_Slider(.3,7.7,2, tImg);
+    build.onChange=new SizeSlider();
+    build.minV=0;
+    build.maxV=100;
+    build.boundValue=sizeSlider;
+  }
+  //stackPos.dm=this;
 }
 
 void draw(){
@@ -160,6 +178,9 @@ void draw(){
       rect(width/4,40,(width/2*img.img.progress/(float)img.img.files.length),10);
 
   }
+  //if(img.size()>0){
+  //  stackPos.draw();
+  //}
   //println(img.brush.getSize());
 }
 

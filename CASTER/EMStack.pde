@@ -46,7 +46,7 @@ class EMStack{
    extension=base.getName();//extract img type
    extension=extension.substring(extension.lastIndexOf('.'),extension.length()-1);
    files=folder.listFiles();//get all files in folder
-		 
+		Arrays.sort(files);//this fixes file order on linux
     frameLoadStack();//load 1 layer so the rest of the program does not complain
   
 		ts=new ThreadStack(this);//load the full dir to the stack in sepperate thread
@@ -173,7 +173,11 @@ class EMStack{
 	}
 	
 	color get(int layer, int x,int y){//obfuscates img.img.get(layer).get(x,y) to img.get(x,y)
-		return img.get(layer).get(x-meta.get(layer).offsetX,y-meta.get(layer).offsetY);
+    if(layer<img.size()){
+		  return img.get(layer).get(x-meta.get(layer).offsetX,y-meta.get(layer).offsetY);
+    }else{
+      return 0;//if the layer is out of frame, return a 0 color
+    }
 	}
 
 }

@@ -43,7 +43,10 @@ class BrushBlackHole extends Brush{
        if(undoFrames>100){
          img.snap(); 
          undoFrames=0;
-       }
+       }else if(undoFrames>0){
+        img.snap(); 
+        undoFrames=0;
+      }
     }
     while(!pixels.isEmpty()&ittr<pixels.size()){//flood fill ends when there are no non c colored pixels to spread to
       Pixel p=pixels.get(0);
@@ -68,8 +71,11 @@ class BrushBlackHole extends Brush{
     return this;
   }
        public Brush eStop(){//clear the list in an emergency
+          if(floodFillBackup.size()>0){
+            img.snap();//commit changes to undo record
+          }
           floodFillBackup=new ArrayList<Pixel>();
-          img.snap();//commit changes to undo record
+          
           return this; 
         }
 }

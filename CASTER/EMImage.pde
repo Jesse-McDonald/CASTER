@@ -22,8 +22,8 @@ class EMImage {
   public ArrayList<EMMeta> meta;//meta data for a given layer
   public byte[] uuid;
   public EMProject project;
-
-  
+  boolean saving;//project is currently saving
+  SaveThread saveThread;
 	public EMImage() {
 		project=new EMProject();
     uuid=project.uuid;
@@ -69,15 +69,23 @@ class EMImage {
       //overlay.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the overlay OVER that
       brush.draw();//draw the brush on top
     }
-
+    
+    if(saving){//display saving text
+       screen.textSize(20);
+       screen.fill(100,120,250);
+       screen.text("Saving",10,30);
+    }
     return this;
   }
-	public EMImage draw() {
+	public EMImage draw() {//is this function even used anymore? I think it has been replaced by above
     if(img.size()>0){
       img.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the image stack 
   		overlay.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the overlay OVER that
   		brush.draw();//draw the brush on top
+  
+
     }
+
   	return this.update();//again, why update?
     
 	}
@@ -129,7 +137,9 @@ class EMImage {
 		c=img.get(layer, x, y);
 		return new Pixel(x, y, c);
 	}
-	
+	public int size(){
+    return img.size();
+  }
 	public Pixel get(int x, int y) {//just an obfuscation of img.img.get(...) to img.get(...)
 		color c;
 		c=img.get(layer, x, y);
@@ -186,6 +196,23 @@ class EMImage {
     return saveOverlay(fileName.getAbsolutePath());
   }
   public boolean saveOverlay(String path){
+    if(saving){
+      return false;
+    }else{
+      saveThread=new SaveThread(path);
+    }
+      
+      
+    return true;
+
+	}
+	class SaveThread extends Thread{
+    String path;
+    SaveThread(String inPath){
+      path=inPath; 
+    }
+    public void run(){
+      saving=true;
     File fileName;
     int dot=path.lastIndexOf('.');
     String ext="";
@@ -199,24 +226,24 @@ class EMImage {
     project.lastOverlay=path;
     fileName=new File(path);
     try{
-			OutputStream file= new BufferedOutputStream(new FileOutputStream(fileName));
-			file.write('J'); //setup header
-			file.write('E');
-			file.write('M');
-			file.write('O');
+      OutputStream file= new BufferedOutputStream(new FileOutputStream(fileName));
+      file.write('J'); //setup header
+      file.write('E');
+      file.write('M');
+      file.write('O');
       file.write(1);//write the version number for the file type
       file.write(uuid);
-			file.write(wrapInt(layer));//write current active layer, I threw this in because I think when I load an overlay I would want to snap to the last position
-			overlay.save(file);//turn the saving over to EMOverlay, we expect it to not close the file
-			file.flush();
-			file.close();
-		}catch(IOException ex){
-			return false; //very little reason the exception should ever be thrown
-		}
+      file.write(wrapInt(layer));//write current active layer, I threw this in because I think when I load an overlay I would want to snap to the last position
+      overlay.save(file);//turn the saving over to EMOverlay, we expect it to not close the file
+      file.flush();
+      file.close();
+    }catch(IOException ex){
+      saving=false;
+    }
     autoSave();
-		return true;
-	}
-	
+    saving=false;
+    }
+  }
   public boolean loadOverlay(String filename){
    return loadOverlay(new File(filename)); 
   }
