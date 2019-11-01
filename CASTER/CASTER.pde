@@ -9,7 +9,9 @@ this is heavily reliant much of on processing
 
 //version: INDEV-19w44a
 String VERSION="INDEV-19w44a";
-
+float greyVal(color c){//this averages the RGB values of a given color to determine its grayscale value
+    return ((c >> 16 & 0xFF) + (c >> 8 & 0xF) + (c & 0xFF))/3.0;//extract and average rgb values
+  }
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
 }
@@ -43,10 +45,8 @@ ProgramSettings programSettings;
 float range(float a, float b, float c){
 	float minV=min(a,b,c);
 	float maxV=max(a,b,c);
-	float inV=a+b+c-minV-maxV;//clever way to find the unused variable, this way the 2 that have been used cancel out
-	float ret = max(minV,inV);
-	ret=min(ret,maxV);
-	return ret;
+	return a+b+c-minV-maxV;//clever way to find the unused variable, this way the 2 that have been used cancel out\
+//coincidentaly we want the unused one
 
 }
 void objSavePasser(File pass){

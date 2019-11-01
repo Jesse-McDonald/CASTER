@@ -71,9 +71,7 @@ class RayCast extends Brush{
     return (_1-_2)*(_1-_2)*3>threshold*threshold;
   }
 
-  float greyVal(color c){//this averages the RGB values of a given color to determine its grayscale value
-    return ((c >> 16 & 0xFF) + (c >> 8 & 0xF) + (c & 0xFF))/3.0;//extract and average rgb values
-  }
+  
 
   public RayCast paint(EMImage img){//this causes the brush to lay down "ink" on the overlay and generally should only be called on mouse press or mouse drag
     Pixel pixel= brushPosition();

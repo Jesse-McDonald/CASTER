@@ -145,7 +145,11 @@ class EMImage {
 		c=img.get(layer, x, y);
 		return new Pixel(x, y, c);
 	}
-		
+	public color get(int x, int y, int z) {//get color in 3 space
+    color c;
+    c=img.get(z, x, y);
+    return c;
+  }	
 	public EMImage changeLayer(float direction){//changes the current layer, designed for a mouse wheel, expects a signed input so as to decide which direction to go
 		brush.eStop();
 		if (direction>0){//I could probiably optimize this, but with the number of layer changes being so low.... why bother
