@@ -31,9 +31,13 @@ class JA_BuffleFill extends Brush{
          float r=key*(sqrt(key-pow((img.layer-c.z),2)));
 
          Pixel p=new Pixel(round(c.x/sphere.xs),round(c.y/sphere.ys),0);
+         
          stroke((1-prob)*511,0,(prob-.5)*511,100);
          //if(r*img.zoom>.1){
+         if(key==sphere.bestRad){
+           stroke(255,255,0,100);  
 
+         }
            ellipse(img.screenX(p),img.screenY(p),r*img.zoom*2,r*img.zoom*2);
          //}
        }
@@ -44,10 +48,12 @@ class JA_BuffleFill extends Brush{
     Pixel p=img.getPixel(mouseX,mouseY);
     this.sphere=new JA_ProbSphere(p.x,p.y,img.layer);
     sphere.setScale(1,1,7);
-    sphere.minThresh=64;
-    sphere.maxThresh=32;
+    sphere.minThresh=130;
+    sphere.maxThresh=64;
     while(this.sphere.expand(img)>.5&&sphere.r<size);
-
+    sphere.generateProbShell(sphere.getBestRad());
+    Point v=sphere.vectorizeShell();
+    v.print();
     return this;
   }
 }

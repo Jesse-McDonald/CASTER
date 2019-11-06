@@ -1,5 +1,6 @@
 
 class JA_ProbSphere{
+  float bestRad;
   float x, y, z;//sphere center
   //x and y are in pixels from top left
   //z is layers from layer 0
@@ -10,6 +11,7 @@ class JA_ProbSphere{
   HashMap<Float, Float> probs;//list of radius and corisponding prob
   float minThresh=255;//colors lighter than this are 0% edge
   float maxThresh=0;//colors darker than this are 100% edge
+  ArrayList<Prob_Point> shell;//the shell is centered around 0,0,0, remember to shift to x,y,z before use (or just use as vector)
   JA_ProbSphere(){
     r=0;
     x=0;
@@ -17,6 +19,7 @@ class JA_ProbSphere{
     z=0;
     curProb=1;
     probs=new HashMap<Float, Float>();
+    shell=new ArrayList<Prob_Point>();
    // probs.put(0.,1.);
   }
   JA_ProbSphere(float ix, float iy, float iz){
@@ -51,14 +54,58 @@ class JA_ProbSphere{
       probsTotal+=probs.get(key);
     }
   }
-  
+  float getBestRad(){
+    float best=0;
+    float bestRat=0;
+    for(Float key: probs.keySet()){
+      float rat=(key)*(probs.get(key));
+      //println(key,rat);
+      if(rat>bestRat){
+       best=key;
+       bestRat=rat;
+      }
+    }
+    bestRad=best;
+    return best;
+  }
+  void generateProbShell(float r){
+    shell=new ArrayList<Prob_Point>(round(4*PI*r*r));//new shell, initilize with roughly the right number of points
+    JA_VirtualGrid virtual =new JA_VirtualGrid(img);
+    virtual.setCenter(round(x),round(y),round(z));
+     for(int k=floor(-r);k<=r;k++){
+      for(int i=floor(-r);i<=r;i++){
+        for(int j=floor(-r);j<=r;j++){
+          float rad=i*i+j*j+k*k;//check what the sphere radius would be assuming that i,j,k are on a sphere
+          if(rad>(r-.5)*(r-.5)&&rad<(r+.5)*(r+.5)){//check that our point is on the actual sphere edge
+
+
+              float c=virtual.get(i,j,k);
+              
+              float prob=range(0,(c-maxThresh)/(float)(minThresh-maxThresh),1);//set the prob of this pixel
+              shell.add(new Prob_Point(i,j,k,prob));
+              
+          }
+        }
+      }
+    }
+  }
+  Point vectorizeShell(){
+    float x=0,y=0,z=0;
+    for(Prob_Point p : shell){
+     x+=p.x*p.prob; 
+     y+=p.y*p.prob; 
+     z+=p.z*p.prob; 
+    }
+    
+    return new Point(x,y,z);
+  }
   void scanSphere(EMImage img){//sets prob by scanning the grid for sphere pixels
     //xs ys and zs accound for needing a squashed sphere for layers being off
     float probTotal=0;//this is a bit odd to do, but we will "average" this later
     int total=0;
     JA_VirtualGrid virtual =new JA_VirtualGrid(img);
     virtual.setCenter(round(x),round(y),round(z));
-   /* for(int k=floor(-r/zs);k<=r/zs;k++){
+    /*for(int k=floor(-r/zs);k<=r/zs;k++){
       for(int i=floor(-r/xs);i<=r/xs;i++){
         for(int j=floor(-r/ys);j<=r/ys;j++){
         
@@ -89,6 +136,8 @@ class JA_ProbSphere{
               probTotal+=range(0,(c-maxThresh)/(float)(minThresh-maxThresh),1);//this is the base line prob that the pixel being considered is
               //infact open area
               total++;
+              //println(r,c,range(0,(c-maxThresh)/(float)(minThresh-maxThresh),1),probTotal/total);
+              
               //println(probTotal,probTotal/total);
           }
         }
@@ -129,5 +178,19 @@ class Point{
    float x,y,z;
    Point(float ix, float iy, float iz){
     x=ix;y=iy;z=iz; 
+   }
+   void print(){
+     println('(',x,',',y,',',z,')');
+   }
+}
+class Prob_Point extends Point{
+   Prob_Point(){}
+   float prob;
+   Prob_Point(float ix, float iy, float iz){
+    super(ix,iy,iz);
+   }
+   Prob_Point(float ix, float iy, float iz, float ip){
+    this(ix,iy,iz);
+    prob=ip;
    }
 }
