@@ -45,7 +45,7 @@ class JA_ProbSphere{
     scanSphere(img);
     //curProb=probsTotal/(probs.size()+1);
     probs.put(r,curProb);
-    println(r,probsTotal,probsTotal/probs.size(),curProb);
+    //println(r,probsTotal,probsTotal/probs.size(),curProb);
     return curProb;
   }
   void retotal(){
@@ -68,7 +68,7 @@ class JA_ProbSphere{
     bestRad=best;
     return best;
   }
-  void generateProbShell(float r){
+  void generateProbShell(float r,ArrayList<JA_ProbSphere> otherAreas){
     shell=new ArrayList<Prob_Point>(round(4*PI*r*r));//new shell, initilize with roughly the right number of points
     JA_VirtualGrid virtual =new JA_VirtualGrid(img);
     virtual.setCenter(round(x),round(y),round(z));
@@ -77,12 +77,30 @@ class JA_ProbSphere{
         for(int j=floor(-r);j<=r;j++){
           float rad=i*i+j*j+k*k;//check what the sphere radius would be assuming that i,j,k are on a sphere
           if(rad>(r-.5)*(r-.5)&&rad<(r+.5)*(r+.5)){//check that our point is on the actual sphere edge
+            boolean skip=false;
+             for(int z=0;z<otherAreas.size();z++){//check all other spheres to not overlap direction, simply give any pixels that way 0 prob
+                 if(otherAreas.get(z).bestRad>dist(otherAreas.get(z).x,otherAreas.get(z).y,otherAreas.get(z).z,x+i,y+j,z+k)){
+                    skip=true;
+                 }
+              }
+              float probT=0;
+              int count=0;
+              if(!skip){
+                Point vec=new Point(i,j,k);
+                vec.normalize();
 
-
-              float c=virtual.get(i,j,k);
-              
-              float prob=range(0,(c-maxThresh)/(float)(minThresh-maxThresh),1);//set the prob of this pixel
-              shell.add(new Prob_Point(i,j,k,prob));
+                for(int d=0;d<=rad;d++){
+                  float c=virtual.get(round(i+vec.x*d),round(j+vec.x*d),round(k+vec.x*d));
+                  //println(c);
+                  probT+=range(0,(c-maxThresh)/(float)(minThresh-maxThresh),1);//set the prob of this pixel
+                  count++;
+                }
+                //println(probT/count);
+              }else{
+                probT=0;//0 probibility
+                count=1;//not division by 0
+              }
+              shell.add(new Prob_Point(i,j,k,probT/count));
               
           }
         }
@@ -97,7 +115,7 @@ class JA_ProbSphere{
      z+=p.z*p.prob; 
     }
     
-    return new Point(x,y,z);
+    return (new Point(x,y,z)).normalize();
   }
   void scanSphere(EMImage img){//sets prob by scanning the grid for sphere pixels
     //xs ys and zs accound for needing a squashed sphere for layers being off
@@ -128,8 +146,8 @@ class JA_ProbSphere{
       for(int i=floor(-r);i<=r;i++){
         for(int j=floor(-r);j<=r;j++){
           float rad=i*i+j*j+k*k;//check what the sphere radius would be assuming that i,j,k are on a sphere
+         
           if(rad>(r-.5)*(r-.5)&&rad<(r+.5)*(r+.5)){//check that our point is on the actual sphere edge
-
 
               float c=virtual.get(i,j,k);
               
@@ -143,7 +161,11 @@ class JA_ProbSphere{
         }
       }
     }
-    curProb-=1-(probTotal/total);
+    //println(probTotal/total,1-1/r);
+    if(probTotal/total<1-(1/r)){
+      curProb-=1-(probTotal/total);
+    }
+    
     //probsTotal+=probTotal/total;
   }
 }
@@ -157,30 +179,45 @@ class JA_ProbSpherePinned extends JA_ProbSphere{//regular sphere except the cent
      py=iy;
      pz=iz;
   }
+  void setDir(Point p){//set the line direction
+    lx=p.x;ly=p.y;lz=p.z; 
+  }
   void setDir(float ix,float iy,float iz){//set the line direction
     lx=ix;ly=iy;lz=iz; 
   }
   float expand(EMImage img, float ir){//expand r by ir and shift center
-    r=r+ir;//make sphere larger
-    
+    getCenter(r+ir);
+    return super.expand(img,ir);
+  }
+  
+  
+  Point getCenter(float r){
     x=px+lx*r;
     y=py+ly*r;//find a new center point
     z=pz+lz*r;
-    
-    scanSphere(img);
-    curProb=probsTotal/probs.size();
-    probs.put(r,curProb);
-    return curProb;
+    return new Point(x,y,z);  
+  }
+  
+  void generateProbShell(float r,ArrayList<JA_ProbSphere> otherAreas){
+    getCenter(r);
+    super.generateProbShell(r,otherAreas);
   }
 }
 class Point{
    Point(){}
-   float x,y,z;
+   float x,y,z,r=0;//r is a cheep hack to allow for checking how long a normalized vector use to be
    Point(float ix, float iy, float iz){
     x=ix;y=iy;z=iz; 
    }
    void print(){
      println('(',x,',',y,',',z,')');
+   }
+   Point normalize(){
+      r=sqrt(x*x+y*y+z*z);
+      x=x/r;
+      y=y/r;
+      z=z/r;
+      return this;
    }
 }
 class Prob_Point extends Point{

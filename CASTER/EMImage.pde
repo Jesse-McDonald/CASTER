@@ -319,6 +319,18 @@ class EMImage {
   int screenY(Pixel p){
     return round((p.y)*zoom+offsetY+zoom/2.);
   }
+   int screenX(int x){
+    return round((x)*zoom+offsetX+zoom/2.);
+  }
+  int screenY(int y){
+    return round(y*zoom+offsetY+zoom/2.);
+  }
+  float screenX(float x){
+    return (x)*zoom+offsetX+zoom/2.;
+  }
+  float screenY(float y){
+    return y*zoom+offsetY+zoom/2.;
+  }
   float greyVal(color c){//this averages the RGB values of a given color to determine its grayscale value
     return ((c >> 16 & 0xFF) + (c >> 8 & 0xFF) + (c & 0xFF))/3.0;//extract and average rgb values
   }
