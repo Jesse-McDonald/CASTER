@@ -100,6 +100,10 @@ class JA_ProbSphere{
                 probT=0;//0 probibility
                 count=1;//not division by 0
               }
+              if (count<1){
+                probT=0;//0 probibility
+                count=1;//not division by 0
+              }
               shell.add(new Prob_Point(i,j,k,probT/count));
               
           }
@@ -172,7 +176,15 @@ class JA_ProbSphere{
 class JA_ProbSpherePinned extends JA_ProbSphere{//regular sphere except the center moves on a line with the pinned edge
    float px,py,pz;//coords of the pined point, same system as x, y, z
    float lx, ly, lz;//this is the vector the line is going
-   JA_ProbSpherePinned(){super();}
+   JA_ProbSpherePinned(){
+     super();
+     px=0;
+     py=0;
+     pz=0;
+     lx=0;
+     ly=0;
+     lz=0;
+   }
    JA_ProbSpherePinned(float ix, float iy, float iz){
      this();
      px=ix;
@@ -195,6 +207,7 @@ class JA_ProbSpherePinned extends JA_ProbSphere{//regular sphere except the cent
     x=px+lx*r;
     y=py+ly*r;//find a new center point
     z=pz+lz*r;
+    
     return new Point(x,y,z);  
   }
   
