@@ -50,7 +50,7 @@ JA_ProbSphereVisulizer view;
            c=sphere.getCenter(key);
             
            if(key-pow((img.layer-c.z),2)>0){
-             float r=key*(sqrt(key-pow((img.layer-c.z),2)));
+             float r=key-abs(img.layer-c.z);
     
              p=new Pixel(round(c.x/sphere.xs),round(c.y/sphere.ys),0);
              
@@ -73,7 +73,7 @@ JA_ProbSphereVisulizer view;
            float r=sphere.bestRad-abs(img.layer-c.z);
            p=new Pixel(round(c.x/sphere.xs),round(c.y/sphere.ys),0);
            
-           ellipse(img.screenX(p),img.screenY(p),r*img.zoom,r*img.zoom);
+           ellipse(img.screenX(p),img.screenY(p),r*img.zoom*2,r*img.zoom*2);
            line(img.screenX(p.x+v.x*100),img.screenY(p.y+v.y*100),img.screenX(p.x),img.screenY(p.y));
            
         }
@@ -90,14 +90,15 @@ JA_ProbSphereVisulizer view;
     for(int i=0;i<10;i++){
       Point v;
       sphere.setScale(1,1,7);
-      sphere.minThresh=128;
-      sphere.maxThresh=64;
+      sphere.minThresh=100;
+      sphere.maxThresh=40;
       while(this.sphere.expand(img)>.5&&sphere.r<size);
   
       sphere.generateProbShell(sphere.getBestRad(),allSpheres);
       
       v=sphere.vectorizeShell();
       p=sphere.getCenter(sphere.bestRad);
+      if(sphere.bestRad<5) break;
       if(Double.isNaN(p.x)||Double.isNaN(p.y)||Double.isNaN(p.z)) break;
       allSpheres.add(sphere);
       
