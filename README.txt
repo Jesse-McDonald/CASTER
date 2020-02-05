@@ -12,3 +12,6 @@ RAE CAST ray segmentation semi-automatic segmentation brush
 EdgeDetection brush for semi-automatic and automatic selection of membrain
 Landmark alignment
 3D visualization
+
+NOTE:
+The CASTER_Key.pdf is key to understanding the EdgeFollowing Brush. 
