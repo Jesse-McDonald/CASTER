@@ -77,7 +77,7 @@ class BrushEdgeFollowing extends Brush{
     if(repeats>0)
     {
       double radians = linearRegression(black, size); // Find the angle in radians of the line of best fit (based on what is the outlined object and what is not)
-      for(int i = 0; i < 8; i++)
+      for(int i = 1; i < 9; i++)
       { 
         int section = i; //The program doesn't know to start going in any particular direction, so one is given here
         double degree = Math.toDegrees((double)radians); //Convert radians to degrees
@@ -615,6 +615,10 @@ class BrushEdgeFollowing extends Brush{
     {
       curSect = 3;
     }
+    else 
+    {
+      print("Broke it. Degree: " + degree + "\tPrevSect: " + prevSect + "\n");
+    }
     curSect = SectionChecker(curSect, prevSect);//Then double check the new section
     return curSect;
   }
@@ -633,6 +637,7 @@ class BrushEdgeFollowing extends Brush{
     int section8Options[] = {3,8,4};
     int[] sectionGrabbers[] = {section1Options, section2Options, section3Options, section4Options, section5Options, section6Options, section7Options, section8Options};
     boolean found = false;
+    print("Section is: " + section + "\n");
     for (int i = 0; i < 3; i++)//For each right, middle, and left option for a section
     {
       //DBJ keep getting "ArrayIndexOutOfBoundsException: -1" 
@@ -754,6 +759,7 @@ class BrushEdgeFollowing extends Brush{
         radians = 3 * PI / 2;
       }
     }
+    
     //Otherwise make sure the radians are within one unit circle of rotation
     while (radians > 2 * PI)
     {
@@ -764,8 +770,64 @@ class BrushEdgeFollowing extends Brush{
       radians += (2 * PI);
     }
     //If the previous section was on the left hand side of the unit circle, adjust the angle for accuracy
-    if (prevSection == 6 || prevSection == 2 || prevSection == 7 || prevSection == 3 || prevSection == 8)
+    if (prevSection == 6 || prevSection == 2 || prevSection == 7 || prevSection == 3 || prevSection == 8 || prevSection == 1 || prevSection == 4)
     {
+      if (prevSection == 6 && radians > PI)
+      {
+        //We don't care if prevSection == 6 && radians <= PI because arcTangent won't mess it up. 
+        radians = radians - PI;
+      }
+      else if (prevSection == 2)
+      {
+        if (radians > ((3*PI)/2))
+        {
+          radians = radians - PI;
+        }
+      }
+      else if (prevSection == 7)
+      {
+        if (radians < (PI/2) && radians >= 0)
+        {
+            radians = radians + PI;
+        }
+        else if (radians > ((3 * PI)/2))
+        {
+          radians = radians - PI;
+        }
+      }
+      else if (prevSection == 3)
+      {
+        if (radians <= 0 && radians < (PI/2))
+        {
+          radians = radians + PI;
+        }
+        else if (radians > ((337.5/180)/PI))
+        {
+          radians = radians- PI;
+        }
+      }
+      else if (prevSection == 8)
+      {
+        if (radians < (PI/2) && radians >= 0)
+        {
+          radians = radians + PI;
+        }
+      }
+      else if (prevSection == 1)
+      {
+        if (radians > ((3*PI)/2) && radians < ((292.5/180)*PI))
+        {
+          radians = radians - PI;
+        }
+      }
+      else if (prevSection == 4)
+      {
+        if (radians < (PI/2) && radians > ((67.5/180)*PI))
+        {
+          radians = radians + PI;
+        }
+      }
+      /*
       //DBJ why is it allowing jumps from 6 to 3?
       print("prevSection: " + prevSection + "\tradians: " + radians);
       if (prevSection == 6 && radians < (PI / 6))
@@ -806,7 +868,9 @@ class BrushEdgeFollowing extends Brush{
       {
         radians += 3 * PI / 2;
       }
+      */
     }
+    /*
     //Then make sure the angle is still within one rotation of the unit circle
     while (radians > 2 * PI)
     {
@@ -817,6 +881,7 @@ class BrushEdgeFollowing extends Brush{
       radians -=(2 * PI);
     }
     print("\tnew radians: " + radians + "\n");
+    */
     return radians;
   }
 
