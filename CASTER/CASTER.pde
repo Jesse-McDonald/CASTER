@@ -115,10 +115,14 @@ void setup(){//setup the window
 	if(programSettings.autoOpen){
     
     if(!programSettings.lastProject.equals("")){
+      String oldPath=programSettings.lastProject;
       File temp=new File(programSettings.lastProject);
       if(temp.exists()){
         load(programSettings.lastProject);
+      }else{
+        oldPath="";        
       }
+      programSettings.lastProject=oldPath;
     }
   }//selectInput("Select an image in the Stack","load");//trigger stack load
   //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
