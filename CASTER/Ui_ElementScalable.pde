@@ -12,8 +12,8 @@ class Ui_ElementScalable extends Ui_Element{
   Ui_ElementScalable(){super();}//default constructor only exists so it can be inherited by Ui_MomentaryButton
   //replace this later
   Ui_ElementScalable(float rX,float rY,float rS,PImage img){//use this constructor if you want the button to self scale
-    this(round(rX*PPI),round(rY*PPI),img);
-    scale=(PPI/img.width)*rS;
+    this(round(rX*programSettings.monitorPPI),round(rY*programSettings.monitorPPI),img);
+    scale=(programSettings.monitorPPI/img.width)*rS;
 
   }
 
