@@ -42,10 +42,8 @@ ProgramSettings programSettings;
 float range(float a, float b, float c){
 	float minV=min(a,b,c);
 	float maxV=max(a,b,c);
-	float inV=a+b+c-minV-maxV;//clever way to find the unused variable, this way the 2 that have been used cancel out
-	float ret = max(minV,inV);
-	ret=min(ret,maxV);
-	return ret;
+	return a+b+c-minV-maxV;//clever way to find the unused variable, this way the 2 that have been used cancel out
+	
 
 }
 void objSavePasser(File pass){
@@ -103,8 +101,8 @@ void autoSave(){//calls various autosaves, does not save overlay (I think) I may
 void settings()
 {
   programSettings =new ProgramSettings("settings.json");
-  //PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
-  size(2000,1000);//window size
+  PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
+  size(displayWidth,displayHeight);//window size
   noSmooth();//without this line, the picture will be smoothed as we zoom in, great for zooming pictures and not having them get pixilated.... but we want pixilated
 }
 
