@@ -18,13 +18,11 @@ class EMProject{
   //unique project identifier
   byte[] uuid;
   //some conditions about the project when it was saved
-  ArrayList<EMMeta> meta;
   EMProject(){
     uuid=createUUID();
     stackPath="";
     stackTopName="";
-    meta=new ArrayList<EMMeta>();
-  }
+     }
   EMProject(String path){
     this();
     importJson(loadJSONObject(path)); 
@@ -76,12 +74,7 @@ class EMProject{
     }
     ret.setString("UUID",exportUUID());
 
-    JSONArray mData=new JSONArray();
-    for(int i=0;i<meta.size();i++){
-      mData.setJSONObject(i,meta.get(i).exportJSON()); 
-    }
-    ret.setJSONArray("Meta",mData);
-
+    
     return ret;
   }
   EMProject importJson(JSONObject in){
@@ -101,13 +94,7 @@ class EMProject{
       stackHash=in.getInt("stackHash");
     }
     importUUID(in.getString("UUID"));
-    JSONArray mData=in.getJSONArray("Meta");
-    
-    for(int i=0;i<mData.size();i++){
-      EMMeta Meta=new EMMeta();
-      Meta.importJSON(mData.getJSONObject(i));
-      meta.add(Meta);
-    }
+   
     return this;
   }
   byte[] createUUID(){
