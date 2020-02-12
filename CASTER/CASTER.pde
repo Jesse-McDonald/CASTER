@@ -21,7 +21,9 @@ PImage imgFromFile(String path){//this exists for 1 and only 1 reason.  The idio
   return loadImage(path); 
 }
 
+import codeanticode.tablet.*;
 Binding<Integer> sizeSlider;
+float PPI=93;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point
 Tablet tablet;
 //https://github.com/Jesse-McDonald/CASTER
 EMImage img;//global because so many things need it
@@ -102,6 +104,7 @@ void autoSave(){//calls various autosaves, does not save overlay (I think) I may
 void settings()
 {
   programSettings =new ProgramSettings("settings.json");
+  PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
   size(2000,1000);//window size
   noSmooth();//without this line, the picture will be smoothed as we zoom in, great for zooming pictures and not having them get pixilated.... but we want pixilated
 }
