@@ -41,6 +41,7 @@ class EMImage {
     uuid=project.uuid;
     overlay=img.overlay;
     overlay.uuid=uuid;
+    project.path="";
     return this;
   }
   EMImage undo(){
@@ -261,12 +262,12 @@ class EMImage {
 
 			}
       if(ver<1){
-        println("file version no longer suported");
+        println("file version no longer suported, min supported version:1");
         file.close();
         return false;
       }
       if(ver>1){
-        println("file version not yet suported");
+        println("file version not yet suported, max supported version:1");
         file.close();
         return false;
       }
@@ -299,7 +300,7 @@ class EMImage {
       }
   		catch(IOException ex){
   			println(ex);
-  			println("exception");
+  			println("exception"+ex);
   			return false; 
   		}
       project.lastOverlay=fileName.getAbsolutePath();
