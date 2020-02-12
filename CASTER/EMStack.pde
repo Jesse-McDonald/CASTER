@@ -19,11 +19,9 @@ class EMStack{
   ThreadStack ts;
   PNGThread pthread; //this is a c joke ;)
   EMOverlay overlay;
-  public ArrayList<EMMeta> meta;//meta data for a given layer
-	EMStack(){//new empty EMStack
+  EMStack(){//new empty EMStack
 		img=new ArrayList<PNGImage>();
     overlay=new EMOverlay(0, 0, 0);//create a overlay for the stack
-    meta=new ArrayList<EMMeta>();
     lastStart=new Pixel(0,0,0);
     lastEnd=lastStart;
 	}
@@ -97,8 +95,7 @@ class EMStack{
     
     //println("creating new overlay layer");
     overlay.addLayer();
-    meta.add(new EMMeta());
-    //println("adding image to stack");
+   //println("adding image to stack");
     img.add(image);
     depth=img.size();
     //println("finished add");
@@ -137,7 +134,7 @@ class EMStack{
       }
       if(cached!=null){
           
-          image(cached,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
+          image(cached,p.offsetX, p.offsetY, this.width*p.zoom, this.height*p.zoom);
       }else{
         if(pthread.retv!=null){
          cached=pthread.retv; 
@@ -146,7 +143,7 @@ class EMStack{
           fastCache=img.get(p.layer).fastGet(p0.x,p0.y,pe.x,pe.y);
     
         }
-        image(fastCache,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
+        image(fastCache,p.offsetX, p.offsetY, this.width*p.zoom, this.height*p.zoom);
         //image(temp,p.offsetX+p0.x*p.zoom+p.meta.get(p.layer).offsetX*p.zoom+.5,p.offsetY+p0.y*p.zoom+p.meta.get(p.layer).offsetY*p.zoom+.5,(pe.x-p0.x+1)*p.zoom,(pe.y-p0.y+1)*p.zoom);//this line took a loooooooot of trial an error, trust that it is right
         //never the less, it is off by less than 1 screen pixel).... not sure how to fix it
         lastStart=p0;
@@ -174,7 +171,7 @@ class EMStack{
 	
 	color get(int layer, int x,int y){//obfuscates img.img.get(layer).get(x,y) to img.get(x,y)
     if(layer<img.size()){
-		  return img.get(layer).get(x-meta.get(layer).offsetX,y-meta.get(layer).offsetY);
+		  return img.get(layer).get(x,y);
     }else{
       return 0;//if the layer is out of frame, return a 0 color
     }

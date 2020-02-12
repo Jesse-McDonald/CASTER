@@ -19,8 +19,7 @@ class EMImage {
 	public EMOverlay overlay;//overlay images
 	public int layer;//layer in overlay and img
   public int prevLayer;
-  public ArrayList<EMMeta> meta;//meta data for a given layer
-  public byte[] uuid;
+ public byte[] uuid;
   public EMProject project;
   boolean saving;//project is currently saving
   SaveThread saveThread;
@@ -39,10 +38,10 @@ class EMImage {
   }
   EMImage changeStack(EMStack stack){
     img=stack;
-    meta=img.meta;
     uuid=project.uuid;
     overlay=img.overlay;
     overlay.uuid=uuid;
+    project.path="";
     return this;
   }
   EMImage undo(){
@@ -79,8 +78,8 @@ class EMImage {
   }
 	public EMImage draw() {//is this function even used anymore? I think it has been replaced by above
     if(img.size()>0){
-      img.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the image stack 
-  		overlay.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the overlay OVER that
+      img.draw(layer, offsetX, offsetY, img.width*zoom, img.height*zoom);//draw the image stack 
+  		overlay.draw(layer, offsetX, offsetY, img.width*zoom, img.height*zoom);//draw the overlay OVER that
   		brush.draw();//draw the brush on top
   
 
@@ -181,7 +180,6 @@ class EMImage {
     project.height=img.height;
     project.width=img.width;
     uuid=project.uuid;
-    project.meta=meta;
     if(img.img.size()>0){
       project.stackTopHash=this.img.img.get(0).hashCode();
     }
@@ -200,6 +198,7 @@ class EMImage {
       return false;
     }else{
       saveThread=new SaveThread(path);
+      saveThread.start();
     }
       
       
@@ -263,12 +262,12 @@ class EMImage {
 
 			}
       if(ver<1){
-        println("file version no longer suported");
+        println("file version no longer suported, min supported version:1");
         file.close();
         return false;
       }
       if(ver>1){
-        println("file version not yet suported");
+        println("file version not yet suported, max supported version:1");
         file.close();
         return false;
       }
@@ -301,7 +300,7 @@ class EMImage {
       }
   		catch(IOException ex){
   			println(ex);
-  			println("exception");
+  			println("exception"+ex);
   			return false; 
   		}
       project.lastOverlay=fileName.getAbsolutePath();
@@ -318,6 +317,7 @@ class EMImage {
   float greyVal(color c){//this averages the RGB values of a given color to determine its grayscale value
     return ((c >> 16 & 0xFF) + (c >> 8 & 0xFF) + (c & 0xFF))/3.0;//extract and average rgb values
   }
+  /*land mark alignment no longer supported, use TrackEM
   public EMImage alignLandmarks(int size){return alignLandmarks(size,1);}//because FRIKING JAVA DOES NOT ALLOW DEFAULT ARGUMENTS!!!
   
   public EMImage alignLandmarks(int size, int startLayer){//size is how large of a shift should be considered for a alignment
@@ -352,5 +352,5 @@ class EMImage {
     }
     return this;
   }
-
+*/
 }
