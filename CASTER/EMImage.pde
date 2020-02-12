@@ -200,6 +200,7 @@ class EMImage {
       return false;
     }else{
       saveThread=new SaveThread(path);
+      saveThread.start();
     }
       
       
