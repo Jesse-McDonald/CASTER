@@ -15,8 +15,8 @@ class Ui_VerticalSlider extends Ui_Element{
   public VariableLambda onChange;
   Ui_VerticalSlider(){super();}//I hate this about java, why do I need a default constructor, figure it out from the parrent
   Ui_VerticalSlider(float rX,float rY,float rS,PImage img){//use this constructor if you want the button to self scale
-    this(round(rX*PPI),round(rY*PPI),img);
-    scale=(PPI/img.width)*rS;
+    this(round(rX*programSettings.monitorPPI),round(rY*programSettings.monitorPPI),img);
+    scale=(programSettings.monitorPPI/img.width)*rS;
   }
   Ui_VerticalSlider(int x, int y, PImage img){//use this constructor if you dont want the button to self scale
     dragging=false;

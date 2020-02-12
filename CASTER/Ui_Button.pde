@@ -34,8 +34,8 @@ class Ui_Button extends Ui_Element{
 	}
 */
 Ui_Button(float rX,float rY,float rS,PImage img){//use this constructor if you want the button to self scale
-    this(round(rX*PPI),round(rY*PPI),img);
-    scale=(PPI/img.width)*rS;
+    this(round(rX*programSettings.monitorPPI),round(rY*programSettings.monitorPPI),img);
+    scale=(programSettings.monitorPPI/img.width)*rS;
 }
 	Ui_Button(int x, int y, PImage img){//use this constructor if you dont want the button to self scale
     background=new PImage(1,1,ARGB);

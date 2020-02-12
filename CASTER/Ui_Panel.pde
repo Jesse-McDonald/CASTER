@@ -14,11 +14,11 @@ class Ui_Panel extends Ui_Element{
 		this(x,y,loadImage(imgPath));
 	}
 	Ui_Panel(float rX, float rY, float rS, PImage img){
-      this(round(rX*PPI),round(rY*PPI),img);
-      scale=(PPI/img.width)*rS;
+      this(round(rX*programSettings.monitorPPI),round(rY*programSettings.monitorPPI),img);
+      scale=(programSettings.monitorPPI/img.width)*rS;
 }
 Ui_Panel(float x, float y, float w, float h, color c){
-  this(x,y,1,createImage(round(w*PPI),round(h*PPI),ARGB));
+  this(x,y,1,createImage(round(w*programSettings.monitorPPI),round(h*programSettings.monitorPPI),ARGB));
    for(int i=0;i<tile.width;i++){
       for (int j=0;j<tile.height;j++){
         tile.set(i,j,c); //color in image
