@@ -85,7 +85,7 @@ Ui buildUi(PApplet dm){
     {//this is a huge reason the { should always be on the same line as the thing it is extending, other wise there is the confusion of if this is a function called ui.add or something
     //or just the code block it is
     Ui_RadioButton buildRadio=new Ui_RadioButton(1);//prep radio button for brush buttons
-   semiAuto.add(new Ui_Panel(1.2,1,1.1,2.3,color(240,240,240,200)));//add the panel to the popout  
+   semiAuto.add(new Ui_Panel(1.2,1,1.1,3.4,color(240,240,240,200)));//add the panel to the popout  
     {//add buttons to radio button
       Ui_PaintButton build=new Ui_PaintButton(1.2,1.1,1,"ui/rayCastBrush.png");
       build.setPressedImg("ui/rayCastBrushActive.png");
@@ -107,6 +107,26 @@ Ui buildUi(PApplet dm){
       
       buildRadio.add(build);
     }//Edge follow brush
+    
+    
+    //dbjones2518
+      {//add buttons to radio button? Maybe? I chose a kitty for the picture
+      //Ui_PaintButton build = new Ui_PaintButton(1.2, 3.3, 1, "ui/tail.png");
+      Ui_PaintButton build = new Ui_PaintButton(1.2, 3.3, 1, "ui/tail.png");
+      build.setPressedImg("ui/tailActive.png");
+      build.setHighlightedImg("ui/highlight.png");
+      build.c = 0;
+      build.mask=mask;
+      build.onActivate = new AxonBrush();
+      buildRadio.add(build);
+        
+      }//probably missed something important, trying to make an axon button
+    
+    
+    
+    
+    
+    
     
     semiAuto.add(buildRadio);//add the radio button (and all sub buttons) to the ui
   }//automation
