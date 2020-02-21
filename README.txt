@@ -10,7 +10,6 @@ Brush style Segmentation
 Saving and loading overlays in JEMO format
 RAE CAST ray segmentation semi-automatic segmentation brush
 EdgeDetection brush for semi-automatic and automatic selection of membrain
-Landmark alignment
 3D visualization
 
 NOTE:
