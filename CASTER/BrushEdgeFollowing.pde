@@ -1083,7 +1083,7 @@ class BrushEdgeFollowing extends Brush{
             }else if(second.picker==2){
               second.variationValue.set(round(grayVal(k.c)));
             }
-            ((Ui_RadioButton)second.ui.getId("pickers")).hide();;
+            //((Ui_RadioButton)second.ui.getId("pickers")).hide();;//I hope you dont need this line
             //second.picker=0;
           }
         }

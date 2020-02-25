@@ -16,6 +16,24 @@ class VariableLambda extends Lambda{
   public void run(int variable){}
   
 }
+class OpenPref extends VariableLambda{
+public void run(){
+      println("Open pref file");
+      try{
+      File file=new File(dataPath("settings.json"));
+      if (Desktop.isDesktopSupported()) {
+        Desktop.getDesktop().edit(file);
+} else {
+    // dunno, up to you to handle this
+}}catch(Exception e){}
+    }
+}
+public class NotSupported extends Lambda{//allows for overlay save button
+public void run(){
+      println("This button not yet supported");
+      showMessageDialog (null, "This button not yet supported");
+    }
+}
 class SizeSlider extends VariableLambda{
   public void run(int x){
     img.brush.setSize(x*2+1);
@@ -28,7 +46,7 @@ class CircleBrush extends Lambda{//allows for circle brush button
   void run(){
    
     img.brush= new BrushCircle(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.getId("eraser")).b.isSelected();//change eraser state to the right one based on the button
      
   }
 }
@@ -38,7 +56,7 @@ class SquareBrush extends Lambda{//allows for square brush button
   
             
     img.brush= new BrushSquare(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
      
   }
 }
@@ -47,7 +65,7 @@ class PickerBrush extends Lambda{//allows for color picker brush button
   
             
     img.brush= new BrushPicker(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
      
   }
 }
@@ -55,7 +73,7 @@ class RayCastBrush extends Lambda{//allows for raycast brush button
   void run(){
  
        img.brush= new RayCast(img.brush.c,img.brush.img,img.brush.size);
-      img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+      img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
 
   }
 }
@@ -63,7 +81,7 @@ class DiamondBrush extends Lambda{//allows for diamond brush button
   void run(){
     
     img.brush= new BrushDiamond(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
       
   }
 }
@@ -72,7 +90,7 @@ class FloodBrush extends Lambda{//allows for flood fill button
   void run(){
          
     img.brush= new BrushFill(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
     
   }
 }
@@ -80,7 +98,7 @@ class BlackHoleBrush extends Lambda{//allows for flood fill button
   void run(){
          
     img.brush= new BrushBlackHole(img.brush.c,img.brush.img,img.brush.size);
-                img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+                img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
     
   }
 }
@@ -108,6 +126,8 @@ class LColor extends Lambda{
  void run(){
    img.brush.c=col;
    img.brush.update();
+   sidebar.setColor(new Color(round(red(col)),round(green(col)),round(blue(col))));
+
  }
 }
 class ClearBrush extends Lambda{//allows for clear brush button that is tuned to specific brush via constructor
@@ -185,7 +205,7 @@ public class EdgeFollowingBrush extends Lambda{//Edgefollowing trigger
     brush.c=img.brush.c;
     brush.size=img.brush.size;
     img.brush= brush;
-    img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+    img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
   }
  
 }
@@ -207,7 +227,7 @@ public class AxonBrush extends Lambda{//Edgefollowing trigger
     brush.c=img.brush.c;
     brush.size=img.brush.size;
     img.brush= brush;
-    img.brush.erase=((Ui_Button)sidebar.ui.getId("eraser")).state.get(0);//change eraser state to the right one based on the button
+    img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
   }
  
 }

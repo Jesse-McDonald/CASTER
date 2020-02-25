@@ -29,7 +29,7 @@ EMImage img;//global because so many things need it
 //Ui ui;
 boolean PAINTING=false;
 boolean usingPenErraser=false;
-SideBar sidebar;
+Ui sidebar;
 Visulization3D view3D;
 int snapFrameCounter=0;//counter for the frames
 int snapFrames=100;//number of frames before auto saving a snap, in theory at 600 it should save every 10 seconds or so and populate the 100 deep buffer at 16 minutes of continuous drawing
@@ -129,22 +129,21 @@ void setup(){//setup the window
 	//ui=buildUi(this);
   String[] args={""};
   sizeSlider=new Binding<Integer>(9);
-  sidebar=new SideBar();
-  PApplet.runSketch(args,sidebar);
+  sidebar=buildUi();
   //stackPos=new Ui_Slider();
-  {//pos slider,
-    PImage tImg=new PImage(100,40,ARGB);
-    tImg.loadPixels();
-    for(int i=0;i<tImg.pixels.length;i++){
-      tImg.pixels[i]=tColor(150,150,100); 
-    }
-    tImg.updatePixels();
-    Ui_Slider build=new Ui_Slider(.3,7.7,2, tImg);
-    build.onChange=new SizeSlider();
-    build.minV=0;
-    build.maxV=100;
-    build.boundValue=sizeSlider;
-  }
+  //{//pos slider,
+  //  PImage tImg=new PImage(100,40,ARGB);
+  //  tImg.loadPixels();
+  //  for(int i=0;i<tImg.pixels.length;i++){
+  //    tImg.pixels[i]=tColor(150,150,100); 
+  //  }
+  //  tImg.updatePixels();
+  //  Ui_Slider build=new Ui_Slider(.3,7.7,2, tImg);
+  //  build.onChange=new SizeSlider();
+  //  build.minV=0;
+  //  build.maxV=100;
+  //  build.boundValue=sizeSlider;
+  //}
   //stackPos.dm=this;
 }
 
@@ -278,7 +277,7 @@ void mouseReleased(){//mouse pressed handler
   if(usingPenErraser){
     img.brush.erase=false;
     usingPenErraser=false;
-    ((Ui_Button)sidebar.ui.getId("eraser")).state.set(0,false);
+    ((Ui_Button)sidebar.getId("eraser")).setClick(false);
   }
   
 
@@ -286,7 +285,7 @@ void mouseReleased(){//mouse pressed handler
 
 void keyPressed(){//key press handler
 	if(key==CODED&&keyCode==ALT){//eraser set on alt
-		((Ui_Button)sidebar.ui.getId("eraser")).state.set(0,true);
+		((Ui_Button)sidebar.getId("eraser")).setClick(true);
 	}else if(key==CODED&&keyCode==SHIFT){
     SHIFT_DOWN=true;
   }else if(key==CODED&&keyCode==CONTROL){
@@ -300,15 +299,14 @@ void keyPressed(){//key press handler
 
 void keyReleased(){//key release handler
 	if(key==CODED&&keyCode==ALT){//eraser clear on alt release
-		((Ui_Button)sidebar.ui.getId("eraser")).state.set(0,false);
-	}  else if(key==CODED&&keyCode==SHIFT){
+		((Ui_Button)sidebar.getId("eraser")).setClick(false);
     SHIFT_DOWN=false;
   }else if(key==CODED&&keyCode==CONTROL){
     CTRL_DOWN=false;
   }
 }
 
-void mouseWheel(MouseEvent event){//mouse scrole handler
+void mouseWheel(processing.event.MouseEvent event){//mouse scrole handler
 	if(event.isControlDown()){//there is this handy function already build for detecting controle pressed :) how nice
     sizeSlider.set(int(event.getAmount())+sizeSlider.stored);
 		//img.brush.changeSize(int(2*event.getAmount()));//change shape size, and rember, keep it even

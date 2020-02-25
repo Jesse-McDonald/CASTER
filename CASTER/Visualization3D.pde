@@ -544,7 +544,7 @@ public class Visulization3D extends PApplet{
     }
    
   }
-  void mouseWheel(MouseEvent event){//mouse scrole handler
+  void mouseWheel(processing.event.MouseEvent event){//mouse scrole handler
     posZ-=((2*event.getAmount()))*20;
   }
   void mouseDragged(){

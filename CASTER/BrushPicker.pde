@@ -44,6 +44,8 @@ class BrushPicker extends Brush{//yah, not a real brush again, but it fits the s
       c=c^0x00ffffff;//this is essencialy bitwise not, but I exclude the alpha channel from being changed
       
     }
+    sidebar.setColor(new Color(round(red(c)),round(green(c)),round(blue(c))));
+
     return this;
   }
   public BrushPicker update(){
