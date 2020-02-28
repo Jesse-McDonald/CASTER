@@ -7,8 +7,7 @@ this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-//version: INDEV-20w8a
-String VERSION="INDEV-20w8a";
+String VERSION="INDEV-20w9b";
 
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
@@ -217,8 +216,12 @@ boolean SHIFT_DOWN;
 boolean CTRL_DOWN;
 void keyTyped(){//key type handler, for wacom tablet ease of resizing and layer change and redo
 	if (key=='-'){
+  sidebar.sizeSlider.setValue(sidebar.sizeSlider.getValue()-1);
+    
 		//img.brush.decrease(2);
 	}else if(key=='+'){
+  sidebar.sizeSlider.setValue(sidebar.sizeSlider.getValue()+1);
+    
 		//img.brush.increase(2);
   
 //ok, riddle me this... if the ctrl key is not pressed, pressing z give 'z' (122) and 'Z' (90) if shift is also pressed
@@ -304,7 +307,7 @@ void keyReleased(){//key release handler
 
 void mouseWheel(processing.event.MouseEvent event){//mouse scrole handler
 	if(event.isControlDown()){//there is this handy function already build for detecting controle pressed :) how nice
-    //sizeSlider.set(int(event.getAmount())+sizeSlider.stored);
+    sidebar.sizeSlider.setValue(int(event.getAmount())+sidebar.sizeSlider.getValue());
 		//img.brush.changeSize(int(2*event.getAmount()));//change shape size, and rember, keep it even
     
 	}else{

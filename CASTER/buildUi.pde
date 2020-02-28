@@ -79,6 +79,7 @@ Ui buildUi(){
           panel.setBounds(0,in(7.8),in(2.2),in(.5));
           
           JSlider slider = new JSlider();
+          slider.setValue(9);
           slider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
               img.brush.setSize(((JSlider)e.getSource()).getValue()*2+1);
@@ -88,7 +89,7 @@ Ui buildUi(){
         });
            panel.add(slider);
            ui.f.add(panel);
-           
+           ui.sizeSlider=slider;
         }
       {//manual brushes
         JPanel brushPanel=new JPanel();
