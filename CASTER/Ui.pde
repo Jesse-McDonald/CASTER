@@ -11,8 +11,12 @@ class Ui{
   JPanel f;
   HashMap<String,Ui_Button> buttons;
   ArrayList<Ui_Button> recolor;
+  JSlider sizeSlider;
   Ui(){
-     root=new JFrame();
+    this("");
+  }
+  Ui(String name){
+     root=new JFrame(name);
      //datapath required for non processing file access from test
      buttons=new HashMap<String,Ui_Button>();
      recolor=new ArrayList<Ui_Button>();
@@ -39,6 +43,24 @@ class Ui{
   }
   Ui_Button getId(String id){
     return buttons.get(id);
+  }
+  public void removeMinMaxClose()
+{
+  Component[] comps = f.getComponents();
+    for(int i = 0; i < comps.length; i++)
+    {
+      if(comps[i] instanceof JButton)
+      {
+        
+        String accName = ((JButton) comps[i]).getAccessibleContext().getAccessibleName();
+        System.out.println(accName);
+        if(accName.equals("Maximize")|| accName.equals("Iconify")||
+           accName.equals("Close")) comps[i].getParent().remove(comps[i]);
+      }
+  
+    
+    }
+  
   }
 }
 class Ui_Button{
