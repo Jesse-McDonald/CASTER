@@ -1,10 +1,14 @@
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 int in(float inches){
  return round(programSettings.monitorPPI*inches) ;
 }
 Ui buildUi(){
  
-  Ui ui=new Ui();
-  
+  Ui ui=new Ui("CASTER "+VERSION);
+ 
+   
   {
     JMenuBar bar=new JMenuBar();
     JMenu file=new JMenu("File");
@@ -49,7 +53,7 @@ Ui buildUi(){
     RadioButton Color=new RadioButton();
     {
       JPanel main=new JPanel();
-      main.setBounds(in(0),in(0),in(1.2),in(5.6));
+      main.setBounds(in(0),in(0),in(1.2),in(5.6));//with pack this is now irrelevent :)
       main.setLayout(null);
       main.setBackground(new Color(240,240,240));
       RadioButton brushes=new RadioButton();
@@ -69,6 +73,22 @@ Ui buildUi(){
           button.setHandler(brushes);
           button.setHandler(Color);
           button.setHandler(new LambdaWrap(new PickerBrush(), new ClearBrush()));
+        }
+       {
+          JPanel panel = new JPanel(new GridLayout());
+          panel.setBounds(0,in(7.8),in(2.2),in(.5));
+          
+          JSlider slider = new JSlider();
+          slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+              img.brush.setSize(((JSlider)e.getSource()).getValue()*2+1);
+              println(((JSlider)e.getSource()).getValue());
+            
+            }
+        });
+           panel.add(slider);
+           ui.f.add(panel);
+           
         }
       {//manual brushes
         JPanel brushPanel=new JPanel();
@@ -157,16 +177,7 @@ Ui buildUi(){
           button.setHandler(brushes);
           button.setHandler(new LambdaWrap(new EdgeFollowingBrush(), new EdgeFollowingBrushDestroy()));
         }
-        /*//I dont think you want your cat button, but here it is if you want it
-        {
-          Ui_Button button=quickButton(new JToggleButton(),"tail",.1,2.3);
-          ui.recolor.add(button);
-          button.addToUi(ui,brushPanel);
-          button.toolTip("KITTY!!!");
-          button.setHandler(brushes);
-          button.setHandler(new LambdaWrap(new AxonBrush(), new ClearBrush()));
-        }   
-*/
+       
 
         brushPanel.setVisible(false);
         ui.f.add(brushPanel);
@@ -230,12 +241,13 @@ Ui buildUi(){
 
         ui.f.add(colorPanel);
       }
-       
     ui.f.add(main);
   }
+   
   ui.setColor(new Color(255,0,0));
     ui.f.revalidate();//these 2 lines clear up random issues in buttons not showing
     ui.f.repaint();
+ 
   return ui;
 }
 Ui_Button quickColor(color c,float xin, float yin){

@@ -21,7 +21,6 @@ PImage imgFromFile(String path){//this exists for 1 and only 1 reason.  The idio
   return loadImage(path); 
 }
 
-Binding<Integer> sizeSlider;
 float PPI=93;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point
 Tablet tablet;
 //https://github.com/Jesse-McDonald/CASTER
@@ -128,7 +127,6 @@ void setup(){//setup the window
   //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
 	//ui=buildUi(this);
   String[] args={""};
-  sizeSlider=new Binding<Integer>(9);
   sidebar=buildUi();
   //stackPos=new Ui_Slider();
   //{//pos slider,
@@ -219,10 +217,8 @@ boolean SHIFT_DOWN;
 boolean CTRL_DOWN;
 void keyTyped(){//key type handler, for wacom tablet ease of resizing and layer change and redo
 	if (key=='-'){
-    sizeSlider.set(sizeSlider.stored-1);
 		//img.brush.decrease(2);
 	}else if(key=='+'){
-    sizeSlider.set(sizeSlider.stored+1);
 		//img.brush.increase(2);
   
 //ok, riddle me this... if the ctrl key is not pressed, pressing z give 'z' (122) and 'Z' (90) if shift is also pressed
@@ -308,7 +304,7 @@ void keyReleased(){//key release handler
 
 void mouseWheel(processing.event.MouseEvent event){//mouse scrole handler
 	if(event.isControlDown()){//there is this handy function already build for detecting controle pressed :) how nice
-    sizeSlider.set(int(event.getAmount())+sizeSlider.stored);
+    //sizeSlider.set(int(event.getAmount())+sizeSlider.stored);
 		//img.brush.changeSize(int(2*event.getAmount()));//change shape size, and rember, keep it even
     
 	}else{

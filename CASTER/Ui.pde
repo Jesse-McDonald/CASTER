@@ -12,7 +12,10 @@ class Ui{
   HashMap<String,Ui_Button> buttons;
   ArrayList<Ui_Button> recolor;
   Ui(){
-     root=new JFrame();
+    this("");
+  }
+  Ui(String name){
+     root=new JFrame(name);
      //datapath required for non processing file access from test
      buttons=new HashMap<String,Ui_Button>();
      recolor=new ArrayList<Ui_Button>();
