@@ -31,7 +31,7 @@ Once the program has reached RELEASE level, all beta branches should merge into 
 there is the future option to expand the version number to A.a.B.b.C.c if there is need, if a goes above 4, or b goes above 20, there may be good reason to switch to this
 (example, there may be a time when a.b.c.d is used with d being bugs, c being new tools, b being big changes, and a being paridime shifs)
 HOTFIX:
-version numbers save as INDEV but with HOTFIX instead of INDEV
+version numbers same as INDEV but with HOTFIX instead of INDEV
 HOTFIX versions do nothing except patch bugs where you dont want to wait for the current version of ALPHA to stablilize, they can be inserted at any point to any branch except to an existing RELEASE branch, when injected into RELEASE they must incriment c at the minimum
 These branches should be used sparingly and only for program breaking bug fixes where any consequence of the branch skipping the usual testing phases are less important than the existing problem (i.e. program crashes on the 20th layer change of an image exactly 6000 pixels, solution dont load 6000 pixel image at all)
 HOTFIXes are designed to be emergency and temporary, and should be replaced by more rigerous solutions (or ran through testing phases) in the next round of testing (ie the next ALPHA/BETA branch)

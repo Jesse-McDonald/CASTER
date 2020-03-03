@@ -13,4 +13,4 @@ EdgeDetection brush for semi-automatic and automatic selection of membrain
 3D visualization
 
 NOTE:
-The CASTER_Key.pdf is key to understanding the EdgeFollowing Brush. 
+The docs/EdgeFolowerQuads.pdf is key to understanding the EdgeFollowing Brush. 
