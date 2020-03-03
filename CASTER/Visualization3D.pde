@@ -238,7 +238,7 @@ public class Visulization3D extends PApplet{
   float minX=Float.MAX_VALUE,minY=Float.MAX_VALUE,minZ=Float.MAX_VALUE,maxX=Float.MIN_VALUE,maxY=Float.MIN_VALUE,maxZ=Float.MIN_VALUE;
   class Web{
     PShape triangelBuffer;
-    byte grid[][][];
+    EMOverlay grid;
     float ofx,ofy,ofz;
     int zext,xext,yext;
     ArrayList<Node> nodes;
@@ -283,19 +283,9 @@ public class Visulization3D extends PApplet{
      minX=min(minx,minX);
      minY=min(miny,minY);
      minZ=min(minz,minZ);
-     grid=new byte[xext][yext][zext];
      //println(grid.length+" "+grid[0].length+" "+grid[0][0].length);
     // println(minz+" "+minx+" "+miny);
-     for(int z=0;z<grid[0][0].length;z++){
-       if(cloud.exists(z+minz)){
-         for(int x=0;x<grid.length;x++){
-            for(int y=0;y<grid[0].length;y++){
-              //println(x+" "+y+" "+z+" "+cloud.get(z+minz,x+minx,y+miny));
-              grid[x][y][z]=byte(cloud.get(z+minz,x+minx,y+miny)==c);
-            }
-         }
-       }
-     }
+    grid=cloud;
      nodes =new ArrayList<Node>();
      lines=new ArrayList<Line>();
     }
@@ -324,47 +314,27 @@ public class Visulization3D extends PApplet{
       triangles=new ArrayList<Triangle>();
       nodes =new ArrayList<Node>();
       if(col==0) return;
-      for(int x=0;x<grid.length;x++){
-        //println(x);
-       for(int y=0;y<grid[0].length;y++){
-          for(int z=0;z<grid[0][0].length;z++){
-            if(grid[x][y][z]==1){
-               grid[x][y][z]=2;
-               Vertex thisPoint=new Vertex(x+ofx,y+ofy,z+ofz);
-               Node thisNode=new Node(thisPoint);
-               for(int xs=-1;xs<=1;xs++){
-                 for(int ys=-1;ys<=1;ys++){
-                   for(int zs=-1;zs<=1;zs++){
-                     
-                     if(x-xs<0||x-xs>=grid.length||y-ys<0||y-ys>=grid[0].length||z-zs<0||z-zs>=grid[0][0].length||(xs==0&&ys==0&&zs==0)){
-                       
-                     }else{
-                       
-                       //println(grid.length+" "+grid[0].length+" "+grid[0][0].length);
-                       if(grid[x-xs][y-ys][z-zs]>0){
-                         Vertex connectedPoint=new Vertex(x-xs+ofx,y-ys+ofy,z-zs+ofz);
-                         thisNode.connect(connectedPoint);
-                         lines.add(new Line(thisPoint,connectedPoint));
-                       }
-                     }
-                   }
-                 }
-               }
-               //if(lines.size()>0){
-               triangles=thisNode.triangles(triangles);
-               minX=min(minX,thisPoint.x);
-               minY=min(minY,thisPoint.y);
-               minZ=min(minZ,thisPoint.z);
-               maxX=max(maxX,thisPoint.x);
-               maxY=max(maxY,thisPoint.y);
-               maxZ=max(maxZ,thisPoint.z);
-               nodes.add(thisNode);
-              
-              //}
+      ArrayList<ListWheel> thisLayer;
+      
+      ArrayList<ListWheel> lastLayer=null;
+      int lastLayerNum=-2;
+      int[] keys=new int[grid.key.size()];
+      int i=0;
+      for(Integer key:grid.key.keySet()){
+        keys[i]=key.intValue();
+        i++;
+      }
+       for(int l=0;l<keys.length;l++){
+          for(int x=0;x<grid.width;x++){
+            for(int y=0;y<grid.width;y++){
+          
+              grid.get(keys[i],1,1);
             }
           }
+              
+              //}
        }
-     } 
+     
                //println(nodes.size());
                //println(triangles.size());
                stripDupeTriangles();

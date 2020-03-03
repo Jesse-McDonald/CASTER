@@ -80,7 +80,7 @@ class EMOverlay{
     }
 		return this;
 	}
-	
+
 	color get(int l, int x,int y){//obfuscate overlay.overlay.get(layer).get(x,y) to overlay.get(layer, x, y)
     if(key.containsKey(l)){
 		  //return overlay.get(key.get(l)).get(x-meta.get(l).offsetX,y-meta.get(l).offsetY); 
