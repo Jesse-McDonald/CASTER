@@ -152,7 +152,7 @@ public class Visulization3D extends PApplet{
     }
   }
   class Node{
-   lastex;
+   Vertex vertex;
    ArrayList<Vertex> connected;
    ArrayList<Line> lines;
    Node(){
@@ -415,16 +415,24 @@ public class Visulization3D extends PApplet{
                        
                      }
                    }
-                   if(selected){
+                   if(selected&&!start.equals(last)){
                      loop.set(last); 
                    }
                  }while(!start.equals(last));
                  loop.loop();
                  thisLayer.add(loop);
                  
-                 if(lastLayer!=null){
+                 if(lastLayer!=null){//this is susceptible to GIGO, if say there are 3 loops in both layers, but one is a main loop and 2 inner loops, and the other layer has a 3 outerloops, then weird stuff will happen.  However, that should never occur in a correctly created outline
                    //layer linking code here
                    //ok, if a loop isnt linked, face fill it
+                   ArrayList<ArrayList<Triangle>> triangleLists;
+                   ArrayList<Float> distance;
+                   for(int i=0;i<lastLayer.size();i++){
+                     for(int j=0;j<thisLayer.size();j++){
+                       ArrayList<Triangle> triangleList;
+                       start=thisLayer.get(i).start.data;
+                     }
+                   }
                  }
                  
               }
