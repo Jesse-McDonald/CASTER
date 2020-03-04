@@ -1,57 +1,66 @@
-class LoopList{
-  ListWheel wheel;
-  int size=0;
-  
-  LoopList(Vertex v){
-  wheel=new ListWheel(v);
+class LoopList<Data>{
+  ListNode<Data> current;
+  ListNode<Data> start;
+  ListNode<Data> end;
+  LoopList(){
+   current=null;
+   start=null;
+   end=null;
   }
-  
-  LoopList add(Vertex v){
-    this.add(v,size-1);
-    
-    return this;
-  }
-  
-  LoopList add(Vertex v,int i){
-    ListWheel temp=new ListWheel(v);
-    get(i);
-    temp.lower=wheel;
-    temp.higher=wheel.higher;
-    wheel.higher=temp;
-    temp.higher.lower=temp;
-    wheel=temp;
-    size+=1;
-    return this;
-  }
-  
-  ListWheel get(int i){
-    ListWheel mount=wheel;
-    i=i%size;
-    while(mount.i!=i){
-      boolean dir=(size/2<(i-mount.i % size + size) % size);
-      if(dir){
-        mount=mount.lower;
-      }else{
-        mount=mount.higher;
-      }
+  LoopList set(Data data){
+    ListNode<Data> temp=new ListNode<Data>(data);
+    if(current!=null){
+       temp.next=current.next;
+       temp.last=current;
+       current.next=temp;
+       if(temp.next!=null){
+        temp.next.last=temp; 
+       }else{
+        end=temp; 
+       }
+       current=temp;
+    }else if(end!=null){//current some how not existant, go to end
+      current=temp;
+      end.next=current;
+      current.last=end;
+      end=current;
+    }else{//new list
+      start=temp;
+      current=start;
+      end=start;
     }
-    wheel=mount;
-    return wheel;
+    return this;
+  }
+  ListNode get(){
+    return current; 
+  }
+  ListNode getNext(){
+    if(current!=null){
+      return current.next; 
+    }else{
+      return start; 
+    }
   }
   
-  LoopList set(int i, Vertex v){
-      get(i).v=v;
-      return this;
+  ListNode getPrevious(){
+    if(current!=null){
+      return current.next; 
+    }else{
+      return end; 
+    }
   }
-  
-  ListWheel next(){
-    wheel=wheel.higher;
-    return wheel;
+  LoopList loop(){
+    if(start!=null&end!=null){
+      start.last=end;
+      end.next=start;
+    }
+    return this;
   }
-  
-  ListWheel last(){
-    wheel=wheel.lower;
-    return wheel;
+  LoopList breakLoop(){
+    if(start!=null&end!=null){
+      start.last=null;
+      end.next=null;
+    }
+    return this;
   }
-  
 }

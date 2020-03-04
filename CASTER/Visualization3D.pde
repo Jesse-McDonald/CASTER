@@ -23,7 +23,7 @@ public class Visulization3D extends PApplet{
   }
   */
   
-  void strip(){
+  EMOverlay strip(EMOverlay cloud){
 
     EMOverlay temp=new EMOverlay(cloud.width,cloud.height,cloud.depth);
     for(int z=0;z<cloud.depth;z++){
@@ -43,18 +43,21 @@ public class Visulization3D extends PApplet{
           }
         }
       }
-      cloud=null;
-      cloud=temp;        
-      
+      //cloud=null;
+      //cloud=temp;        
+      return temp;
   
   }
   
   
   class Vertex{
-   float x;
-   float y;
-   float z;
-   Vertex(float fx, float fy, float fz){
+   int x;
+   int y;
+   int z;
+   int insideX=0;//values for this are limited to -1,0, and 1, specifes direction for inside
+   int insideY=0;
+   int insideZ=0;
+   Vertex(int fx, int fy, int fz){
     x=fx;
     y=fy;
     z=fz;
@@ -81,6 +84,9 @@ public class Visulization3D extends PApplet{
    String toObj(){
      return x+" "+y+" "+z*layerThickness; 
    }
+   boolean equals(Vertex o){
+    return  o!=null&&x==o.x&&y==o.y&&z==o.z;
+  }
   }
   class Triangle{
     Vertex p1,p2,p3;
@@ -146,7 +152,7 @@ public class Visulization3D extends PApplet{
     }
   }
   class Node{
-   Vertex vertex;
+   lastex;
    ArrayList<Vertex> connected;
    ArrayList<Line> lines;
    Node(){
@@ -236,6 +242,21 @@ public class Visulization3D extends PApplet{
    }
   }
   float minX=Float.MAX_VALUE,minY=Float.MAX_VALUE,minZ=Float.MAX_VALUE,maxX=Float.MIN_VALUE,maxY=Float.MIN_VALUE,maxZ=Float.MIN_VALUE;
+  class LayerPoint{
+    int x, y;
+    int ix,iy;
+    LayerPoint(){}
+    LayerPoint(int xi,int yi){
+        x=xi;
+        y=yi;
+    }
+    LayerPoint internal(int xi, int yi){
+      ix=xi;
+      iy=yi;
+      return this;
+    }
+  }
+  
   class Web{
     PShape triangelBuffer;
     EMOverlay grid;
@@ -314,21 +335,94 @@ public class Visulization3D extends PApplet{
       triangles=new ArrayList<Triangle>();
       nodes =new ArrayList<Node>();
       if(col==0) return;
-      ArrayList<ListWheel> thisLayer;
+      EMOverlay reduced=strip(cloud);
+      ArrayList<LoopList<Vertex>> thisLayer;
       
-      ArrayList<ListWheel> lastLayer=null;
+      ArrayList<LoopList<Vertex>> lastLayer=null;
       int lastLayerNum=-2;
       int[] keys=new int[grid.key.size()];
-      int i=0;
-      for(Integer key:grid.key.keySet()){
-        keys[i]=key.intValue();
-        i++;
+      {
+        int i=0;
+        for(Integer key:grid.key.keySet()){
+          keys[i]=key.intValue();
+          i++;
+        }
       }
        for(int l=0;l<keys.length;l++){
-          for(int x=0;x<grid.width;x++){
+         thisLayer=new ArrayList<LoopList<Vertex>>();
+         for(int x=0;x<grid.width;x++){
             for(int y=0;y<grid.width;y++){
-          
-              grid.get(keys[i],1,1);
+              
+              if(reduced.get(keys[l],x,y)==col){
+                 Vertex start=new Vertex(x,y,l);
+                 reduced.set(keys[l],x,y,0);
+                 Vertex last=start;
+                 LoopList<Vertex> loop=new LoopList<Vertex>();
+                 loop.set(start);
+                 do{
+                   boolean selected=false;
+                   if(selected||grid.get(keys[l],last.x+1,last.y)!=col){
+                     if(reduced.get(keys[l],last.x+1,last.y-1)==col){
+                       selected=true;
+                       last=new Vertex(last.x+1,last.y-1,l);
+                       reduced.set(keys[l],last.x,last.y,0);
+   
+                     }else if(reduced.get(keys[l],last.x,last.y-1)==col){
+                       selected=true;
+                       last=new Vertex(last.x,last.y-1,l);
+                       reduced.set(keys[l],last.x,last.y,0);
+                       
+                     }
+                  
+                   }
+                   if(selected||grid.get(keys[l],last.x-1,last.y)!=col){
+                     if(reduced.get(keys[l],last.x-1,last.y+1)==col){
+                       selected=true;
+                       last=new Vertex(last.x-1,last.y+1,l);
+                       reduced.set(keys[l],last.x,last.y,0);
+                       
+                     }else if(reduced.get(keys[l],last.x,last.y-1)==col){
+                       selected=true;
+                       last=new Vertex(last.x,last.y-1,l);
+                       reduced.set(keys[l],last.x,last.y,0);
+                       
+                     }
+                   }
+                   if(selected||grid.get(keys[l],last.x,last.y-1)!=col){
+                     if(reduced.get(keys[l],last.x-1,last.y-1)==col){
+                       selected=true;
+                       last=new Vertex(last.x-1,last.y-1,l);
+                       reduced.set(keys[l],last.x,last.y,0);
+                       
+                     }else if(reduced.get(keys[l],last.x,last.y-1)==col){
+                       selected=true;
+                       last=new Vertex(last.x-1,last.y,l);
+                       reduced.set(keys[l],last.x,last.y,0);
+                       
+                     }
+                   }
+                   if(selected||grid.get(keys[l],last.x,last.y+1)!=col){
+                     if(reduced.get(keys[l],last.x+1,last.y+1)==col){
+                       selected=true;
+                       last=new Vertex(last.x,last.y+1,l);
+                       reduced.set(keys[l],last.x,last.y,0);
+                       
+                     }else if(reduced.get(keys[l],last.x+1,last.y)==col){
+                       selected=true;
+                       last=new Vertex(last.x+1,last.y,l);
+                       reduced.set(keys[l],last.x,last.y,0);
+                       
+                     }
+                   }
+                   if(selected){
+                     loop.set(last); 
+                   }
+                 }while(!start.equals(last));
+                 loop.loop();
+                 thisLayer.add(loop);
+                 
+              }
+              
             }
           }
               
@@ -436,7 +530,7 @@ public class Visulization3D extends PApplet{
   
   void prep(){
     STOP=true;
-    strip();
+    //strip();
     web=new ArrayList<Web>();
     for(int i=1;i<cloud.palette.size();i++){
        web.add(new Web(cloud,cloud.palette.get(i)));
