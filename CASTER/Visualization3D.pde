@@ -349,6 +349,7 @@ public class Visulization3D extends PApplet{
         }
       }
        for(int l=0;l<keys.length;l++){
+         lastLayer=thisLayer;
          thisLayer=new ArrayList<LoopList<Vertex>>();
          for(int x=0;x<grid.width;x++){
             for(int y=0;y<grid.width;y++){
