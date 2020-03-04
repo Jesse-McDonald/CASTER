@@ -336,7 +336,7 @@ public class Visulization3D extends PApplet{
       nodes =new ArrayList<Node>();
       if(col==0) return;
       EMOverlay reduced=strip(cloud);
-      ArrayList<LoopList<Vertex>> thisLayer;
+      ArrayList<LoopList<Vertex>> thisLayer=null;
       
       ArrayList<LoopList<Vertex>> lastLayer=null;
       int lastLayerNum=-2;
@@ -421,6 +421,11 @@ public class Visulization3D extends PApplet{
                  }while(!start.equals(last));
                  loop.loop();
                  thisLayer.add(loop);
+                 
+                 if(lastLayer!=null){
+                   //layer linking code here
+                   //ok, if a loop isnt linked, face fill it
+                 }
                  
               }
               
