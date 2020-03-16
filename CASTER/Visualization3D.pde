@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Stack;
 public class Visulization3D extends PApplet{
   int layerThickness=10;//number of pixels thick each layer is
   void exit(){ this.dispose(); 
@@ -329,6 +330,71 @@ public class Visulization3D extends PApplet{
     }
     void drawBuffer(){
       shape(triangleBuffer); 
+    }
+    PNGOverlay merge(PNGOverlay top, PNGOverlay bottom){
+      PNGOverlay mask=new PNGOverlay(top.width,top.height);
+      color black=tColor(0,0,0);
+      for(int x=0;x<mask.width;x++){
+        for(int y=0;y<mask.height;y++){
+           if((top.get(x,y)==col)||(bottom.get(x,y)==col)){
+             mask.set(x,y,black);
+           }
+        }
+      }
+    }
+    PNGOverlay floodFill(PNGOverlay source, int x, int y,color c){
+      color black=tColor(0,0,0);
+      Stack<Pixel> frountier=new Stack<Pixel>();
+      frountier.add(new Pixel(x,y,source.get(x,y)));
+      while(!frountier.empty()){
+         
+      }
+      return source;
+    }
+    color niceColor(int k, int n){
+      float freq=2*PI*(1.0/n);//this is magic, basicly cut a circle in to l parts and tell me how big each is
+      return tColor(round(cos(freq*k)*127+128),round(cos(freq*k +4*PI/3))*127+128,round(cos(freq*k +2*PI/3)*127+128),255);//at this point a magic unicorns leap out of the circle and make colors appear
+  }
+    PNGOverlay fillStamp(PNGOverlay mask,boolean recolor){
+      color black=tColor(0,0,0);
+      int colors=1;//track which colors we have used
+      for(int x=0;x<mask.width;x++){
+        for(int y=0;y<mask.height;y++){
+          if(mask.get(x,y)==black){
+            mask=floodFill(mask,x,y,black+colors);
+          }
+        }
+      }
+      if(recolor){
+        for(int x=0;x<mask.width;x++){
+          for(int y=0;y<mask.height;y++){
+            color c=0x00ffffff&mask.get(x,y);
+            c=niceColor(c,colors);
+            mask.set(x,y,c);
+          }
+        }
+      }
+      return mask;
+    }
+    PNGOverlay[] reverseStamping(PNGOverlay top, PNGOverlay bottom){
+      PNGOverlay[] ret=new PNGOverlay[2];
+      PNGOverlay mask=merge(top,bottom);
+      mask=fillStamp(mask,false);
+      ret[0]=new PNGOverlay(top.width,top.height);
+      ret[1]=new PNGOverlay(bottom.width,bottom.height);
+      for(int x=0;x<mask.width;x++){
+        for(int y=0;y<mask.height;y++){
+           if((mask.get(x,y)!=0)&&(top.get(x,y)==col)){
+             ret[0].set(x,y,mask.get(x,y));
+           }
+           if((mask.get(x,y)!=0)&&(bottom.get(x,y)==col)){
+             ret[1].set(x,y,mask.get(x,y));
+           }
+        }
+      }
+      
+     
+      return ret;
     }
     void map(){
 
