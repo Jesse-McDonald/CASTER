@@ -307,7 +307,7 @@ public class Visulization3D extends PApplet{
      minZ=min(minz,minZ);
      //println(grid.length+" "+grid[0].length+" "+grid[0][0].length);
     // println(minz+" "+minx+" "+miny);
-    grid=cloud;
+
      nodes =new ArrayList<Node>();
      lines=new ArrayList<Line>();
     }
@@ -331,7 +331,7 @@ public class Visulization3D extends PApplet{
     void drawBuffer(){
       shape(triangleBuffer); 
     }
-    PNGOverlay merge(PNGOverlay top, PNGOverlay bottom){
+    PNGOverlay merge(PNGOverlay top, PNGOverlay bottom){//creates deep copy
       PNGOverlay mask=new PNGOverlay(top.width,top.height);
       color black=tColor(0,0,0);
       for(int x=0;x<mask.width;x++){
@@ -341,14 +341,29 @@ public class Visulization3D extends PApplet{
            }
         }
       }
+      return mask;
     }
     PNGOverlay floodFill(PNGOverlay source, int x, int y,color c){
       color black=tColor(0,0,0);
       Stack<Pixel> frountier=new Stack<Pixel>();
       frountier.add(new Pixel(x,y,source.get(x,y)));
       while(!frountier.empty()){
-         //flood fill
-         
+         Pixel p=frountier.pop();
+         if(p.c==black){
+            source.set(p.x,p.y,c);
+            if(p.x+1<source.width){
+                frountier.add(new Pixel(x+1,y,source.get(x+1,y)));
+            }
+            if(p.x-1>0){
+                frountier.add(new Pixel(x-1,y,source.get(x-1,y)));
+            }
+            if(p.y+1<source.height){
+                frountier.add(new Pixel(x,y+1,source.get(x,y+1)));
+            }
+            if(p.y-1>0){
+                frountier.add(new Pixel(x,y-1,source.get(x,y-1)));
+            }
+         }         
       }
       return source;
     }
@@ -367,118 +382,115 @@ public class Visulization3D extends PApplet{
         }
       }
       if(recolor){
-        for(int x=0;x<mask.width;x++){
-          for(int y=0;y<mask.height;y++){
-            color c=0x00ffffff&mask.get(x,y);
+         for(int i=0;i<mask.palette.size();i++){
+            color c=0x00ffffff&mask.palette.get(i);
             c=niceColor(c,colors);
-            mask.set(x,y,c);
+            mask.palette.set(key,c);
           }
         }
-      }
+      
       return mask;
     }
     PNGOverlay[] reverseStamping(PNGOverlay top, PNGOverlay bottom){
-      PNGOverlay[] ret=new PNGOverlay[2];
+      PNGOverlay[] ret=new PNGOverlay[3];
       PNGOverlay mask=merge(top,bottom);
       mask=fillStamp(mask,false);
-      ret[0]=new PNGOverlay(top.width,top.height);
-      ret[1]=new PNGOverlay(bottom.width,bottom.height);
+      ret[1]=new PNGOverlay(top.width,top.height);
+      ret[2]=new PNGOverlay(bottom.width,bottom.height);
       for(int x=0;x<mask.width;x++){
         for(int y=0;y<mask.height;y++){
            if((mask.get(x,y)!=0)&&(top.get(x,y)==col)){
-             ret[0].set(x,y,mask.get(x,y));
-           }
-           if((mask.get(x,y)!=0)&&(bottom.get(x,y)==col)){
              ret[1].set(x,y,mask.get(x,y));
            }
+           if((mask.get(x,y)!=0)&&(bottom.get(x,y)==col)){
+             ret[2].set(x,y,mask.get(x,y));
+           }
         }
       }
       
-     
+      ret[0]=mask;
       return ret;
     }
-    void map(){
-
-      triangles=new ArrayList<Triangle>();
-      nodes =new ArrayList<Node>();
-      if(col==0) return;
-      EMOverlay reduced=strip(cloud);
-      ArrayList<LoopList<Vertex>> thisLayer=null;
-      
-      ArrayList<LoopList<Vertex>> lastLayer=null;
-      int lastLayerNum=-2;
-      int[] keys=new int[grid.key.size()];
-      {
-        int i=0;
-        for(Integer key:grid.key.keySet()){
-          keys[i]=key.intValue();
-          i++;
-        }
-      }
-       for(int l=0;l<keys.length;l++){
-         lastLayer=thisLayer;
-         thisLayer=new ArrayList<LoopList<Vertex>>();
+    PNGOverlay strip(PNGOverlay full, color c){
+     PNGOverlay ret=new PNGOverlay(full.width,full.height);
+     for(int x=0;x<full.width;x++){
+       for(int y=0;y<full.width;y++){
+         if(full.get(x,y)==c&&
+          !((x-1>0        &&full.get(x-1,y)==c)&&
+            (x+1<full.width &&full.get(x+1,y)==c)&&
+            (y-1>0          &&full.get(x-1,y)==c)&&
+            (y+1<full.height&&full.get(x,y+y)==c))){//the pixel is the right color and is not surounded completely by said color
+            ret.set(x,y,c);
+         }
+          
+       }  
+     }
+     return ret;
+    }
+    ArrayList<LoopList<Vertex>> buildLoops(PNGOverlay full,int l, color c){
+      PNGOverlay reduced=strip(full,c);
+      ArrayList<LoopList<Vertex>>thisLayer=new ArrayList<LoopList<Vertex>>();
          for(int x=0;x<grid.width;x++){
             for(int y=0;y<grid.width;y++){
               
-              if(reduced.get(keys[l],x,y)==col){
+              if(reduced.get(x,y)==col){
                  Vertex start=new Vertex(x,y,l);
-                 reduced.set(keys[l],x,y,0);
+                 reduced.set(x,y,0);
                  Vertex last=start;
                  LoopList<Vertex> loop=new LoopList<Vertex>();
                  loop.set(start);
                  do{
                    boolean selected=false;
-                   if(selected||grid.get(keys[l],last.x+1,last.y)!=col){
-                     if(reduced.get(keys[l],last.x+1,last.y-1)==col){
+                   if(selected||full.get(last.x+1,last.y)!=col){
+                     if(reduced.get(last.x+1,last.y-1)==col){
                        selected=true;
                        last=new Vertex(last.x+1,last.y-1,l);
-                       reduced.set(keys[l],last.x,last.y,0);
+                       reduced.set(last.x,last.y,0);
    
-                     }else if(reduced.get(keys[l],last.x,last.y-1)==col){
+                     }else if(reduced.get(last.x,last.y-1)==col){
                        selected=true;
                        last=new Vertex(last.x,last.y-1,l);
-                       reduced.set(keys[l],last.x,last.y,0);
+                       reduced.set(last.x,last.y,0);
                        
                      }
                   
                    }
-                   if(selected||grid.get(keys[l],last.x-1,last.y)!=col){
-                     if(reduced.get(keys[l],last.x-1,last.y+1)==col){
+                   if(selected||full.get(last.x-1,last.y)!=col){
+                     if(reduced.get(last.x-1,last.y+1)==col){
                        selected=true;
                        last=new Vertex(last.x-1,last.y+1,l);
-                       reduced.set(keys[l],last.x,last.y,0);
+                       reduced.set(last.x,last.y,0);
                        
-                     }else if(reduced.get(keys[l],last.x,last.y-1)==col){
+                     }else if(reduced.get(last.x,last.y-1)==col){
                        selected=true;
                        last=new Vertex(last.x,last.y-1,l);
-                       reduced.set(keys[l],last.x,last.y,0);
+                       reduced.set(last.x,last.y,0);
                        
                      }
                    }
-                   if(selected||grid.get(keys[l],last.x,last.y-1)!=col){
-                     if(reduced.get(keys[l],last.x-1,last.y-1)==col){
+                   if(selected||full.get(last.x,last.y-1)!=col){
+                     if(reduced.get(last.x-1,last.y-1)==col){
                        selected=true;
                        last=new Vertex(last.x-1,last.y-1,l);
-                       reduced.set(keys[l],last.x,last.y,0);
+                       reduced.set(last.x,last.y,0);
                        
-                     }else if(reduced.get(keys[l],last.x,last.y-1)==col){
+                     }else if(reduced.get(last.x,last.y-1)==col){
                        selected=true;
                        last=new Vertex(last.x-1,last.y,l);
-                       reduced.set(keys[l],last.x,last.y,0);
+                       reduced.set(last.x,last.y,0);
                        
                      }
                    }
-                   if(selected||grid.get(keys[l],last.x,last.y+1)!=col){
-                     if(reduced.get(keys[l],last.x+1,last.y+1)==col){
+                   if(selected||full.get(last.x,last.y+1)!=col){
+                     if(reduced.get(last.x+1,last.y+1)==col){
                        selected=true;
                        last=new Vertex(last.x,last.y+1,l);
-                       reduced.set(keys[l],last.x,last.y,0);
+                       reduced.set(last.x,last.y,0);
                        
-                     }else if(reduced.get(keys[l],last.x+1,last.y)==col){
+                     }else if(reduced.get(last.x+1,last.y)==col){
                        selected=true;
                        last=new Vertex(last.x+1,last.y,l);
-                       reduced.set(keys[l],last.x,last.y,0);
+                       reduced.set(last.x,last.y,0);
                        
                      }
                    }
@@ -489,35 +501,61 @@ public class Visulization3D extends PApplet{
                  loop.loop();
                  thisLayer.add(loop);
                  
-                 if(lastLayer!=null){//this is susceptible to GIGO, if say there are 3 loops in both layers, but one is a main loop and 2 inner loops, and the other layer has a 3 outerloops, then weird stuff will happen.  However, that should never occur in a correctly created outline
-                   //layer linking code here
-                   //ok, if a loop isnt linked, face fill it
-                   ArrayList<ArrayList<Triangle>> triangleLists;
-                   ArrayList<Float> distance;
-                   for(int i=0;i<lastLayer.size();i++){
-                     for(int j=0;j<thisLayer.size();j++){
-                       ArrayList<Triangle> triangleList;
-                       start=thisLayer.get(i).start.data;
-                     }
-                   }
-                 }
+                 
                  
               }
               
             }
           }
-              
-              //}
+          return thisLayer;
+  }
+  int [] extractLayers(EMOverlay source){
+      int[] keys=new int[source.key.size()];
+      {
+        int i=0;
+        for(Integer key:source.key.keySet()){
+          keys[i]=key.intValue();
+          i++;
+        }
+      }
+      Arrays.sort(keys);
+      ArrayList<Integer> pad=new ArrayList<Integer>();
+      for(int i=0;i<keys.length;i++){
+        if(i-1<0||keys[i-1]+1!=keys[i]){
+         pad.add(-1);//pull blank layer 
+        }
+        pad.add(keys[i]);
+      }
+      pad.add(-1);//last pad
+      keys=new int[pad.size()];//can we all agree to just use length() for all arrays? then we can use size for allocated size
+      for(int i=0;i<pad.size();i++){
+        keys[i]=pad.get(i).intValue(); 
+      }
+      return keys;
+  }
+  ArrayList<Triangle> stitch(ArrayList<Triangle> list, ArrayList<LoopList<Vertex>> lastLayer, ArrayList<LoopList<Vertex>> thisLayer){
+    
+    
+    return list;
+  }
+    void map(){
+
+      triangles=new ArrayList<Triangle>();
+      nodes =new ArrayList<Node>();
+      if(col==0) return;
+      
+      int[] keys=extractLayers(cloud);
+       for(int i=1;i<keys.length;i++){
+         PNGOverlay[] stamped;
+         stamped=reverseStamping(cloud.get(keys[i-1]),cloud.get(keys[i]));
+         for(color c : stamped[0].palette){
+
+           ArrayList<LoopList<Vertex>> lastLayer=buildLoops(stamped[1],keys[i-1],c);
+           ArrayList<LoopList<Vertex>> thisLayer=buildLoops(stamped[2],keys[i],c);
+           triangles=stitch(triangles,lastLayer,thisLayer);
+         }
        }
-     
-               //println(nodes.size());
-               //println(triangles.size());
-               stripDupeTriangles();
-               //println(triangles.size());
-               //for(int i=0;i<triangles.size();i++){
-               //  println(triangles.get(i).toString());
-               //}
-        grid=null;//destroy the grid to free up memory, these things can be huge
+
     }
     Web stripDupeTriangles(){
       HashMap<String,Triangle> map=new HashMap<String,Triangle>();

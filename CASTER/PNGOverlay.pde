@@ -194,5 +194,11 @@ class PNGOverlay extends PNGImage{
    file.write(new byte[colorSize+2]);//write layer terminator (oh please java auto 0 dont fail me now)
    return file;
  }
-  
+  PNGOverlay clone(){
+   PNGOverlay ret=new PNGOverlay(width,height);
+   ret.merge(this);//in theory this should work, make a blank image and merge this one into it.
+   
+   
+   return ret;
+  }
 }

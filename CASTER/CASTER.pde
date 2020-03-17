@@ -10,7 +10,7 @@ this is heavily reliant on processing
 String VERSION="EX-20w9b";
 
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
-  return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
+  return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)+(b&0xff);
 }
 int tColor(int r,int g,int b){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return tColor(r,g,b,255);

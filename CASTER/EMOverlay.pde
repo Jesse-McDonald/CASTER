@@ -50,6 +50,7 @@ class EMOverlay{
   boolean exists(int layer){
     return key.containsKey(layer); 
   }
+  
 	EMOverlay addLayer(){
     //println("adding "+width+" "+height+" image");
     //meta.add(new EMMeta());
@@ -90,6 +91,14 @@ class EMOverlay{
      return 0; 
     }
 	}
+
+  PNGOverlay get(int l){//obfuscate overlay.overlay.get(overlay.keys.get(layer)) to overlay.get(layer)
+    if(key.containsKey(l)){
+      return overlay.get(key.get(l));
+    }else{
+     return new PNGOverlay(width,height); 
+    }
+  }
   EMOverlay pushHistory(int layer){
 
       if(fHistory.changed){
