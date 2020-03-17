@@ -347,13 +347,14 @@ public class Visulization3D extends PApplet{
       Stack<Pixel> frountier=new Stack<Pixel>();
       frountier.add(new Pixel(x,y,source.get(x,y)));
       while(!frountier.empty()){
+         //flood fill
          
       }
       return source;
     }
     color niceColor(int k, int n){
       float freq=2*PI*(1.0/n);//this is magic, basicly cut a circle in to l parts and tell me how big each is
-      return tColor(round(cos(freq*k)*127+128),round(cos(freq*k +4*PI/3))*127+128,round(cos(freq*k +2*PI/3)*127+128),255);//at this point a magic unicorns leap out of the circle and make colors appear
+      return tColor(round(cos(freq*k)*127+128),round(cos(freq*k +4*PI/3)*127+128),round(cos(freq*k +2*PI/3)*127+128),255);//at this point a magic unicorns leap out of the circle and make colors appear
   }
     PNGOverlay fillStamp(PNGOverlay mask,boolean recolor){
       color black=tColor(0,0,0);
