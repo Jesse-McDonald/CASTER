@@ -534,8 +534,20 @@ public class Visulization3D extends PApplet{
       return keys;
   }
   ArrayList<Triangle> stitch(ArrayList<Triangle> list, ArrayList<LoopList<Vertex>> lastLayer, ArrayList<LoopList<Vertex>> thisLayer){
-    
-    
+    if(lastLayer.size()==0||thisLayer.size()==0){//face
+       ArrayList<LoopList<Vertex>> active;
+       if(lastLayer.size()==0){
+         active=thisLayer; 
+       }else{
+         active=lastLayer;
+       }
+       //faceFill active
+         
+    }else{
+      
+      if(){
+      }
+    }
     return list;
   }
     void map(){
@@ -552,6 +564,7 @@ public class Visulization3D extends PApplet{
 
            ArrayList<LoopList<Vertex>> lastLayer=buildLoops(stamped[1],keys[i-1],c);
            ArrayList<LoopList<Vertex>> thisLayer=buildLoops(stamped[2],keys[i],c);
+           //detect and handle internal loops
            triangles=stitch(triangles,lastLayer,thisLayer);
          }
        }
