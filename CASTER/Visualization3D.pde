@@ -534,21 +534,79 @@ public class Visulization3D extends PApplet{
       return keys;
   }
   ArrayList<Triangle> stitch(ArrayList<Triangle> list, ArrayList<LoopList<Vertex>> lastLayer, ArrayList<LoopList<Vertex>> thisLayer){
-    if(lastLayer.size()==0||thisLayer.size()==0){//face
-       ArrayList<LoopList<Vertex>> active;
-       if(lastLayer.size()==0){
-         active=thisLayer; 
-       }else{
-         active=lastLayer;
-       }
-       //faceFill active
-         
-    }else{
-      
-      if(){
-      }
-    }
+    //TODO build stitch
+    
     return list;
+  }
+  ArrayList<Triangle> face(ArrayList<Triangle> list, ArrayList<LoopList<Vertex>> layer){
+    //TODO build face
+    
+    return list;
+  }
+  ListNode<Vertex> getTopNode(LoopList<Vertex> loop){
+             ListNode<Vertex> start=loop.get();
+             ListNode<Vertex> top=loop.get();
+             for(ListNode<Vertex> current=start.next;current!=start;current=current.next){
+               if(top.data.x<current.data.x){
+                 top=current;
+               }
+             }
+            return top;
+  }
+  LoopList<Vertex> mergeLoops(ArrayList<LoopList<Vertex>> loops){
+    Vertex commonCenter=new Vertex(0,0,0);
+    
+    for(int i=0;i<loops.size();i++){
+       Vertex center=new Vertex(0,0,0);
+       int count=0;
+       ListNode<Vertex> start=loops.get(i).get();
+       for(ListNode<Vertex> current=start.next;current!=start;current=current.next){
+         center.x+=current.data.x;
+         center.y+=current.data.y;
+         center.z+=current.data.z;
+         count++;
+       }
+       
+       center.x/=count;
+       center.y/=count;
+       center.z/=count;
+       
+       commonCenter.x+=center.x;
+       commonCenter.y+=center.y;
+       commonCenter.z+=center.z;
+    }
+    commonCenter.x/=loops.size();
+    commonCenter.y/=loops.size();
+    commonCenter.z/=loops.size();
+    
+    
+    LoopList<Vertex> loop=loops.get(0);
+    
+   return loop;
+  }
+  ArrayList<ArrayList<LoopList<Vertex>>[]> linkLoops(ArrayList<LoopList<Vertex>> lastLayer,ArrayList<LoopList<Vertex>> thisLayer){
+     ArrayList<ArrayList<LoopList<Vertex>>[]> loopLinks=new ArrayList<ArrayList<LoopList<Vertex>>[]>();//this rather anoying data type is an arraylist of all loop pairs. 
+           //the basic array is the top and bottom loop in each pair
+           //the first element of the list is the outer most shell
+           LoopList<Vertex> outer;//build outer shell
+           if(lastLayer.size()>1){
+             ArrayList<LoopList<Vertex>> outerShells=new ArrayList<LoopList<Vertex>>();
+             for(int i=0;i<lastLayer.size();i++){//locate the highest node
+               ListNode<Vertex> top=getTopNode(lastLayer.get(i));
+               if(top.next.data.y>top.data.y){//check that the cell turns clockwise at highest node
+                 outerShells.add(lastLayer.get(i));//if it does, it is an outer loop
+                 
+               }
+             }
+             if(outerShells.size()==1){
+               outer=outerShells.get(0); 
+             }else{
+               outer=mergeLoops(outerShells); 
+             }
+           }else{
+             outer=lastLayer.get(0); 
+           }
+           return loopLinks;
   }
     void map(){
 
@@ -565,7 +623,19 @@ public class Visulization3D extends PApplet{
            ArrayList<LoopList<Vertex>> lastLayer=buildLoops(stamped[1],keys[i-1],c);
            ArrayList<LoopList<Vertex>> thisLayer=buildLoops(stamped[2],keys[i],c);
            //detect and handle internal loops
+           if(lastLayer.size()>0&&thisLayer.size()>0){
+             ArrayList<ArrayList<LoopList<Vertex>>[]> loopLinks=linkLoops(lastLayer,thisLayer);//this rather anoying data type is an arraylist of all loop pairs. 
+           //the basic array is the top and bottom loop in each pair
+           //the first element of the list is the outer most shell
            triangles=stitch(triangles,lastLayer,thisLayer);
+           }else{
+             if(lastLayer.size()>0){
+               triangles=face(triangles,lastLayer);
+             }else{
+               triangles=face(triangles,thisLayer);
+             }
+           }
+           
          }
        }
 

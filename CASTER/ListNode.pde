@@ -1,7 +1,7 @@
 class ListNode<Data>{
   Data data;
-  ListNode next;
-  ListNode last;
+  ListNode<Data> next;
+  ListNode<Data> last;
   ListNode(){
    data=null;
    next=null;
