@@ -119,7 +119,7 @@ class EMOverlay{
   }
 	EMOverlay draw(EMImage p,Pixel p0, Pixel pe){
     boolean forceCache=false;
-    if(key.containsKey(p.layer)){
+    if(key.containsKey(p.layer)){//this starts caching the image
         if(p.layer!=lastLayer){
           if(pthread.alive){
             pthread.terminate=true;

@@ -125,7 +125,7 @@ class PNGImage{
      }
     }
  }
- color get(long i){//get color i in left to right top to bottom
+ color get(long i){//get color at i in left to right top to bottom
    //println(i+" "+i%width+" "+i/width);
    //println(width+" "+height);
    return get(int(i%width),int(i/width));

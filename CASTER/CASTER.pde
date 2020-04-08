@@ -1,3 +1,4 @@
+// master repo can be found at https://github.com/Jesse-McDonald/CASTER
 import codeanticode.tablet.*;//if there is an error on this line go to sketch->import Library...->add library then do a search for Tablet
 //you want the library called "Tablet" by Andres Colubri
 import java.awt.Toolkit;
@@ -7,7 +8,7 @@ this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-String VERSION="INDEV-20w9b";
+String VERSION="INDEV-20w15a";
 
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
@@ -22,9 +23,8 @@ PImage imgFromFile(String path){//this exists for 1 and only 1 reason.  The idio
 
 float PPI=93;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point
 Tablet tablet;
-//https://github.com/Jesse-McDonald/CASTER
+
 EMImage img;//global because so many things need it
-//Ui ui;
 boolean PAINTING=false;
 boolean usingPenErraser=false;
 Ui sidebar;
