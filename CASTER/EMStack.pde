@@ -1,29 +1,21 @@
 /**
-	EMStack is really an obfuscation of ArrayList<PImage> img built to decrease the legwork of EMImage
+	EMStack use to be an obfuscation of ArrayList<PImage> img built to decrease the legwork of EMImage, but that arraylist is completely gone and the EMImage interfaces with the priorityStackLoader
 	it passes though many useful functions such as add, size, and get
-	EMStack does not depend on any custom classes
+	EMStack depends entirly on priorityStackLoader
 	EMStack does depend on PImage, color, PImage loadImage(String path), and image(PImage img, int x, int y, int xScale, int yScale) from processing
 */
 class EMStack{
 	int width;//img width
+  PriorityStack stackLoader;
 	int height;//img height
 	int depth;//number of images in stack 
-	ArrayList<PNGImage> img;
   File[] files;
-  String extension;
-  int progress;
-  PImage cached;
-  PImage fastCache;
-  Pixel lastStart,lastEnd;
   int lastLayer=-1;
-  ThreadStack ts;
   PNGThread pthread; //this is a c joke ;)
   EMOverlay overlay;
   EMStack(){//new empty EMStack
-		img=new ArrayList<PNGImage>();
     overlay=new EMOverlay(0, 0, 0);//create a overlay for the stack
-    lastStart=new Pixel(0,0,0);
-    lastEnd=lastStart;
+
 	}
 	EMStack(String dir){//new EMStack seeded from picture file by path
 		this(new File(dir)); 
@@ -31,7 +23,7 @@ class EMStack{
 	int hashCode(){
     long hash=0;
     for(int i=0;i<depth;i++){
-      hash+=img.get(i).hashCode();
+      hash+=files.hashCode();
            
     }
     //println(hash);
@@ -40,24 +32,30 @@ class EMStack{
   }
 	EMStack(File base){//new EMStack seeded from picture file
 		this();
-		File folder=new File(base.getParent());//this gets the parrent folder of the given image
-   extension=base.getName();//extract img type
-   extension=extension.substring(extension.lastIndexOf('.'),extension.length()-1);
-   files=folder.listFiles();//get all files in folder
-		Arrays.sort(files);//this fixes file order on linux
-    frameLoadStack();//load 1 layer so the rest of the program does not complain
-  
-		ts=new ThreadStack(this);//load the full dir to the stack in sepperate thread
-    //new Thread(ts).start();//this line would trigger a race condition with the thread stack updating a project vs an EMImage being initilized
-    pthread=new PNGThread();
+    stackLoader=new PriorityStack(programSettings.maxFastCache,programSettings.maxPNGCache);
     
-		
-		
+		File folder=new File(base.getParent());//this gets the parrent folder of the given image
+    String extension=base.getName();//extract img type
+    
+    extension=extension.substring(extension.lastIndexOf('.'),extension.length()-1);
+    stackLoader.extension=extension;
+    files=folder.listFiles();//get all files in folder
+		Arrays.sort(files);//this fixes file order on linux
+    PImage initial=stackLoader.load(base);
+    stackLoader.loadStack(files);
+    width=initial.width;
+    height=initial.height;
+		depth=files.length;
+		overlay.height=height;
+    overlay.width=width;
+    overlay.depth=depth;
+   
 	}
   EMStack launch(){
-    new Thread(ts).start(); 
+     stackLoader.activateManagers();
     return this;
   }
+  /*superseded by priority loader
 	EMStack frameLoadStack(){
     
     if(progress<files.length){
@@ -176,5 +174,17 @@ class EMStack{
       return 0;//if the layer is out of frame, return a 0 color
     }
 	}
+*/
+EMStack draw(EMImage p, Pixel p0, Pixel pe){
+  stackLoader.draw(p,p0,pe);
+  return this;
+}
 
+  int size(){//used to obfiscates img.img.size() to img.size()  but now just returns depth
+    return depth;
+  }
+  
+  color get(int layer, int x,int y){
+      return stackLoader.get(layer,x,y);
+  }
 }

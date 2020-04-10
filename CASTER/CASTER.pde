@@ -62,7 +62,7 @@ void load(String path){
     }
     if(ext.equals(".png")){
       img.changeStack(new EMStack(path));
-      img.img.launch();//start thread stack 
+      img.img.launch();//I dont know why I cant start threads in constructors without null pointer exceptions.... but I cant, so I will start it here
     }else if(ext.equals(".caster")){
 
       img.project=new EMProject(path);
@@ -163,6 +163,7 @@ void draw(){
 	line(width,height/2,0,height/2); 
 	//ui.draw();//draw ui on top
   //text(frameRate,width/2,height/2);
+  /*hopefully the loading bar is obsolete
    if(img.img.files!=null&&img.img.progress<img.img.files.length){//hard code in file loading bar because I didnt feel like trying to shove it somewhere
       noStroke();
       fill(200,200,150,200);
@@ -175,6 +176,7 @@ void draw(){
       rect(width/4,40,(width/2*img.img.progress/(float)img.img.files.length),10);
 
   }
+  */
   fill(0,0,255);
   textSize(20);
   text(img.layer,width-100,height-10);

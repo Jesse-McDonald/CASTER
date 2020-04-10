@@ -4,5 +4,7 @@
   "monitorPPI": -1,
   "maxPixelCache": 1400000,
   "lastProject": "",
-  "maxProgramRam": 120000
+  "maxProgramRam": 120000,
+  "MaxFastCache":10,
+  "MaxPNGCache":100
 }

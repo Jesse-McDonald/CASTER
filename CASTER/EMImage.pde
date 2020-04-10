@@ -42,6 +42,7 @@ class EMImage {
     overlay=img.overlay;
     overlay.uuid=uuid;
     project.path="";
+    
     return this;
   }
   EMImage undo(){
@@ -76,6 +77,7 @@ class EMImage {
     }
     return this;
   }
+  /*I sure hope its not used, because its going down
 	public EMImage draw() {//is this function even used anymore? I think it has been replaced by above
     if(img.size()>0){
       img.draw(layer, offsetX, offsetY, img.width*zoom, img.height*zoom);//draw the image stack 
@@ -88,7 +90,7 @@ class EMImage {
   	return this.update();//again, why update?
     
 	}
-	
+	*/
 	public EMImage move(float x, float y) {
 		//calculate the offset allowing for a 10 pixel allowance adjusted by zoom
 		offsetX=range(width-10*zoom, offsetX+x, 10*zoom-img.width*zoom);
@@ -180,9 +182,7 @@ class EMImage {
     project.height=img.height;
     project.width=img.width;
     uuid=project.uuid;
-    if(img.img.size()>0){
-      project.stackTopHash=this.img.img.get(0).hashCode();
-    }
+
     if(!file.equals("")){
       project.path=file; 
     }

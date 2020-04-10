@@ -4,6 +4,8 @@ class ProgramSettings{
  boolean saveMonitorPPI=true;
  int maxProgramRam=120000;
  int undoDepth=100;
+ int maxFastCache=10;
+ int maxPNGCache=1000;
  boolean autoOpen=true;
  String lastProject="";
  JSONObject raw;
@@ -19,6 +21,8 @@ class ProgramSettings{
  ProgramSettings load(JSONObject settingsJSON){
    raw=settingsJSON;
   maxPixelCache=settingsJSON.getInt("maxPixelCache");
+  maxFastCache=settingsJSON.getInt("MaxFastCache");
+  maxPNGCache=settingsJSON.getInt("MaxPNGCache");
   maxProgramRam=settingsJSON.getInt("maxProgramRam");
   monitorPPI=settingsJSON.getInt("monitorPPI");
   undoDepth=settingsJSON.getInt("undoDepth"); 
