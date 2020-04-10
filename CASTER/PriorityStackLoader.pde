@@ -1,6 +1,7 @@
+import java.util.concurrent.ConcurrentHashMap;//man I miss c++ where I can just use a regular datastructure from 2 threads with limited problems
 class PriorityStack{
-  HashMap<Integer,PImage> cached;
-  HashMap<Integer,PNGImage> loaded;
+  ConcurrentHashMap<Integer,PImage> cached;
+  ConcurrentHashMap<Integer,PNGImage> loaded;
   Object layerChange;//apparently Java can just bind a semaphore like object to any object, so this acts like a semaphore
   Integer cacheReserved;//because the loader loads first to PImage and then to PNGImage, 1 slot in the cache can not be deleated if it is out of range
   File[] files;
@@ -17,6 +18,7 @@ class PriorityStack{
     this(10,100); 
   }
   PriorityStack(int imaxCached, int imaxLoaded){
+    layerChange=new Object();
     maxLoaded=imaxLoaded;
     maxCached=imaxCached;
     if(maxLoaded<2){
@@ -25,8 +27,8 @@ class PriorityStack{
     if(maxCached<2){//minimum cached is 2 because 1 image is the active layer, and 1 is reserved for loading
       maxCached=2; 
     }
-    loaded=new HashMap<Integer,PNGImage>();
-    cached=new HashMap<Integer,PImage>();
+    loaded=new ConcurrentHashMap<Integer,PNGImage>();
+    cached=new ConcurrentHashMap<Integer,PImage>();
     loader=new PriorityStackLoader(this);
     manager=new PriorityStackManager(this);
     lastStart=new Pixel(0,0,0);
@@ -42,7 +44,6 @@ class PriorityStack{
     files=inFiles;
   }
   PriorityStack draw(EMImage p,Pixel p0, Pixel pe){
-    
     boolean forceCache=false;//this overrides p0 and pe calculation for calling fast cache if we change layers
     if(p.layer!=lastLayer){
       changeLayer(p.layer); 
@@ -66,12 +67,13 @@ class PriorityStack{
       }else{//notify user that image is not loaded while image is fetched
         background(0);
         fill(255);
-        textSize(200);
+        textSize(50);
+        textAlign(CENTER);
         String msg="This layer is not currently loaded\nIf this message persists for more than a few seconds, please check that\n"+files[currentLayer].getPath()+"\nexists and is a valid .png file" ;
-        text(msg,width/2-textWidth(msg)/2,height/2-   
-        textAscent()*2);
+        text(msg,width/2,height/2);
       }
     }
+    lastLayer=p.layer;
     return this;
   }
   PImage get(int layer){//retrive an image from the stack (bypass queue)
@@ -155,7 +157,7 @@ class PriorityStackLoader extends Thread{
         noChange=false;
         for(Integer k : parent.loaded.keySet()){
           if(abs(k-layer)>parent.maxLoaded){//key is out of range of layer, so remove it
-            parent.loaded.remove(key);
+            parent.loaded.remove(k);
           }
         }
       }
@@ -163,7 +165,7 @@ class PriorityStackLoader extends Thread{
         noChange=false;
         for(Integer k : parent.loaded.keySet()){
           if(abs(k-layer)>parent.maxLoaded/2){//key is out of range of layer, so remove it
-            parent.loaded.remove(key);
+            parent.loaded.remove(k);
           }
         }
       }
@@ -177,6 +179,7 @@ class PriorityStackLoader extends Thread{
         if(!parent.loaded.containsKey(index)){
           parent.cacheReserved=index;//reserve PImage, even if it does not exist
           if(!parent.cached.containsKey(index)){//it didnt exist, load from hdd
+          
             PImage tmp=parent.load(parent.files[index]);
             if(tmp!=null){
               parent.cached.put(index,tmp);
@@ -194,6 +197,7 @@ class PriorityStackLoader extends Thread{
       }
 
       if(noChange){//no change was even attempted, it is time to sleep untill the layer is next changed
+        layerIttr=1;
         synchronized(parent.layerChange){//this is java magic that will make a thread wait untill it is notified to start again
           try {
             parent.layerChange.wait();
@@ -225,27 +229,30 @@ class PriorityStackManager extends Thread{
         noChange=false;
         for(Integer k : parent.cached.keySet()){
           if(layer!=parent.cacheReserved&&abs(k-layer)>parent.maxCached){//key is out of range of layer, so remove it
-            parent.cached.remove(key);
+
+            parent.cached.remove(k);
           }
         }
       }
-      if(layer!=parent.cacheReserved&&parent.cached.size()>parent.maxCached){//if its still too full, take a more agressive pass
+      if(parent.cached.size()>parent.maxCached){//if its still too full, take a more agressive pass
         noChange=false;
-        for(Integer k : parent.loaded.keySet()){
-          if(abs(k-layer)>=parent.maxCached/2){//key is out of range of layer, so remove it
-            parent.loaded.remove(key);
+        for(Integer k : parent.cached.keySet()){
+          if(layer!=parent.cacheReserved&&abs(k-layer)>=parent.maxCached/2){//key is out of range of layer, so remove it
+ 
+            parent.cached.remove(k);
           }
         }
       }
       if(layerIttr<=parent.maxCached){//is there actualy room to load? 
         noChange=false;//we may not actualy make a change, but we could have, so we did
-        int index=layer+layerIttr/2*(layerIttr%2*2-1);//in theory this should oscelate arround layer (ie if layer is 10, the sequence is 10,11,9,12,8,13,7,14...)
+        int index=layer+layerIttr/2*(layerIttr%2*2-1);//in theory this should oscillate arround layer (ie if layer is 10, the sequence is 10,11,9,12,8,13,7,14...)
         if(index<0){//we dont want negative layers, if we do get any, realocate those loads to further out + numbers
          index=index+parent.maxCached;
         }
         
         if(!parent.cached.containsKey(index)){//we need to cache the layer
           if(parent.loaded.containsKey(index)){//if loaded does not have it skip, loading caches the image anyway so it will get cached
+
             parent.cached.put(index,parent.loaded.get(index).getImage());
           }
         }
@@ -253,9 +260,10 @@ class PriorityStackManager extends Thread{
       }
 
       if(noChange){//no change was even attempted, it is time to sleep untill the layer is next changed
-        
+          layerIttr=1;//since no change was made, reset the layer itterator incase we skipped an unloaded layer
           synchronized(parent.layerChange){//this is java magic that will make a thread wait untill it is notified to start again
             try {
+
               parent.layerChange.wait();
             } catch(InterruptedException e) {
             

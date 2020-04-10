@@ -6,5 +6,5 @@
   "lastProject": "",
   "maxProgramRam": 120000,
   "MaxFastCache":10,
-  "MaxPNGCache":100
+  "MaxPNGCache":50
 }
