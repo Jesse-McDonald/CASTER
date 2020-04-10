@@ -11,8 +11,8 @@ class PriorityStack{
   int maxLoaded;
   int maxCached;
   String extension="";
-  int currentLayer;
-  int lastLayer;
+  int currentLayer=0;
+  int lastLayer=0;
   Pixel lastStart,lastEnd;
   PriorityStack(){
     this(10,100); 
