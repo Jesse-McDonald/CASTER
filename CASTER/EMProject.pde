@@ -10,11 +10,10 @@ class EMProject{
   String stackPath;//check if exists, speculate arround if it does not
   String stackTopName;//name of the top image in the stack
   String lastOverlay;
-  int stackTopHash;//just the hash of the top
   int width,height;//image size
   boolean stackLoaded;//if we finished load so we can hash and count the stack before the project was saved
   int stackSize;//number of files loaded
-  int stackHash;
+
   //unique project identifier
   byte[] uuid;
   //some conditions about the project when it was saved
@@ -63,14 +62,12 @@ class EMProject{
     ret.setInt("numFiles",numFiles);
     ret.setString("stackPath",stackPath);
     ret.setString("topFileName",stackTopName);
-    ret.setInt("topFileHash",stackTopHash);
     ret.setInt("width",width);
     ret.setInt("height",height);
     ret.setBoolean("stackLoaded",stackLoaded);
     ret.setString("lastOverlay",lastOverlay);
     if(stackLoaded){
       ret.setInt("stackSize",stackSize);
-      ret.setInt("stackHash",stackHash);
     }
     ret.setString("UUID",exportUUID());
 
@@ -85,13 +82,11 @@ class EMProject{
     numFiles=in.getInt("numFiles",numFiles);
     stackPath=in.getString("stackPath");
     stackTopName=in.getString("topFileName");
-    stackTopHash=in.getInt("topFileHash");
     width=in.getInt("width",width);
     height=in.getInt("height",height);
     stackLoaded=in.getBoolean("stackLoaded");
     if(stackLoaded){
       stackSize=in.getInt("stackSize");
-      stackHash=in.getInt("stackHash");
     }
     importUUID(in.getString("UUID"));
    
