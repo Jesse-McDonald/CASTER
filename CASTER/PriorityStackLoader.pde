@@ -67,12 +67,15 @@ class PriorityStack{
       }else{//notify user that image is not loaded while image is fetched
         background(0);
         fill(255);
-        textSize(50);
+        textSize(25);
         textAlign(CENTER);
         String msg="This layer is not currently loaded\nIf this message persists for more than a few seconds, please check that\n"+files[currentLayer].getPath()+"\nexists and is a valid .png file" ;
         text(msg,width/2,height/2);
+
       }
+     
     }
+    
     lastLayer=p.layer;
     return this;
   }
@@ -176,7 +179,9 @@ class PriorityStackLoader extends Thread{
          index=index+parent.maxLoaded;
         }
         if(index>=parent.files.length){
-           break;//we are past the edge of the stack, it is time to stop trying to load
+
+           continue;//we are past the edge of the stack, it is time to stop trying to load
+
         }
         if(!parent.loaded.containsKey(index)){
           parent.cacheReserved=index;//reserve PImage, even if it does not exist
