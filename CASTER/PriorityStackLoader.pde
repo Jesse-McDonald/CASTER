@@ -179,7 +179,9 @@ class PriorityStackLoader extends Thread{
          index=index+parent.maxLoaded;
         }
         if(index>=parent.files.length){
+
            continue;//we are past the edge of the stack, it is time to stop trying to load
+
         }
         if(!parent.loaded.containsKey(index)){
           parent.cacheReserved=index;//reserve PImage, even if it does not exist
