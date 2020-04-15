@@ -7,6 +7,8 @@ import javafx.stage.Screen ;
 this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
+Log mainThread;
+ProccessDebugger mainProc;
 
 String VERSION="INDEV-20w15a";
 
@@ -105,7 +107,9 @@ void settings()
 }
 
 void setup(){//setup the window
- //output = createWriter("log.txt");//not sure we need a log file right now
+ mainThread =new Log();
+ mainProc=new ProccessDebugger(mainThread);
+ //output = createWriter("log.txt");//not sure we need a log file right now//oh trust me, we do
 	frameRate(60);
   tablet = new Tablet(this);
 	img=new EMImage();//build an EMImage
