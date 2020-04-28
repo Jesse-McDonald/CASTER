@@ -1,4 +1,4 @@
-
+//No loging was added to this file since BrushGradFill A. does not work, and B. is never used
 class BrushGradFill extends Brush{
     public BrushGradFill(color col,EMImage image,int s){
       super(col,image,s);
@@ -6,6 +6,7 @@ class BrushGradFill extends Brush{
   ArrayList<Pixel> floodFillBackup=new ArrayList<Pixel>();//used to store pixels for processes taking more than 1 frame
  
   public BrushGradFill draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process
+    
     //this should be called every frame
     float zoom=this.img.getZoom();
     Pixel pixel = brushPosition();

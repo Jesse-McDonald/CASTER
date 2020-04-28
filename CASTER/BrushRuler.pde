@@ -1,4 +1,5 @@
 //this is not technically a brush, but it fills the slot so I am calling it a brush
+//this has not yet been hooked into the UI, do that and add logging
 class BrushRuler extends Brush{
   Pixel mark1;
   int layer1;

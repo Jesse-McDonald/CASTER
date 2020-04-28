@@ -24,10 +24,12 @@ class Brush{
             pressure=0;
         }
 	public Brush(color col,EMImage image,int s){
+                
                 this.img=image;
                 this.setSize(s);
 		            c=col;
 		            update();//update does almost everything we would want the constructor to do anyway
+                
 	}
 
 	public Brush draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process

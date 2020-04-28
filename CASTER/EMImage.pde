@@ -24,6 +24,7 @@ class EMImage {
   boolean saving;//project is currently saving
   SaveThread saveThread;
 	public EMImage() {
+    log.start("EmImage()");
 		project=new EMProject();
     uuid=project.uuid;
     layer=0;
@@ -35,31 +36,40 @@ class EMImage {
       brush=new Brush(color(26, 140, 255, 75),this,9);//color blind mode
     
 		this.update();//call update... apparently update does not actually do anything right now..... not sure what it was going to do	
+  log.stop();
   }
   EMImage changeStack(EMStack stack){
+    log.start("EmImage.changeStack()");
     img=stack;
     uuid=project.uuid;
     overlay=img.overlay;
     overlay.uuid=uuid;
     project.path="";
-    
+    log.stop();
     return this;
   }
   EMImage undo(){
+    log.start("EMImage.undo()");
     brush.eStop();//we need this to be safe, just imagin undoing a floodfill and it keeps going after the undo
     overlay.undo(this);
+    log.stop();
     return this;
   }
   EMImage redo(){
+    log.start("EMImage.redo()");
     brush.eStop();
     overlay.redo(this);
+    log.stop();
     return this;
   }
   EMImage snap(){
+    log.start("EMImage.snap()");
    overlay.pushHistory(layer);
+   log.stop();
    return this;
   }
   public EMImage draw(PApplet screen){
+    log.start("EMImage.draw()");
     if(img.size()>0){
       Pixel p0=getPixel(0,0);
       Pixel pe=getPixel(screen.width,screen.height);
@@ -68,6 +78,7 @@ class EMImage {
       overlay.draw(this,p0,pe);
       //overlay.draw(layer, offsetX+meta.get(layer).offsetX*zoom, offsetY+meta.get(layer).offsetY*zoom, img.width*zoom, img.height*zoom);//draw the overlay OVER that
       brush.draw();//draw the brush on top
+      
     }
     
     if(saving){//display saving text
@@ -75,6 +86,7 @@ class EMImage {
        screen.fill(100,120,250);
        screen.text("Saving",10,30);
     }
+    log.stop();
     return this;
   }
   /*I sure hope its not used, because its going down
@@ -91,14 +103,18 @@ class EMImage {
     
 	}
 	*/
+
 	public EMImage move(float x, float y) {
+    log.start("EMImage.move()");
 		//calculate the offset allowing for a 10 pixel allowance adjusted by zoom
 		offsetX=range(width-10*zoom, offsetX+x, 10*zoom-img.width*zoom);
 		offsetY=range(height-10*zoom, offsetY+y, 10*zoom-img.height*zoom);
+    log.stop();
 		return this.update();//not sure what I planned for update
 	}
 	
 	public EMImage zoom(float fac) {
+  log.start("EMImage.zoom()");
 		float oldZ=zoom;
 		zoom+=(fac)*zoom*.01;
 		//adjust offset so center pixel does not move
@@ -109,7 +125,9 @@ class EMImage {
 		//then apply the range function for safety
 		offsetX=width/2+(offsetX-width/2)/oldZ*zoom;
 		offsetY=height/2+(offsetY-height/2)/oldZ*zoom;
-		return this.update();//but its here again
+    this.update();
+    log.stop();
+		return this;//but its here again
 	}
 	
 	public EMImage SetZoom(float zoomTo) {
@@ -130,25 +148,30 @@ class EMImage {
 	}
 	
 	public Pixel getPixel(int screenX, int screenY) {//gets the img pixel at a screen cord
+    log.start("EMImage.getPixel()");
 		int x, y;
 		color c;
 
 		x=int((screenX-offsetX)/zoom);//+meta.get(layer).offsetX;
 		y=int((screenY-offsetY)/zoom);//+meta.get(layer).offsetY;
 		c=img.get(layer, x, y);
+    log.stop();
 		return new Pixel(x, y, c);
 	}
 	public int size(){
     return img.size();
   }
 	public Pixel get(int x, int y) {//just an obfuscation of img.img.get(...) to img.get(...)
+    log.start("EMIage.get()");
 		color c;
 		c=img.get(layer, x, y);
+    log.stop();
 		return new Pixel(x, y, c);
 	}
 		
 	public EMImage changeLayer(float direction){//changes the current layer, designed for a mouse wheel, expects a signed input so as to decide which direction to go
-		brush.eStop();
+		log.start("EMImage.changeLayer()");
+    brush.eStop();
 		if (direction>0){//I could probiably optimize this, but with the number of layer changes being so low.... why bother
       prevLayer=layer;//do this inside the if so it does not accidentally trigger
 			layer=min(img.depth-1,layer+1);
@@ -156,7 +179,7 @@ class EMImage {
       prevLayer=layer;
 			layer=max(0,layer-1);
 		}
-    
+    log.stop();
 		return this;
 	}
   public byte[] wrapInt(int toWrap){//a method that wraps an int in a byte[] because write(int) ONLY WRITES THE LOW BYTE TO THE FILE!!!!!!!!
@@ -178,6 +201,7 @@ class EMImage {
     return conv;
   }
   public boolean saveProject(String file){
+    log.start("EMImage.saveProject()");
     boolean ret=false;
     project.height=img.height;
     project.width=img.width;
@@ -188,66 +212,75 @@ class EMImage {
     }
     project.save();
     
+    log.stop();
     return ret;
+    
   }
 	public boolean saveOverlay(File fileName){//saves current layout to JEMO format
     return saveOverlay(fileName.getAbsolutePath());
   }
   public boolean saveOverlay(String path){
+    log.start("EMImage.saveOverlay()");
     if(saving){
       return false;
     }else{
       saveThread=new SaveThread(path);
       saveThread.start();
     }
-      
+     log.stop();
       
     return true;
 
 	}
 	class SaveThread extends Thread{
     String path;
+    StackTrace saveLog;
     SaveThread(String inPath){
       path=inPath; 
+      saveLog=new StackTrace();
+      saveLog.filename="SaveThreadLog";
+      saveLog.start("Save Log");
     }
     public void run(){
+      saveLog.start("SaveThread.run()");
       saving=true;
-    File fileName;
-    int dot=path.lastIndexOf('.');
-    String ext="";
-    if(dot>=0){
-      ext=path.substring(dot ,path.length()).toLowerCase();
-    }
-    if(!ext.equals(".jemo")){
-        path+=".jemo";
-    }
-    
-    project.lastOverlay=path;
-    fileName=new File(path);
-    try{
-      OutputStream file= new BufferedOutputStream(new FileOutputStream(fileName));
-      file.write('J'); //setup header
-      file.write('E');
-      file.write('M');
-      file.write('O');
-      file.write(1);//write the version number for the file type
-      file.write(uuid);
-      file.write(wrapInt(layer));//write current active layer, I threw this in because I think when I load an overlay I would want to snap to the last position
-      overlay.save(file);//turn the saving over to EMOverlay, we expect it to not close the file
-      file.flush();
-      file.close();
-    }catch(IOException ex){
+      File fileName;
+      int dot=path.lastIndexOf('.');
+      String ext="";
+      if(dot>=0){
+        ext=path.substring(dot ,path.length()).toLowerCase();
+      }
+      if(!ext.equals(".jemo")){
+          path+=".jemo";
+      }
+      
+      project.lastOverlay=path;
+      fileName=new File(path);
+      try{
+        OutputStream file= new BufferedOutputStream(new FileOutputStream(fileName));
+        file.write('J'); //setup header
+        file.write('E');
+        file.write('M');
+        file.write('O');
+        file.write(1);//write the version number for the file type
+        file.write(uuid);
+        file.write(wrapInt(layer));//write current active layer, I threw this in because I think when I load an overlay I would want to snap to the last position
+        overlay.save(file);//turn the saving over to EMOverlay, we expect it to not close the file
+        file.flush();
+        file.close();
+      }catch(IOException ex){
+        saving=false;
+      }
+      autoSave();
       saving=false;
-    }
-    autoSave();
-    saving=false;
+     saveLog.stop();
     }
   }
   public boolean loadOverlay(String filename){
    return loadOverlay(new File(filename)); 
   }
 	public boolean loadOverlay(File fileName){//load JEMO file to overlay, replaces overlay
-
+    log.start("EMImage.loadOverlay()");
 		try{
 			InputStream file = new BufferedInputStream(new FileInputStream(fileName));
 			byte[] byte4=new byte[4];
@@ -301,10 +334,13 @@ class EMImage {
   		catch(IOException ex){
   			println(ex);
   			println("exception"+ex);
+        log.stop();
   			return false; 
   		}
+
       project.lastOverlay=fileName.getAbsolutePath();
       autoSave();
+      log.stop();
   		return true;
    
 	}  

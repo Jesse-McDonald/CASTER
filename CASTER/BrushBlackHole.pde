@@ -2,40 +2,47 @@ class BrushBlackHole extends Brush{
     int undoFrames=0;
       public BrushBlackHole(color col,EMImage image,int s){
         super(col,image,s);
+        log.start("BrushBlackHole()");
         shape=loadImage("ui/blackHoleIcon.png");//load up the bucket incase of flood fill
         shape.resize(128,128);
+        log.stop();
     }
   ArrayList<Pixel> floodFillBackup=new ArrayList<Pixel>();//used to store pixels for processes taking more than 1 frame
   public Brush draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process
-  
+    log.start("BrushBlackHole()");
  
     //this should be called every frame
     float zoom=this.img.getZoom();
     Pixel pixel = brushPosition();
     
-      image(shape,mouseX-shape.width/2,mouseY-shape.height/2); 
-      floodFillUpdate();
-      if(erase){//clears ongoing flood fill in case of overflow
-        floodFillBackup=new ArrayList<Pixel>();
-      }
-    return this; 
+    image(shape,mouseX-shape.width/2,mouseY-shape.height/2); 
+    floodFillUpdate();
+    if(erase){//clears ongoing flood fill in case of overflow
+      floodFillBackup=new ArrayList<Pixel>();
+    }   
+    log.stop();
+    return this;
   }
   
 
   public BrushBlackHole paint(EMImage img){//this causes the brush to lay down "ink" on the overlay and generally should only be called on mouse press or mouse drag
+    log.start("BrushBlackHole.paint()");
     Pixel pixel= brushPosition();
     this.img=img;
     float zoom=this.img.getZoom();
     floodFill(this.img.getPixel(int(mouseX-zoom/2),int(mouseY-zoom/2)));//not sure why I am doing this instead of just passing pixel in, will test when not documenting
+    log.stop();
     return this;
   }
 
   public BrushBlackHole floodFill(Pixel pixel){//add initial flood fill pixel
+    log.start("brushBlackHole.foodFill()");
     floodFillBackup.add(pixel);
     return this;
   }
 
   public BrushBlackHole floodFillUpdate(){//expand the flood fill
+    log.start("brushBlackHole.floodFillUpdate()");
     ArrayList<Pixel> pixels=floodFillBackup;
     int ittr=0;
     if(!pixels.isEmpty()){
@@ -62,20 +69,21 @@ class BrushBlackHole extends Brush{
       }
     }
     floodFillBackup=pixels;//I don’t know why I don’t edit floodFillBackup directly, but for some reason I implemented this way sooooo
+    log.stop();
     return this;
   }
 
   public BrushBlackHole update(){//updates the shape of the brush, this should only be called when there is a reasonable certainty that the brush has changed in some way
     //as it can be a computationally complex operation
-
     return this;
   }
        public Brush eStop(){//clear the list in an emergency
+       log.start("BrushBlackHole.eStop()");
           if(floodFillBackup.size()>0){
             img.snap();//commit changes to undo record
           }
           floodFillBackup=new ArrayList<Pixel>();
-          
+         log.stop();
           return this; 
         }
 }
