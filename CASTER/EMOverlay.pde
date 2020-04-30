@@ -27,6 +27,7 @@ class EMOverlay{
   PNGThread pthread; //this is a c joke ;)
   //public ArrayList<EMMeta> meta;//meta data for a given layer
 	EMOverlay(int w, int h, int d){
+    log.start("EMOveraly()");
 		width=w;//set width height and depth
 		height=h;
 		depth=0;
@@ -41,16 +42,18 @@ class EMOverlay{
 		for( int i=0;i<d;i++){
 			addLayer();
 		}
-    pthread=new PNGThread();
+    pthread=new PNGThread("EMOverlay");
     history=new FBuffer<HistorySnap>(new HistorySnap[programSettings.undoDepth]);
     fHistory=new HistorySnap();
     lastStart=new Pixel(0,0,0);
     lastEnd=lastStart;
+    log.stop();
 	}
   boolean exists(int layer){
+    log.log("EMOverlay.exists()");
     return key.containsKey(layer); 
   }
-	EMOverlay addLayer(){
+	EMOverlay addLayer(){//this use to do more, true story, now it does almost nothing
     //println("adding "+width+" "+height+" image");
     //meta.add(new EMMeta());
     //overlay.add(new PImage(width,height,ARGB));//populate overlay with blank PImages//removed for keyed stack
@@ -60,7 +63,7 @@ class EMOverlay{
 	EMOverlay set(int l, int x, int y, color c){//obfuscate overlay.overlay.get(key.get(layer)).set(x,y,c) to overlay.set(layer, x, y, c)
     
     if(!key.containsKey(l)){
-
+      log.log("EMOverlay adding new layer");
       overlay.add(new PNGOverlay(width,height,palette,paletteMap));//add new image to the stack and add its index to the key
       key.put(l,overlay.size()-1);
     }
@@ -78,10 +81,12 @@ class EMOverlay{
       overlay.get(key.get(l)).set(x,y,c);//we removed meta shifts from the overlay, it does not make sense for the future of this since meta is not stored in the JEMO, but the 3d visualization is only based on the JEMO so if
       //we landmark align the image and save an JEMO, then make a 3d of it, it will be shifted.  combine that with the server based landmark alignment that is planned and overlay shifting is rather hard to justify
     }
+    
 		return this;
 	}
 	
 	color get(int l, int x,int y){//obfuscate overlay.overlay.get(layer).get(x,y) to overlay.get(layer, x, y)
+
     if(key.containsKey(l)){
 		  //return overlay.get(key.get(l)).get(x-meta.get(l).offsetX,y-meta.get(l).offsetY); 
       return overlay.get(key.get(l)).get(x,y);//we removed meta shifts from the overlay, it does not make sense for the future of this since meta is not stored in the JEMO, but the 3d visualization is only based on the JEMO so if
@@ -91,36 +96,41 @@ class EMOverlay{
     }
 	}
   EMOverlay pushHistory(int layer){
-
+      log.start("EMOverlay.pushHistory()");
       if(fHistory.changed){
          history.push(fHistory); 
       }
       fHistory=new HistorySnap(layer);
+      log.stop();
       return this;    
   }
   EMOverlay undo(EMImage parrent){
+    log.start("EMOverlay.undo()");
     HistorySnap temp=history.top();
     history.prev();
     if(temp!=null){
       temp.undo(parrent); 
     }
-    
+    log.stop();
     return this;
   }
   EMOverlay redo(EMImage parrent){
+    log.start("EMOverlay.redo()");
     history.next();
     HistorySnap temp=history.top();
     
     if(temp!=null){
       temp.redo(parrent); 
     }
-    
+    log.stop();
     return this;
   }
 	EMOverlay draw(EMImage p,Pixel p0, Pixel pe){
+  log.start("EMOverlay.draw()");
     boolean forceCache=false;
     if(key.containsKey(p.layer)){//this starts caching the image
         if(p.layer!=lastLayer){
+          log.log("Caching new overlay");
           if(pthread.alive){
             pthread.terminate=true;
             try{//I hate java, if I dont want to catch an exception, dont force me to
@@ -130,7 +140,7 @@ class EMOverlay{
            }
            
           }
-          pthread=new PNGThread();
+          pthread=new PNGThread("EMOverlay");
           pthread.terminate=false;
           pthread.in=overlay.get(key.get(p.layer));
           cached=null;
@@ -144,6 +154,7 @@ class EMOverlay{
         }
         if(cached!=null){
             if(drawCache!=null){
+              log.log("merging Cache");
               cached=merge(cached,drawCache);
               drawCache=null;
             }
@@ -151,6 +162,7 @@ class EMOverlay{
             image(cached,p.offsetX, p.offsetY, this.width*p.zoom, this.height*p.zoom);//we removed meta shifts from the overlay, it does not make sense for the future of this since meta is not stored in the JEMO, but the 3d visualization is only based on the JEMO so if
       //we landmark align the image and save an JEMO, then make a 3d of it, it will be shifted.  combine that with the server based landmark alignment that is planned and overlay shifting is rather hard to justify
         }else{
+          log.log("Normal render");
           if(pthread.retv!=null){
            cached=pthread.retv; 
           }
@@ -171,6 +183,7 @@ class EMOverlay{
           //never the less, it is off by less than 1 screen pixel).... not sure how to fix it  
         }
     }
+    log.stop();
     return this;
   }
   EMOverlay draw(int layer,float x,float y,float zX,float zY){//draw current layer
@@ -198,7 +211,7 @@ class EMOverlay{
 	}
 	//convert to JEMO v.1 major fixes needed, taken temporaroly off line
 	EMOverlay save(OutputStream file) throws IOException{//this writes the overlay to a JEMO file
-
+    log.start("EMOverlay.save()");
 		file.write(wrapInt(width));//write width, height, and depth
 		file.write(wrapInt(height));
 		file.write(wrapInt(depth));
@@ -237,6 +250,7 @@ class EMOverlay{
 		}
       byte[] scrap=new byte[colorSize+6];//get enough zeros,colorSize for the color, 4 for the offset, and 2 for the length
       file.write(scrap);//terminate file
+      log.stop();
 		return this;
 	}
 	EMOverlay set(int x, int y, color c){
@@ -245,7 +259,7 @@ class EMOverlay{
   }
   //update to JEMO v.1
 	EMOverlay load(InputStream file) throws IOException{//load overlay from JEMO file
-
+    log.start("EMOverlay.load()");
 		byte[] temp=new byte[4];
 		file.read(temp);
 		width=ByteBuffer.wrap(temp).getInt();//get the width, height, and depth
@@ -294,12 +308,14 @@ class EMOverlay{
 
     //overlay=tOverlay;
     lastLayer=-1;//reset layer cache by making the program think we just changed layers
+    log.stop();
 		return this;
 	}
 	
 
 
 PImage merge(PImage _1, PImage _2){
+   log.start("PImage Merge");
     PImage ret=_1.get(); 
     ret.loadPixels();
     _2.loadPixels();
@@ -310,6 +326,7 @@ PImage merge(PImage _1, PImage _2){
         
      }
      ret.updatePixels();
+     log.stop();
     return ret;
   }
 }

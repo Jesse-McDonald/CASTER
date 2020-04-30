@@ -222,6 +222,7 @@ class EMImage {
   public boolean saveOverlay(String path){
     log.start("EMImage.saveOverlay()");
     if(saving){
+      log.stop();
       return false;
     }else{
       saveThread=new SaveThread(path);
@@ -238,8 +239,12 @@ class EMImage {
     SaveThread(String inPath){
       path=inPath; 
       saveLog=new StackTrace();
-      saveLog.filename="SaveThreadLog";
+      saveLog.filename="SaveThreadLog"+saveLog.filename;
       saveLog.start("Save Log");
+    }
+    void finilize(){
+      saveLog.stop();
+      saveLog.saveLog();
     }
     public void run(){
       saveLog.start("SaveThread.run()");
@@ -272,6 +277,7 @@ class EMImage {
         saving=false;
       }
       autoSave();
+      saveLog.saveLog();
       saving=false;
      saveLog.stop();
     }

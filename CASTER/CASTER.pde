@@ -10,7 +10,7 @@ this is heavily reliant much of on processing
 StackTrace log;
 
 String VERSION="INDEV-20w15a";
-
+int itterations;
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
 }
@@ -69,7 +69,7 @@ void load(String path){
       img.project=new EMProject(path);
        //open project file 
        programSettings.lastProject=path;
-       programSettings.save();
+       //programSettings.save();//no way to change settings from inside program, this would just overwrite user changes
        
        //save it for auto load
        //auto load progress if possible
@@ -95,7 +95,8 @@ void autoSave(){//calls various autosaves, does not save overlay (I think) I may
     img.saveProject(img.project.path); 
   }
   programSettings.lastProject=img.project.path;
-  programSettings.save();
+  log.saveLog();
+  //programSettings.save();//no way to change settings from inside program, this would just overwrite user changes
 }
 void settings()
 {
@@ -155,6 +156,7 @@ void setup(){//setup the window
 }
 
 void draw(){
+  itterations++;
   log.start("Processing.draw()");
 	background(50);//set background to non discript gray
   if(PAINTING){
@@ -195,6 +197,12 @@ void draw(){
   //}
   //println(img.brush.getSize());
   log.stop();
+  if(itterations%54000==0){//auto save every 15 minutes
+    autoSave(); 
+  }else if(itterations%3600==0){//save log every minute
+    
+    log.saveLog();  
+  }
 }
 
 void mouseDragged(){//mouse drag handler

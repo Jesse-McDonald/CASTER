@@ -1,3 +1,4 @@
+//vestigual but usefull code
 class LoopList{
   ListWheel wheel;
   int size=0;

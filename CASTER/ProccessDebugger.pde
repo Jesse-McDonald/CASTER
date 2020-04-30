@@ -33,7 +33,7 @@ class StackTrace{
       strings[i]=str;
       i++;
     }
-    saveStrings(filename,strings);
+    saveStrings("log/"+filename,strings);
   }
   void printLog(){
     println(filename);

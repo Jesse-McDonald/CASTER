@@ -35,6 +35,7 @@ class ProgramSettings{
   return this;
  }
  ProgramSettings save(){
+   log.log("program settings saved");
    raw.setInt("maxPixelCache",maxPixelCache);
    raw.setInt("maxProgramRam",maxProgramRam);
    if(saveMonitorPPI){

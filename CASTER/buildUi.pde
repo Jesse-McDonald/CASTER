@@ -1,4 +1,4 @@
-
+//logging not added to this file
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 int in(float inches){

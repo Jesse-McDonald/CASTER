@@ -55,7 +55,7 @@ class EMProject{
     return this;
   }
   JSONObject exportJSON(){
-
+    log.log("Saving project json");
     JSONObject ret=new JSONObject();
     ret.setInt("version",1);
     ret.setString("savedBy",VERSION);
