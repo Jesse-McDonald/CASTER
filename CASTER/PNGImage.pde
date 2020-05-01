@@ -1,6 +1,7 @@
 import java.util.*;
 
 class PNGImage{
+ StackTrace PNGLog=log;
  int width;
  int height;
  int hashV=0;
@@ -19,14 +20,18 @@ class PNGImage{
   palette=null;
  }
  PNGImage(PImage source){
-   log.start("PNGImage()");
+   this(source,log);
+ }
+ PNGImage(PImage source,StackTrace trace){
+   PNGLog=trace;
+   PNGLog.start("PNGImage()");
    byteArray=null;
    shortArray=null;
    colorArray=null;
    palette=null;
    this.width=source.width;
    this.height=source.height;
-   log.stop();
+   PNGLog.stop();
     
  }
 
@@ -49,7 +54,7 @@ class PNGImage{
    return hashV;
  }
  void genPalette(PImage source,int forceGray){//this can not be called from the constructor or other threads will block for this rather long process
-   log.start("PNGImage.genPalette()");
+   PNGLog.start("PNGImage.genPalette()");
    if(forceGray!=0){
       mode=1;
   
@@ -126,7 +131,7 @@ class PNGImage{
        palette=null;
      }
     }
-    log.stop();
+    PNGLog.stop();
  }
  color get(long i){//get color at i in left to right top to bottom
    //println(i+" "+i%width+" "+i/width);
@@ -152,14 +157,14 @@ class PNGImage{
  }
 
  PImage getImage(){
-   log.start("PNGImage.getImage()");
+   PNGLog.start("PNGImage.getImage()");
    PImage ret=createImage(this.width,this.height,ARGB);
    for(int x=0;x<this.width;x++){
         for(int y=0;y<this.height;y++){
           ret.set(x,y,this.get(x,y));
         }
    }
-   log.stop();
+   PNGLog.stop();
    return ret;
  }
  PNGImage draw(int x,int y){
@@ -167,7 +172,7 @@ class PNGImage{
    return this;
  }
  PImage fastGet(int sX, int sY, int eX, int eY){//start xy, end xy
-   log.start("PNGImage.fastGet()");
+   PNGLog.start("PNGImage.fastGet()");
    int px=(eX-sX)*(eY-sY);
    int cn=ceil(sqrt(px/(float)programSettings.maxPixelCache));//if we process more than 700,000 pixles we start to lag our machines, so limit processing to a total of 700,000, but lets let the user decide
    
@@ -192,7 +197,7 @@ class PNGImage{
    //if(cn>1){
      //ret.resize(width,height);
    //}
-   log.stop();
+   PNGLog.stop();
    return ret;
  }
  /*
@@ -230,20 +235,20 @@ class PNGThread extends Thread{
   PImage temp;
   boolean terminate=false;
   boolean alive=false;
-  StackTrace threadLog;
+  StackTrace threadPNGLog;
   String instanceName;
   PNGThread(String name){
     instanceName=name;
-    threadLog=new StackTrace();
-    threadLog.filename="PNGThread_"+name+threadLog.filename;
-    threadLog.start("PNGThread "+name+"()");
+    threadPNGLog=new StackTrace();
+    threadPNGLog.filename="PNGThread_"+name+threadPNGLog.filename;
+    threadPNGLog.start("PNGThread "+name+"()");
   }
   void finilize(){
-    threadLog.stop();
-    threadLog.saveLog();
+    threadPNGLog.stop();
+    threadPNGLog.saveLog();
   }
   void run(){
-    threadLog.start("PNGTread "+instanceName+".run()");
+    threadPNGLog.start("PNGTread "+instanceName+".run()");
     alive=true;
     temp=in.primeImage();
     temp.loadPixels();
@@ -254,11 +259,11 @@ class PNGThread extends Thread{
     temp.updatePixels();
     retv=temp;
     alive=false;
-    threadLog.stop();
+    threadPNGLog.stop();
   }
   
  PImage merge(PImage _1, PImage _2){
-   threadLog.start("PNGTread "+instanceName+".merge()");
+   threadPNGLog.start("PNGTread "+instanceName+".merge()");
     PImage ret=_1.get(); 
     ret.loadPixels();
     _2.loadPixels();
@@ -269,7 +274,7 @@ class PNGThread extends Thread{
         
      }
      ret.updatePixels();
-     log.stop();
+ threadPNGLog.stop();
     return ret;
   }
   

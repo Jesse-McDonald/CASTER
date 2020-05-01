@@ -109,11 +109,13 @@ class PriorityStack{
     return null;
     
   }
-  PriorityStack cache(int layer, PImage in){
+  PriorityStack cache(int layer, PImage in,StackTrace logf){
+    logf.start("PriorityStack.cache()");
     cached.put(layer,in);
-    PNGImage tempPng=new PNGImage(in);
+    PNGImage tempPng=new PNGImage(in,logf);
     tempPng.genPalette(in,1);
     loaded.put(layer,tempPng);
+    logf.stop();
     return this;
   }
   PriorityStack changeLayer(int layer){
@@ -224,7 +226,7 @@ class PriorityStackLoader extends Thread{
           }
           threadLog.start("Making slow cache");
           //regardless of if the PImage used to exist, it does now, PNGImage it
-          PNGImage tempPng=new PNGImage(parent.cached.get(index));
+          PNGImage tempPng=new PNGImage(parent.cached.get(index),threadLog);
           tempPng.genPalette(parent.cached.get(index),1);
           parent.loaded.put(index,tempPng);
           threadLog.stop();
@@ -318,6 +320,7 @@ class PriorityStackManager extends Thread{
         if(!parent.cached.containsKey(index)){//we need to cache the layer
           if(parent.loaded.containsKey(index)){//if loaded does not have it skip, loading caches the image anyway so it will get cached
             threadLog.start("caching image from slow");
+            parent.loaded.get(index).PNGLog=threadLog;//transfer log 
             parent.cached.put(index,parent.loaded.get(index).getImage());
             threadLog.stop();
           }
