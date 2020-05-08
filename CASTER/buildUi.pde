@@ -245,7 +245,7 @@ Ui buildUi(){
     ui.f.add(main);
   }
    
-  ui.setColor(new Color(255,0,0));
+  ui.setColor(new Color(0,0,0,0));
     ui.f.revalidate();//these 2 lines clear up random issues in buttons not showing
     ui.f.repaint();
  

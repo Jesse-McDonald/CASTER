@@ -33,8 +33,8 @@ class EMImage {
 //set brush color
 //		brush=new Brush(color(255, 0, 0, 50),this,9);//create generic brush
       //brush=new Brush(color(0, 255, 0, 75),this,9);//color blind mode
-      brush=new Brush(color(26, 140, 255, 75),this,9);//color blind mode
-    
+      brush=new Brush(color(255, 255, 255, 0),this,9);//color blind mode
+      
 		this.update();//call update... apparently update does not actually do anything right now..... not sure what it was going to do	
   log.stop();
   }
