@@ -360,5 +360,5 @@ log.stop();
 
 void exit(){
   log.saveLog();  
-  
+  sidebar.root.dispose();
 }

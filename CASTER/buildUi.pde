@@ -7,7 +7,7 @@ int in(float inches){
 Ui buildUi(){
  
   Ui ui=new Ui("CASTER "+VERSION);
-  ui.root.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);;
+  ui.root.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
    
   {
     JMenuBar bar=new JMenuBar();

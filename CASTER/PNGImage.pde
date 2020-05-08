@@ -260,6 +260,7 @@ class PNGThread extends Thread{
     retv=temp;
     alive=false;
     threadPNGLog.stop();
+    threadPNGLog.saveLog();
   }
   
  PImage merge(PImage _1, PImage _2){

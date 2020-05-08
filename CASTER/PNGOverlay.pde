@@ -203,7 +203,7 @@ class PNGOverlay extends PNGImage{
    }
    file.write(new byte[colorSize+2]);//write layer terminator (oh please java auto 0 dont fail me now)
    PNGLog.log("Stoping PNGOverlay.toJEMOv1()");
-   
+   PNGLog.saveLog();
    return file;
  }
   

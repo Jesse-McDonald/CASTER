@@ -130,7 +130,7 @@ class EMOverlay{
     boolean forceCache=false;
     if(key.containsKey(p.layer)){//this starts caching the image
         if(p.layer!=lastLayer){
-          log.log("Caching new overlay");
+          log.start("Caching new overlay");
           if(pthread.alive){
             pthread.terminate=true;
             log.start("Joining pthread");
@@ -141,6 +141,7 @@ class EMOverlay{
               e.printStackTrace();
            }
            log.stop();
+           
            
           }
           pthread=new PNGThread("EMOverlay");
@@ -154,6 +155,7 @@ class EMOverlay{
           forceCache=true;
           drawCache=createImage(width,height,ARGB);
           pushHistory(lastLayer);
+          log.stop();
         }
         if(cached!=null){
             if(drawCache!=null){
