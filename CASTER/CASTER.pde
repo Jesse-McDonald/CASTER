@@ -105,6 +105,10 @@ void settings()
  log.start("main process");
  log.start("setings()");
   programSettings =new ProgramSettings("settings.json");
+  if(!programSettings.logExecution){
+    log=new FakeTrace();
+    println("Logging dissabled");
+  }
   PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
   size(displayWidth,displayHeight);//window size
   noSmooth();//without this line, the picture will be smoothed as we zoom in, great for zooming pictures and not having them get pixilated.... but we want pixilated

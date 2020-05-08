@@ -244,6 +244,10 @@ class EMImage {
       path=inPath; 
       saveLog=new StackTrace();
       saveLog.filename="SaveThreadLog"+saveLog.filename;
+      if(!programSettings.logExecution){
+        log=new FakeTrace();
+        println("Logging dissabled");
+      }
       saveLog.start("Save Log");
     }
     void finilize(){

@@ -159,6 +159,10 @@ class PriorityStackLoader extends Thread{
   PriorityStackLoader(PriorityStack iparent){
     parent=iparent; 
     threadLog=new StackTrace();
+    if(!programSettings.logExecution){
+      log=new FakeTrace();
+      println("Logging dissabled");
+    }
     threadLog.start("PriorityStackLoader()");
     threadLog.filename="LoaderLog"+threadLog.filename;
   }

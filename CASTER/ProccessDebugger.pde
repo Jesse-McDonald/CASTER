@@ -73,7 +73,23 @@ class StackTrace{
   
 }
 
+class FakeTrace extends StackTrace{//for when you dont want to log the execution
+  FakeTrace(){}
+  long start(String name){
+    return 0;
+  }
+  float stop(){
+    return 0;
+  }
+  void log(String msg){
+  }
+  void saveLog(){
 
+  }
+  void printLog(){
+
+  }
+}
 class Process{
   long start;
   long end;
