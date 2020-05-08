@@ -160,7 +160,7 @@ class EMOverlay{
         if(cached!=null){
             if(drawCache!=null){
               log.log("merging Cache");
-              cached=merge(cached,drawCache);
+              cached=merge(cached,drawCache);//todo, move to cache thread
               drawCache=null;
             }
             //image(cached,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
