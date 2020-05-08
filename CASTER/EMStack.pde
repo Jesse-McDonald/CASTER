@@ -20,18 +20,22 @@ class EMStack{
 	EMStack(String dir){//new EMStack seeded from picture file by path
 		this(new File(dir)); 
 	}    
+/*removing hashCode prety much everywhere
 	int hashCode(){
     long hash=0;
     for(int i=0;i<depth;i++){
       hash+=files.hashCode();
            
     }
+    
     //println(hash);
     //println(depth);
     return (int)hash;
   }
+  */
 	EMStack(File base){//new EMStack seeded from picture file
 		this();
+  log.start("EMStack()");
     stackLoader=new PriorityStack(programSettings.maxFastCache,programSettings.maxPNGCache);
     
 		File folder=new File(base.getParent());//this gets the parrent folder of the given image
@@ -49,7 +53,7 @@ class EMStack{
 		overlay.height=height;
     overlay.width=width;
     overlay.depth=depth;
-   
+   log.stop();
 	}
   EMStack launch(){
      stackLoader.activateManagers();
@@ -57,7 +61,6 @@ class EMStack{
   }
   /*superseded by priority loader
 	EMStack frameLoadStack(){
-    
     if(progress<files.length){
     if (files[progress].isFile()) {
       if (files[progress].getName().contains(extension)){//only attempt to load a file if the file types match existing
@@ -176,7 +179,9 @@ class EMStack{
 	}
 */
 EMStack draw(EMImage p, Pixel p0, Pixel pe){
+  log.start("EMStack.draw()");
   stackLoader.draw(p,p0,pe);
+  log.stop();
   return this;
 }
 

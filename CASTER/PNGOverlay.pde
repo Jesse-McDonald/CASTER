@@ -13,6 +13,7 @@ class PNGOverlay extends PNGImage{
  PNGOverlay(int w, int h, ArrayList<Integer> p, HashMap<Integer,Integer> pM){
    
    this(w,h);
+   PNGLog.start("PNGOverlay()");
    palette=p;
    paletteMap=pM;
    if(palette.size()<256){
@@ -26,6 +27,7 @@ class PNGOverlay extends PNGImage{
      colorArray=new int[this.width][this.height];
      palette=null;
    }
+   PNGLog.stop();
  }
  PNGOverlay set(long index,color c){
    return set(int(index%width),int(index/width),c); 
@@ -77,6 +79,7 @@ class PNGOverlay extends PNGImage{
    return this;
  }
  PNGOverlay merge(PNGOverlay other){
+   PNGLog.start("PNGOverlay.merge()");
    for(int j=0;j<min(this.height,other.height);j++){
      for(int i=0;i<min(this.width,other.width);i++){
        if(this.get(i,j)==0){
@@ -84,14 +87,17 @@ class PNGOverlay extends PNGImage{
        }
      }
    }
+   PNGLog.stop();
    return this;
  }
   PNGOverlay get(){
+    PNGLog.start("PNGOverlay.get() (clone)");
    PNGOverlay ret=new PNGOverlay(width,height,palette,paletteMap);
    ret.byteArray=byteArray.clone();
    ret.colorArray=colorArray.clone();
    ret.shortArray=shortArray.clone();
    ret.mode=mode;
+   PNGLog.stop();
    return ret;
  }
  public byte[] wrapNByte(long toWrap,int n){//a method that wraps n bytes of a long in a byte[]
@@ -113,6 +119,7 @@ class PNGOverlay extends PNGImage{
    return ret;
  }
  boolean fromJEMOv1(int colorSize, InputStream file) throws IOException{
+   PNGLog.log("Starting PNGOverlay.fromJEMOv1()");
    boolean fileTerminator=false;
    byte[] byte4=new byte[4];
    byte[] byteC=new byte[colorSize];
@@ -141,11 +148,14 @@ class PNGOverlay extends PNGImage{
      }
     
    }
+   PNGLog.log("Stop PNGOverlay.fromJEMOv1()");
     
    return fileTerminator;//is this layer the file terminator
  }
  OutputStream toJEMOv1(int colorSize,OutputStream file) throws IOException{//we throw an exception because this is not the first step in writing and previous layers are already handeling io exceptions so I dont feel like handeling it here
   //writing good to here
+  PNGLog.log("Starting PNGOverlay.toJEMOv1()");
+   
    long first=-1;
    int last=0;
    int index=0;
@@ -192,6 +202,8 @@ class PNGOverlay extends PNGImage{
      len++;
    }
    file.write(new byte[colorSize+2]);//write layer terminator (oh please java auto 0 dont fail me now)
+   PNGLog.log("Stoping PNGOverlay.toJEMOv1()");
+   PNGLog.saveLog();
    return file;
  }
   

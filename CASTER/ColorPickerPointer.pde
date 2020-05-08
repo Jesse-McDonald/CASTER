@@ -4,16 +4,21 @@ class ColorPickerPointer{
   PImage mask;
   color maskColor; 
   ColorPickerPointer(){
+      log.start("ColorPickerPointer()");
       picker=loadImage("ui/picker.png");
       mask=loadImage("ui/pickerMap.png");
       map=createImage(mask.width,mask.height,ARGB);
+      log.stop();
   }
   ColorPickerPointer draw(float x, float y){
+    log.start("ColorPickerPointer.draw()");
     image(map,x,y-mask.height);
     image(picker,x,y-picker.height);
+    log.stop();
     return this;
   }
   ColorPickerPointer updateMask(color c){
+    log.start("ColorPickerPointer.updateMask()");
     if(maskColor !=c){
        maskColor=c;
        map.loadPixels();
@@ -25,6 +30,7 @@ class ColorPickerPointer{
        }
        map.updatePixels();
     }
+    log.stop();
     return this;
   }
 }

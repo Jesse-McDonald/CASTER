@@ -21,11 +21,25 @@ public void run(){
       println("Open pref file");
       try{
       File file=new File(dataPath("settings.json"));
+      try{
       if (Desktop.isDesktopSupported()) {
         Desktop.getDesktop().edit(file);
-} else {
-    // dunno, up to you to handle this
-}}catch(Exception e){}
+      } else {
+          // dunno, up to you to handle this
+      }
+      }catch(Exception e){//edit faileld
+        try{
+          if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().open(file);
+          } else {
+              // dunno, up to you to handle this
+              
+          }
+          }catch(Exception ee){//open faileld
+            JOptionPane.showMessageDialog(null, "Please open \""+file.getAbsolutePath()+"\" to change settings.");
+        }
+      }
+}catch(Exception e){}//file dne
     }
 }
 public class NotSupported extends Lambda{//allows for overlay save button

@@ -7,9 +7,10 @@ import javafx.stage.Screen ;
 this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
+StackTrace log;
 
 String VERSION="INDEV-20w15a";
-
+int itterations;
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
 }
@@ -68,7 +69,7 @@ void load(String path){
       img.project=new EMProject(path);
        //open project file 
        programSettings.lastProject=path;
-       programSettings.save();
+       //programSettings.save();//no way to change settings from inside program, this would just overwrite user changes
        
        //save it for auto load
        //auto load progress if possible
@@ -94,25 +95,36 @@ void autoSave(){//calls various autosaves, does not save overlay (I think) I may
     img.saveProject(img.project.path); 
   }
   programSettings.lastProject=img.project.path;
-  programSettings.save();
+  log.saveLog();
+  //programSettings.save();//no way to change settings from inside program, this would just overwrite user changes
 }
 void settings()
 {
+  
+ log=new StackTrace();
+ log.start("main process");
+ log.start("setings()");
   programSettings =new ProgramSettings("settings.json");
+  if(!programSettings.logExecution){
+    log=new FakeTrace();
+    println("Logging dissabled");
+  }
   PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
   size(displayWidth,displayHeight);//window size
   noSmooth();//without this line, the picture will be smoothed as we zoom in, great for zooming pictures and not having them get pixilated.... but we want pixilated
+  log.stop();
 }
 
 void setup(){//setup the window
- //output = createWriter("log.txt");//not sure we need a log file right now
+  log.start("setup()");
+ //output = createWriter("log.txt");//not sure we need a log file right now//oh trust me, we do
 	frameRate(60);
   tablet = new Tablet(this);
 	img=new EMImage();//build an EMImage
 	surface.setResizable(true);//allow the window to be resized
 	if(programSettings.autoOpen){
-    
     if(!programSettings.lastProject.equals("")){
+      log.start("opening last project");
       String oldPath=programSettings.lastProject;
       File temp=new File(programSettings.lastProject);
       if(temp.exists()){
@@ -121,7 +133,9 @@ void setup(){//setup the window
         oldPath="";        
       }
       programSettings.lastProject=oldPath;
+      log.stop();
     }
+    
   }//selectInput("Select an image in the Stack","load");//trigger stack load
   //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
 	//ui=buildUi(this);
@@ -142,10 +156,12 @@ void setup(){//setup the window
   //  build.boundValue=sizeSlider;
   //}
   //stackPos.dm=this;
+  log.stop();
 }
 
 void draw(){
-  
+  itterations++;
+  log.start("Processing.draw()");
 	background(50);//set background to non discript gray
   if(PAINTING){
    img.brush.paint(img); 
@@ -163,20 +179,20 @@ void draw(){
 	line(width,height/2,0,height/2); 
 	//ui.draw();//draw ui on top
   //text(frameRate,width/2,height/2);
-  /*hopefully the loading bar is obsolete
-   if(img.img.files!=null&&img.img.progress<img.img.files.length){//hard code in file loading bar because I didnt feel like trying to shove it somewhere
-      noStroke();
-      fill(200,200,150,200);
-      rect(width/4-10,0,width/2+20,60);
-      String lable="Loading Image "+img.img.files[img.img.progress]+"("+img.img.progress+"/"+img.img.files.length+")";
+  //hopefully the loading bar is obsolete
+  // if(img.img.files!=null&&img.img.progress<img.img.files.length){//hard code in file loading bar because I didnt feel like trying to shove it somewhere
+   //   noStroke();
+   //   fill(200,200,150,200);
+   //   rect(width/4-10,0,width/2+20,60);
+   //   String lable="Loading Image "+img.img.files[img.img.progress]+"("+img.img.progress+"/"+img.img.files.length+")";
 
-      fill(0);
-      text(lable,(width-textWidth(lable))/2,20);
-      fill(255,0,0);
-      rect(width/4,40,(width/2*img.img.progress/(float)img.img.files.length),10);
+   //   fill(0);
+   //   text(lable,(width-textWidth(lable))/2,20);
+   //   fill(255,0,0);
+   //   rect(width/4,40,(width/2*img.img.progress/(float)img.img.files.length),10);
 
-  }
-  */
+  //}
+  
   fill(0,0,255);
   textSize(20);
   text(img.layer,width-100,height-10);
@@ -184,10 +200,17 @@ void draw(){
   //  stackPos.draw();
   //}
   //println(img.brush.getSize());
+  log.stop();
+  if(itterations%54000==0){//auto save every 15 minutes
+    autoSave(); 
+  }else if(itterations%3600==0){//save log every minute
+    
+    log.saveLog();  
+  }
 }
 
 void mouseDragged(){//mouse drag handler
-
+  log.start("Processing.mouseDragged()");
   if(tablet.getPenKind()==Tablet.STYLUS){
     if(tablet.isRightDown()){//move
       img.move(mouseX-pmouseX,mouseY-pmouseY);
@@ -213,10 +236,12 @@ void mouseDragged(){//mouse drag handler
   		img.brush.paint(img);
   	}
   }
+  log.stop();
 }
 boolean SHIFT_DOWN;
 boolean CTRL_DOWN;
 void keyTyped(){//key type handler, for wacom tablet ease of resizing and layer change and redo
+  log.start("processing.keyTyped()");
 	if (key=='-'){
   sidebar.sizeSlider.setValue(sidebar.sizeSlider.getValue()-1);
     
@@ -243,13 +268,17 @@ void keyTyped(){//key type handler, for wacom tablet ease of resizing and layer 
   }
   //println(CTRL_DOWN);
   //println((int)key);
+  log.stop();
 }
 void startPainting(){
+  log.start("main.startPainting()");
       img.brush.paint(img);//lay down paint, this would other wise not happen unless the mouse was moved afterwards making placing a single shape hard to imposible
       PAINTING=true;
       snapFrameCounter=0;//start the snap counter
+      log.stop();
 }
 void mousePressed(){//mouse pressed handler
+  log.start("processing.mousePressed()");
 	boolean onUi=false;//ui.onUi();//the UI has been moved to a different window so this is not a thing anymore
   if(tablet.getPenKind()==Tablet.STYLUS){
     if(tablet.isRightDown()||tablet.isCenterDown()){//we dont do anything with these, but we dont want to paint in this case
@@ -267,9 +296,11 @@ void mousePressed(){//mouse pressed handler
       startPainting();
     }
   }
+  log.stop();
 }
 
 void mouseReleased(){//mouse pressed handler
+ log.start("processing.mouseReleased()");
   //boolean onUi=ui.onUi();
   //if (mouseButton==LEFT&&!onUi){//turn off painter when mouse un pressed
       PAINTING=false;//turns out we wanted to do this even if we where on the ui
@@ -281,10 +312,11 @@ void mouseReleased(){//mouse pressed handler
     ((Ui_Button)sidebar.getId("eraser")).setClick(false);
   }
   
-
+log.stop();
 }
 
 void keyPressed(){//key press handler
+  log.start("processing.keyPressed()");
 	if(key==CODED&&keyCode==ALT){//eraser set on alt
 		((Ui_Button)sidebar.getId("eraser")).setClick(true);
 	}else if(key==CODED&&keyCode==SHIFT){
@@ -296,18 +328,30 @@ void keyPressed(){//key press handler
   }else if(key==CODED&&keyCode==DOWN){
     img.changeLayer(-1);  
   }
+  
+  
+  
+  if(key==ESC){//surpress close on escape
+    key=0; 
+  }
+  log.stop();
 }
 
 void keyReleased(){//key release handler
+log.start("processing.keyReleased()");
+  
 	if(key==CODED&&keyCode==ALT){//eraser clear on alt release
 		((Ui_Button)sidebar.getId("eraser")).setClick(false);
     SHIFT_DOWN=false;
   }else if(key==CODED&&keyCode==CONTROL){
     CTRL_DOWN=false;
   }
+  log.stop();
 }
 
 void mouseWheel(processing.event.MouseEvent event){//mouse scrole handler
+log.start("processing.mouseWheel()");
+  
 	if(event.isControlDown()){//there is this handy function already build for detecting controle pressed :) how nice
     sidebar.sizeSlider.setValue(int(event.getAmount())+sidebar.sizeSlider.getValue());
 		//img.brush.changeSize(int(2*event.getAmount()));//change shape size, and rember, keep it even
@@ -315,4 +359,11 @@ void mouseWheel(processing.event.MouseEvent event){//mouse scrole handler
 	}else{
 		img.changeLayer(event.getAmount());//change layer
 	}
+log.stop();
+}
+
+void exit(){
+  log.saveLog();  
+  sidebar.root.dispose();
+  super.exit();
 }

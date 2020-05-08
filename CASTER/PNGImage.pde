@@ -1,6 +1,7 @@
 import java.util.*;
 
 class PNGImage{
+ StackTrace PNGLog=log;
  int width;
  int height;
  int hashV=0;
@@ -19,13 +20,18 @@ class PNGImage{
   palette=null;
  }
  PNGImage(PImage source){
+   this(source,log);
+ }
+ PNGImage(PImage source,StackTrace trace){
+   PNGLog=trace;
+   PNGLog.start("PNGImage()");
    byteArray=null;
    shortArray=null;
    colorArray=null;
    palette=null;
    this.width=source.width;
    this.height=source.height;
-   
+   PNGLog.stop();
     
  }
 
@@ -48,6 +54,7 @@ class PNGImage{
    return hashV;
  }
  void genPalette(PImage source,int forceGray){//this can not be called from the constructor or other threads will block for this rather long process
+   PNGLog.start("PNGImage.genPalette()");
    if(forceGray!=0){
       mode=1;
   
@@ -124,6 +131,7 @@ class PNGImage{
        palette=null;
      }
     }
+    PNGLog.stop();
  }
  color get(long i){//get color at i in left to right top to bottom
    //println(i+" "+i%width+" "+i/width);
@@ -149,12 +157,14 @@ class PNGImage{
  }
 
  PImage getImage(){
+   PNGLog.start("PNGImage.getImage()");
    PImage ret=createImage(this.width,this.height,ARGB);
    for(int x=0;x<this.width;x++){
         for(int y=0;y<this.height;y++){
           ret.set(x,y,this.get(x,y));
         }
    }
+   PNGLog.stop();
    return ret;
  }
  PNGImage draw(int x,int y){
@@ -162,7 +172,7 @@ class PNGImage{
    return this;
  }
  PImage fastGet(int sX, int sY, int eX, int eY){//start xy, end xy
-
+   PNGLog.start("PNGImage.fastGet()");
    int px=(eX-sX)*(eY-sY);
    int cn=ceil(sqrt(px/(float)programSettings.maxPixelCache));//if we process more than 700,000 pixles we start to lag our machines, so limit processing to a total of 700,000, but lets let the user decide
    
@@ -187,6 +197,7 @@ class PNGImage{
    //if(cn>1){
      //ret.resize(width,height);
    //}
+   PNGLog.stop();
    return ret;
  }
  /*
@@ -224,7 +235,20 @@ class PNGThread extends Thread{
   PImage temp;
   boolean terminate=false;
   boolean alive=false;
+  StackTrace threadPNGLog;
+  String instanceName;
+  PNGThread(String name){
+    instanceName=name;
+    threadPNGLog=new StackTrace();
+    threadPNGLog.filename="PNGThread_"+name+threadPNGLog.filename;
+    threadPNGLog.start("PNGThread "+name+"()");
+  }
+  void finilize(){
+    threadPNGLog.stop();
+    threadPNGLog.saveLog();
+  }
   void run(){
+    threadPNGLog.start("PNGTread "+instanceName+".run()");
     alive=true;
     temp=in.primeImage();
     temp.loadPixels();
@@ -235,9 +259,12 @@ class PNGThread extends Thread{
     temp.updatePixels();
     retv=temp;
     alive=false;
+    threadPNGLog.stop();
+    threadPNGLog.saveLog();
   }
   
  PImage merge(PImage _1, PImage _2){
+   threadPNGLog.start("PNGTread "+instanceName+".merge()");
     PImage ret=_1.get(); 
     ret.loadPixels();
     _2.loadPixels();
@@ -248,6 +275,7 @@ class PNGThread extends Thread{
         
      }
      ret.updatePixels();
+ threadPNGLog.stop();
     return ret;
   }
   

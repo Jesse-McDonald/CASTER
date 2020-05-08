@@ -5,7 +5,7 @@ import javax.swing.border.Border;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-
+//logging not added to this file
 class Ui{
   JFrame root;
   JPanel f;

@@ -1,4 +1,4 @@
-
+//logging not added to this file
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 int in(float inches){
@@ -7,7 +7,7 @@ int in(float inches){
 Ui buildUi(){
  
   Ui ui=new Ui("CASTER "+VERSION);
- 
+  ui.root.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
    
   {
     JMenuBar bar=new JMenuBar();
@@ -245,7 +245,7 @@ Ui buildUi(){
     ui.f.add(main);
   }
    
-  ui.setColor(new Color(255,0,0));
+  ui.setColor(new Color(0,0,0,0));
     ui.f.revalidate();//these 2 lines clear up random issues in buttons not showing
     ui.f.repaint();
  

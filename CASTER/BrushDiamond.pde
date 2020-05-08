@@ -4,13 +4,16 @@ class BrushDiamond extends Brush{
     }
     public BrushDiamond draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process
     //this should be called every frame
+    log.start("BrushDiamond.draw");
     float zoom=this.img.getZoom();
     Pixel pixel = brushPosition();
     //draw shape centered on mouse
     image(shape,(pixel.x*zoom+this.img.offsetX),(pixel.y*zoom+this.img.offsetY),shape.width*zoom,shape.height*zoom); 
+      log.stop();
     return this; 
   }
     public BrushDiamond paint(EMImage img){//this causes the brush to lay down "ink" on the overlay and generally should only be called on mouse press or mouse drag
+    log.start("BrushDiamond.paint()");
     Pixel pixel= brushPosition();
     this.img=img;
     for (int x=0;x<this.img.overlay.width&&x<shape.width;x++){
@@ -28,11 +31,13 @@ class BrushDiamond extends Brush{
           }
         }  
       }
+      log.stop();
     return this;
   }
   
   public BrushDiamond update(){//updates the shape of the brush, this should only be called when there is a reasonable certainty that the brush has changed in some way
     //as it can be a computationally complex operation
+    log.start("BrushDiamond.update()");
       shape=createImage((int)size,(int)size,ARGB);
       for(int x=0;x<shape.width;x++){
         for(int y=0;y<shape.height;y++){
@@ -43,6 +48,7 @@ class BrushDiamond extends Brush{
           }
         }
       }
+      log.stop();
     return this;
   }
   

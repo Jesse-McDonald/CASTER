@@ -1,4 +1,5 @@
 import java.util.Arrays;
+//logging not added to this file
 public class Visulization3D extends PApplet{
   int layerThickness=10;//number of pixels thick each layer is
   void exit(){ this.dispose(); 

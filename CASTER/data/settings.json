@@ -6,5 +6,6 @@
   "lastProject": "",
   "maxProgramRam": 120000,
   "MaxFastCache":10,
-  "MaxPNGCache":50
+  "MaxPNGCache":50,
+  "LogExecution":true
 }

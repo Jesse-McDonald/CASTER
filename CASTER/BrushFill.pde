@@ -8,7 +8,7 @@ class BrushFill extends Brush{
     }
   ArrayList<Pixel> floodFillBackup=new ArrayList<Pixel>();//used to store pixels for processes taking more than 1 frame
   public Brush draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process
-  
+    log.start("BrushFill.draw()");
  
     //this should be called every frame
     float zoom=this.img.getZoom();
@@ -19,10 +19,12 @@ class BrushFill extends Brush{
       if(erase){//clears ongoing flood fill in case of overflow
         floodFillBackup=new ArrayList<Pixel>();
       }
+      log.stop();
     return this; 
   }
   
   public BrushFill paint(EMImage img){//this causes the brush to lay down "ink" on the overlay and generally should only be called on mouse press or mouse drag
+    log.start("BrushFill.paint()");
     this.img=img;
     float zoom=this.img.getZoom();
     Pixel pixel= this.img.getPixel(int(mouseX-zoom/2),int(mouseY-zoom/2));//not sure why I am doing this instead of just passing pixel in, will test when not documenting
@@ -33,23 +35,29 @@ class BrushFill extends Brush{
     //oh yah, you very much need that line, with out that line the program will enter a valid flood fill of a color (lets say 0), it will go through the if and enter the loop, then on the next mouse event, the color is set to what
     //is under the mouse (now c, we just flood filled there) and this new flood fill fails to start because of the if, buuuuuuuuuut 1 flood is still going... now with c as its color... you see the problem?
     //unfortunatly that line actually causes the flood fill to insta clear and set target to c, so it does not lock up, but at the same time it does not flood fill either, use these lines
+   
     if(floodFillBackup.size()==0){//there, we only change colors if there is not a flood fill in progress, a better solution would be a FloodArea class that keeps track of c and target, then you could just make 2 FloodArea objects
     //that would allow the multi point flood fill that this does not
       target= this.img.overlay.get(this.img.layer,pixel.x,pixel.y);
     }
+    //I have no idea what the above comments mean, nor what the above code is suppose to mean, but changing color durring flood fill works fine
     if(target!=c){//without this line, if you click on an area the same color as the brush color it will infinitly fill its self over and over and over
       floodFill(pixel);
     }
+    log.stop();
     return this;
   }
+ 
 
   public BrushFill floodFill(Pixel pixel){//add initial flood fill pixel
+    log.start("BrushFill.floodFill()");
     floodFillBackup.add(pixel);
+    log.stop();
     return this;
   }
 
   public BrushFill floodFillUpdate(){//expand the flood fill
-
+    log.start("BrushFill.floodFillUpdate()");
     if(target==c){//I have had so many problems with this that I am saying "Screw it" if we ever enter this condition for any reason, drop the entire flood fill emediatly
       floodFillBackup=new ArrayList<Pixel>();
     }//I should also probiably dump on color change in general, but this is just so fun to use, so I am going to leave it
@@ -83,7 +91,9 @@ class BrushFill extends Brush{
       }
     }
     floodFillBackup=pixels;//I don’t know why I don’t edit floodFillBackup directly, but for some reason I implemented this way sooooo
+    log.stop();
     return this;
+    
   }
 
   public BrushFill update(){//updates the shape of the brush, this should only be called when there is a reasonable certainty that the brush has changed in some way

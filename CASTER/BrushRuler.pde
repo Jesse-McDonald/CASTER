@@ -1,4 +1,5 @@
 //this is not technically a brush, but it fills the slot so I am calling it a brush
+//this has not yet been hooked into the UI, do that and add logging
 class BrushRuler extends Brush{
   Pixel mark1;
   int layer1;
@@ -12,6 +13,7 @@ class BrushRuler extends Brush{
       
   }
   public BrushRuler draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process
+    log.start("BrushRuler.draw()");
     //this should be called every frame
     float zoom=this.img.getZoom();
     int xDistance=0;
@@ -57,10 +59,12 @@ class BrushRuler extends Brush{
       mark1=null;
       mark2=null;
     }
+    log.stop();
     return this; 
   }
   
   public BrushRuler paint(EMImage img){//this causes the brush to lay down "ink" on the overlay and generally should only be called on mouse press or mouse drag
+    log.start("BrushRuler.paint()");
     Pixel pixel= brushPosition();
     this.img=img;
     float zoom=this.img.getZoom();
@@ -80,7 +84,7 @@ class BrushRuler extends Brush{
     }if(clickToggle==1&&!mousePressed){
       clickToggle=0; 
     }
-    
+    log.stop();
     return this;
   }
   BrushRuler update(){

@@ -7,6 +7,7 @@ class RayCast extends Brush{
 
 
   public RayCast draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process
+    log.start("RayCast.draw()");
     //this should be called every frame
     float zoom=this.img.getZoom();
     Pixel pixel = brushPosition();
@@ -31,10 +32,12 @@ class RayCast extends Brush{
       strokeWeight(w);//and weight
       fill(fill);//and fill
       rayCastAngle+=.2;//increment angle, larger values are generaly faster, smaller are slower, I found 0.2 is about right
+      log.stop();
     return this; 
   }
 
   public RayCast rayCastBrush(int x, int y){//projects rays from the mouse which stop and fill when a certain gradiant is met, then smooth the result
+      log.start("RayCast.rayCastBrush()");
       Pixel pixel =this.img.getPixel(x,y);//seed first pixel
       final int RAY_COUNT=4;//rays go out in this many directions 
       float zoom=this.img.zoom;
@@ -60,6 +63,7 @@ class RayCast extends Brush{
         }
       }
       smoothBrush(pixel.x,pixel.y);//smooths area
+      log.stop();
       return this;
   }
 
@@ -84,6 +88,7 @@ class RayCast extends Brush{
   }
 
   public RayCast smoothBrush(int startX, int startY){//this brush smooths out thin ridges and fills in thin gaps, it does this by checking the number of neighboring pixels for each pixel, it is designed to be used with ray fill, but can be used independantly
+    log.start("RayCast.smoothBrush()");
     ArrayList<Pixel> add=new ArrayList<Pixel>();//list of pixels to fill, we have to do these last or it will throw off the calculations
     ArrayList<Pixel> remove=new ArrayList<Pixel>();  //list of pixels to clear, we have to do these last or it will throw off the calculations
     float ss=size*size/4;//callculate r^2 from D
@@ -125,6 +130,7 @@ class RayCast extends Brush{
     for(int i=0;i<remove.size();i++){
       this.img.overlay.set(this.img.layer,remove.get(i).x,remove.get(i).y,color(0,0,0,0));//clear pixels to clear
     }
+    log.stop();
     return this;
   }
   public RayCast update(){//updates the shape of the brush, this should only be called when there is a reasonable certainty that the brush has changed in some way

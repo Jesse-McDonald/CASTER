@@ -21,6 +21,7 @@ class BrushPicker extends Brush{//yah, not a real brush again, but it fits the s
     return this;
   }
   BrushPicker updateMask(color c){
+    log.start("BrushPicker.updateMask()");
     if(maskColor !=c){
        maskColor=c;
        map.loadPixels();
@@ -32,9 +33,11 @@ class BrushPicker extends Brush{//yah, not a real brush again, but it fits the s
        }
        map.updatePixels();
     }
+    log.stop();
     return this;
   }
   public BrushPicker paint(EMImage img){
+    log.start("BrushPicker.paint()");
     this.img=img;
     float zoom=this.img.getZoom();
     Pixel pixel= this.img.getPixel(int(mouseX-zoom/2),int(mouseY-zoom/2));//isnt there a function to get the pixel under the mouse?
@@ -45,7 +48,7 @@ class BrushPicker extends Brush{//yah, not a real brush again, but it fits the s
       
     }
     sidebar.setColor(new Color(round(red(c)),round(green(c)),round(blue(c))));
-
+    log.stop();
     return this;
   }
   public BrushPicker update(){

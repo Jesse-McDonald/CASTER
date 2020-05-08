@@ -12,27 +12,33 @@ class HistorySnap{
     layer=l;
   }
   HistorySnap log(Pixel point, color change){
+
     if(point.c!=change){
       before.add(point);
       after.add(change);
       changed=true;
     }
     if(before.size()>12000000){
+      log.log("Excesivly large snap");
       System.err.println("Warning, this log is getting large, you may crash if you keep making logs this size");
     }
+
     return this;
     
   }
   HistorySnap redo(EMImage target){
+    log.start("HistorySnap.redo()");
     target.overlay.logChanges=false;
     for(int i=0;i<before.size();i++){
       target.overlay.set(layer,before.get(i).x,before.get(i).y,after.get(i));
     }
     target.overlay.logChanges=true;
     target.layer=layer;
+    log.stop();
     return this;
   }
   HistorySnap undo(EMImage target){
+    log.start("HistorySnap.undo()");
     target.overlay.logChanges=false;
    
     for(int i=0;i<before.size();i++){
@@ -40,6 +46,7 @@ class HistorySnap{
     }
     target.overlay.logChanges=true;
     target.layer=layer;
+    log.stop();
     return this;
   }
 }

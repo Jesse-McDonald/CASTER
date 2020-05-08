@@ -1,4 +1,5 @@
 //a link in my loop list data type (only for vertecis) it tracks the next, the last, and its own index aswell as the data type, 
+//vestigual code
 class ListWheel{
   Vertex v;
   int i;

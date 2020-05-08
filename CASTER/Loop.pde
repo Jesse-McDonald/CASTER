@@ -1,3 +1,4 @@
+//vestigual code, but still usefull
 class Loop{
   LoopList nodes;
   Loop(Vertex vert){

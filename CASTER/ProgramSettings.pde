@@ -6,6 +6,7 @@ class ProgramSettings{
  int undoDepth=100;
  int maxFastCache=10;
  int maxPNGCache=1000;
+ boolean logExecution;
  boolean autoOpen=true;
  String lastProject="";
  JSONObject raw;
@@ -26,6 +27,7 @@ class ProgramSettings{
   maxProgramRam=settingsJSON.getInt("maxProgramRam");
   monitorPPI=settingsJSON.getInt("monitorPPI");
   undoDepth=settingsJSON.getInt("undoDepth"); 
+  logExecution=settingsJSON.getBoolean("LogExecution");
   if(monitorPPI==-1){
     saveMonitorPPI=false;
    monitorPPI=Toolkit.getDefaultToolkit().getScreenResolution();//this does not get true dpi, but it gets the dpi according to the os so good enought
@@ -35,6 +37,7 @@ class ProgramSettings{
   return this;
  }
  ProgramSettings save(){
+   log.log("program settings saved");
    raw.setInt("maxPixelCache",maxPixelCache);
    raw.setInt("maxProgramRam",maxProgramRam);
    if(saveMonitorPPI){
