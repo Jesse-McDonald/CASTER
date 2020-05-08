@@ -20,7 +20,7 @@ class Brush{
   public float pressure;//pressure from a wacom tablet, if not used set to 0
 	EMImage img;
         public Brush(){
-            this(color(0,0,0,0), (EMImage)null,9);//please never try to use this constructor, java just instits we have it so here is something
+            this(color(0,0,0,0), (EMImage)null,9);//please never try to use this constructor, java just insits we have it so here is something
             pressure=0;
         }
 	public Brush(color col,EMImage image,int s){
@@ -40,9 +40,13 @@ class Brush{
 
   Pixel brushPosition(){//calculates the offset to the top left corner of the image based on the pixel under the mouse
     float zoom=this.img.getZoom();
-    return this.img.getPixel(int(mouseX-shape.width/2.0*zoom+zoom/2),int(mouseY-shape.width/2.0*zoom+zoom/2));
+    return this.img.getPos(int(mouseX-shape.width/2.0*zoom+zoom/2),int(mouseY-shape.width/2.0*zoom+zoom/2));
   }
-
+  Pixel brushPixel(){//returns the pixel the brush is on 
+      float zoom=this.img.getZoom();
+    return this.img.getPixel(int(mouseX-shape.width/2.0*zoom+zoom/2),int(mouseY-shape.width/2.0*zoom+zoom/2));
+    
+  }
 	float grayVal(color c){//this averages the RGB values of a given color to determine its grayscale value
 		return ((c >> 16 & 0xFF) + (c >> 8 & 0xFF) + (c & 0xFF))/3.0;//extract and average rgb values
 	}

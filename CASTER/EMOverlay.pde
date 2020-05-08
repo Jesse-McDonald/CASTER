@@ -133,11 +133,14 @@ class EMOverlay{
           log.log("Caching new overlay");
           if(pthread.alive){
             pthread.terminate=true;
+            log.start("Joining pthread");
             try{//I hate java, if I dont want to catch an exception, dont force me to
+            
               pthread.join();
             }catch (InterruptedException e) {
               e.printStackTrace();
            }
+           log.stop();
            
           }
           pthread=new PNGThread("EMOverlay");

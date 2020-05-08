@@ -71,8 +71,8 @@ class EMImage {
   public EMImage draw(PApplet screen){
     log.start("EMImage.draw()");
     if(img.size()>0){
-      Pixel p0=getPixel(0,0);
-      Pixel pe=getPixel(screen.width,screen.height);
+      Pixel p0=getPos(0,0);
+      Pixel pe=getPos(screen.width,screen.height);
 
       img.draw(this,p0,pe);
       overlay.draw(this,p0,pe);
@@ -146,17 +146,21 @@ class EMImage {
 		//... apparently this stub... is just a stub... yah... I don’t know what i was planning to put here so I will probably remove it unless I remember
 		return this;
 	}
-	
+	public Pixel getPos(int screenX, int screenY){//get only the position of a pixel, not its color
+    log.start("EMImage.getPos()");
+    int x, y;
+    x=int((screenX-offsetX)/zoom);//+meta.get(layer).offsetX;
+    y=int((screenY-offsetY)/zoom);//+meta.get(layer).offsetY;
+    log.stop();
+    return new Pixel(x,y,0);
+    
+  }
 	public Pixel getPixel(int screenX, int screenY) {//gets the img pixel at a screen cord
     log.start("EMImage.getPixel()");
-		int x, y;
-		color c;
-
-		x=int((screenX-offsetX)/zoom);//+meta.get(layer).offsetX;
-		y=int((screenY-offsetY)/zoom);//+meta.get(layer).offsetY;
-		c=img.get(layer, x, y);
+		Pixel p=getPos(screenX,screenY);
+		p.c=img.get(layer, p.x, p.y);
     log.stop();
-		return new Pixel(x, y, c);
+		return p;
 	}
 	public int size(){
     return img.size();

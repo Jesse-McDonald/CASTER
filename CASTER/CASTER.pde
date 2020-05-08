@@ -324,6 +324,12 @@ void keyPressed(){//key press handler
   }else if(key==CODED&&keyCode==DOWN){
     img.changeLayer(-1);  
   }
+  
+  
+  
+  if(key==ESC){//surpress close on escape
+    key=0; 
+  }
   log.stop();
 }
 
@@ -350,4 +356,9 @@ log.start("processing.mouseWheel()");
 		img.changeLayer(event.getAmount());//change layer
 	}
 log.stop();
+}
+
+void exit(){
+  log.saveLog();  
+  
 }
