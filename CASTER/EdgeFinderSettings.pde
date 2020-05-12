@@ -1,6 +1,5 @@
 public class EdgeFinderSettings extends PApplet 
   {
-	  
     Ui ui;
     int picker=0;
     float lightest;
@@ -160,7 +159,7 @@ public class EdgeFinderSettings extends PApplet
   PImage loadImage(String path){//because WHY NOT!!!! >:(
    return imgFromFile(path); 
   }
-  
+
   
   /*All ui files have been moved to the bottom of this file to free up the namespace*/
   /**
