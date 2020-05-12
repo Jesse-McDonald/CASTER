@@ -28,7 +28,7 @@ class Ui{
      //using no layout managers  
      f=new JPanel();
      f.setBackground(new Color(150,150,150));
-     f.setBounds(0,0,400,in(9));
+     f.setBounds(0,0,in(3.6),in(9));
      f.setLayout(null);
      f.setVisible(true);
      root.add(f);

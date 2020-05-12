@@ -42,7 +42,7 @@ public void run(){
 }catch(Exception e){}//file dne
     }
 }
-public class NotSupported extends Lambda{//allows for overlay save button
+public class NotSupported extends Lambda{
 public void run(){
       println("This button not yet supported");
       showMessageDialog (null, "This button not yet supported");
@@ -160,16 +160,10 @@ class EraserBrush extends Lambda{//allows for erase mode button
 
   }
 }
-
-public class Save extends Lambda{//allows for overlay save button
-        public void run(){
-          if(img.project.path.equals("")){
-             selectOutput("Select file to save Project","handler2",null,this);
-          }
-          selectOutput("Select file to save overlay","handler",null,this);
-        
-        }
-  
+public class SaveAsOverlay extends Lambda{
+  public void run(){
+            selectOutput("Select file to save overlay","handler",null,this);
+  }
   public void handler(File f){//this gets called by selectOutput when the output is selected
     if(f!=null){
        
@@ -178,7 +172,21 @@ public class Save extends Lambda{//allows for overlay save button
     }
     
   }
-  public void handler2(File f){//this gets called by selectOutput when the output is selected
+}
+public class SaveProject extends Lambda{
+    public void run(){
+      if(img.project.path.equals("")){
+             (new SaveAsProject()).run();
+          }else{
+     img.saveProject(img.project.path);
+          }
+  }
+}
+public class SaveAsProject extends Lambda{
+  public void run(){
+    selectOutput("Select file to save Project","handler2",null,this);
+  }
+    public void handler2(File f){//this gets called by selectOutput when the output is selected
     if(f!=null){
       String path=f.getAbsolutePath();
       
@@ -196,6 +204,25 @@ public class Save extends Lambda{//allows for overlay save button
     }
     
   }
+}
+public class SaveOverlay extends Lambda{
+  public void run(){
+    if(img.overlay.path.equals("")){
+            (new SaveAsOverlay()).run();
+          }else{
+            
+    img.saveOverlay(img.overlay.path); 
+          }
+  }
+}
+public class Save extends Lambda{//allows for overlay save button
+        public void run(){
+          
+          (new SaveProject()).run();
+          (new SaveOverlay()).run();
+          
+        
+        }
 }
 
 public class Load extends Lambda{//allow for overlay load button 

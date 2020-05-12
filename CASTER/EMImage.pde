@@ -225,6 +225,7 @@ class EMImage {
     return saveOverlay(fileName.getAbsolutePath());
   }
   public boolean saveOverlay(String path){
+    overlay.path=path;
     log.start("EMImage.saveOverlay()");
     if(saving){
       log.stop();

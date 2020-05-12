@@ -16,6 +16,8 @@ class EMOverlay{
 	ArrayList<PNGOverlay> overlay;//PImage stack for storing the overlay
   HashMap<Integer,Integer> key;
   ArrayList<Integer> palette;
+  
+  String path="";//path to save to
   HashMap<Integer,Integer> paletteMap;
 	int width;//width of overlay, all PImages in overlay should have same width
 	int height;//height of overlay, all PImages in overlay should have same width
