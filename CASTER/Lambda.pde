@@ -257,27 +257,6 @@ public class EdgeFollowingBrushDestroy extends Lambda{//I am guessing anti edgef
  
 }
 
-public class AxonBrush extends Lambda{//Edgefollowing trigger
-  Axon brush;
-  boolean first=true;
-  public void run(){
-    if(first){
-      brush=new Axon(img.brush.c,img.brush.img,img.brush.size);
-    }
-    first=false;
-    brush.c=img.brush.c;
-    brush.size=img.brush.size;
-    img.brush= brush;
-    img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
-  }
- 
-}
-public class AxonBrushDestroy extends Lambda{//I am guessing anti edgefollowing trigger, but I dont know
-  public void run(){
-    img.brush= new Brush(img.brush.c,img.brush.img,img.brush.size);
-  }
- 
-}
 
 
 public class BlankButton extends Lambda{//blank button for testing, hyjack all you want

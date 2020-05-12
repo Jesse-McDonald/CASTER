@@ -20,26 +20,21 @@ class BrushEdgeFollowing extends Brush{
 //ThirdApplet third = new ThirdApplet();//This creates the frame that will show the outline in 3D moved to CASTER
 //EMOverlay[] overlayCopies = new EMOverlay[10]; //This is to make the undo button work properly, but it's not working just yet
 //Pixel[] overlayCenters = new Pixel[10];
-  boolean paintLock; //JESSE 
+  boolean paintLock;
   String[] args = {"Edge Outlining Tools"}; // I don't understand why this is needed, I just know that it is.
-  EdgeFinderSettings second; //This is for the second popup window that opens once this brush has been initlized, which is the Edge Finder Settings
-  ColorPickerPointer colorPicker; //JESSE
+  EdgeFinderSettings second;
+  ColorPickerPointer colorPicker;
   float rayCastAngle=0;
-  
-  public BrushEdgeFollowing(color col,EMImage image,int s){ //col is the current color selected, EMImage loads the current image, s is the brush size
+  public BrushEdgeFollowing(color col,EMImage image,int s){
       super(col,image,s);
       second = new EdgeFinderSettings();//This crates the frame that will show the tools for the outliner
-      colorPicker=new ColorPickerPointer();//JESSE
-      PApplet.runSketch(args, second);//Load and display the second pop up box
+      colorPicker=new ColorPickerPointer();
+      PApplet.runSketch(args, second);//Load and display the second pop up box, 
   }
 
   public BrushEdgeFollowing draw(){//this draws the shape of the BrushEdgeFollowing to the screen, generally should not update overlay unless there is a multi-frame process
     //this should be called every frame
-    paintLock = false; 
-    if(paintLock&&!mousePressed) 
-    {
-       paintLock=false;
-    }
+    if(paintLock&&!mousePressed) paintLock=false;
     float zoom=this.img.getZoom();
     Pixel pixel = brushPosition();
     if(second.picker==0){
@@ -77,7 +72,7 @@ class BrushEdgeFollowing extends Brush{
     if(repeats>0)
     {
       double radians = linearRegression(black, size); // Find the angle in radians of the line of best fit (based on what is the outlined object and what is not)
-      for(int i = 1; i < 9; i++)
+      for(int i = 0; i < 8; i++)
       { 
         int section = i; //The program doesn't know to start going in any particular direction, so one is given here
         double degree = Math.toDegrees((double)radians); //Convert radians to degrees
@@ -195,7 +190,7 @@ class BrushEdgeFollowing extends Brush{
        }
        if(count<=3)//And it is touching 3 or less other membrane/object sections, unmark it
        {
-        temp[i][j]=color(0,0,0,0); //This sets the pixel to a color which will be ignored. The specific color is not important. 
+        temp[i][j]=color(0,0,0,0);
        }
       }
      }
@@ -212,7 +207,7 @@ class BrushEdgeFollowing extends Brush{
           }
          }
          if(count<=1){
-          temp[i][j]=color(0,0,0,0); //This sets the pixel to a color which will be ignored. The specific color is not important. 
+          temp[i][j]=color(0,0,0,0);
          }
        }
     }
@@ -316,8 +311,6 @@ class BrushEdgeFollowing extends Brush{
   
   //This function selects the current object being followed
   public color[][] GetMembrane(color[][] temp, color[][] white, Pixel p, color lightest, int variation)
-  // Temp is the array that stores all possible membrane pixels
-  // White is the array that stores all pixels that cannot be membrane
   {
     color[][] black = FocusMembrane(temp, p, lightest, variation);//focus the suspected membrane
     black = realMemFloodFill(temp, white, new Pixel(size, size, p.c));//and select only the area that is membrane
@@ -326,7 +319,7 @@ class BrushEdgeFollowing extends Brush{
   }
   
   //Flood fills the object that is currently being followed
-  public color[][] realMemFloodFill(color[][] temp, color[][]white, Pixel onMembrane) // Why am I only checking 4 of the 8 sections? DBJ
+  public color[][] realMemFloodFill(color[][] temp, color[][]white, Pixel onMembrane)
   {     
     ArrayList<Pixel> pixels = new ArrayList<Pixel>();//create storage for markers of known membrane peices
     pixels.add(onMembrane);//and add the one peice that we know is membrane (based on user click)
@@ -391,7 +384,6 @@ class BrushEdgeFollowing extends Brush{
   //This locates a pixel to be the center of the next box
   public Pixel FindPixelForRecursion(double radians, Pixel p, color[][] black, int section, int area, color lightest, int variation)
   {
-    //The sections are defined in a graphic at https://delaneybjones.netlify.com/educaton.html
     Pixel p2 = SectionsBy(p, radians, area); // locate a pixel in the direction being moved
     p2 = MembraneFinder(p2, p, black); //Then find the closest piece of membrane to it
     //If the best new pixel is the same as the old one...
@@ -442,7 +434,6 @@ class BrushEdgeFollowing extends Brush{
         Pixel left = new Pixel (p2.x - 3, p2.y, 0);
         int LeftCount = testArea(left, lightest, variation);
         int CurrentCount = testArea(p2, lightest, variation);
-        //DBJ why am I using >= instead of > ?
         if (UpCount >= DownCount && UpCount >= LeftCount && UpCount >= RightCount && UpCount >= CurrentCount)
         {
           p2 = up;
@@ -562,7 +553,6 @@ class BrushEdgeFollowing extends Brush{
       {
         p2 = new Pixel(p.x-3, p.y, c);
       }
-      //DBJ am I mixing up sections 6 and 8 so they are reversed
       else
       {
         p2 = new Pixel(p.x, p.y+3, c);
@@ -581,13 +571,7 @@ class BrushEdgeFollowing extends Brush{
     {
       curSect = 5;
     }
-    
-    //DBJ ask Fang if confused? If it's from sections 5,6,1 and it's out of range for sections 5 and 6, it must be in section 1.
-    /*else if (degree <= 67.5 && degree > 22.5)
-    {
-      curSect = 1;
-    }*/
-    else if (degree > 112.5 && degree < 137.5)
+    else if (degree <= 67.5 && degree > 22.5)
     {
       curSect = 1;
     }
@@ -599,7 +583,7 @@ class BrushEdgeFollowing extends Brush{
     {
       curSect = 2;
     }
-    else if (degree > 157.5  && degree <= 202.5)
+    else if (degree > 157.5  && degree <= 202.)
     {
       curSect = 7;
     }
@@ -611,13 +595,9 @@ class BrushEdgeFollowing extends Brush{
     {
       curSect = 8;
     }
-    else if (degree <= -112.5 && degree > -157.5 || degree > 202.5 && degree <= 247.5 )
+    else if (degree <= -67.5 && degree > -157.5 || degree > 202.5 && degree <= 247.5 )
     {
       curSect = 3;
-    }
-    else 
-    {
-      print("Broke it. Degree: " + degree + "\tPrevSect: " + prevSect + "\n");
     }
     curSect = SectionChecker(curSect, prevSect);//Then double check the new section
     return curSect;
@@ -637,10 +617,8 @@ class BrushEdgeFollowing extends Brush{
     int section8Options[] = {3,8,4};
     int[] sectionGrabbers[] = {section1Options, section2Options, section3Options, section4Options, section5Options, section6Options, section7Options, section8Options};
     boolean found = false;
-    print("Section is: " + section + "\n");
     for (int i = 0; i < 3; i++)//For each right, middle, and left option for a section
     {
-      //DBJ keep getting "ArrayIndexOutOfBoundsException: -1" 
       if (sectionGrabbers[section-1][i] == prevsection)//If the section being moved into neighbors the previous section
       {
         found = true;//Then the new section has been verified
@@ -759,7 +737,6 @@ class BrushEdgeFollowing extends Brush{
         radians = 3 * PI / 2;
       }
     }
-    
     //Otherwise make sure the radians are within one unit circle of rotation
     while (radians > 2 * PI)
     {
@@ -769,72 +746,13 @@ class BrushEdgeFollowing extends Brush{
     {
       radians += (2 * PI);
     }
+
     //If the previous section was on the left hand side of the unit circle, adjust the angle for accuracy
-    if (prevSection == 6 || prevSection == 2 || prevSection == 7 || prevSection == 3 || prevSection == 8 || prevSection == 1 || prevSection == 4)
+    if (prevSection == 6 || prevSection == 2 || prevSection == 7 || prevSection == 3 || prevSection == 8)
     {
-      if (prevSection == 6 && radians > PI)
-      {
-        //We don't care if prevSection == 6 && radians <= PI because arcTangent won't mess it up. 
-        radians = radians - PI;
-      }
-      else if (prevSection == 2)
-      {
-        if (radians > ((3*PI)/2))
-        {
-          radians = radians - PI;
-        }
-      }
-      else if (prevSection == 7)
-      {
-        if (radians < (PI/2) && radians >= 0)
-        {
-            radians = radians + PI;
-        }
-        else if (radians > ((3 * PI)/2))
-        {
-          radians = radians - PI;
-        }
-      }
-      else if (prevSection == 3)
-      {
-        if (radians <= 0 && radians < (PI/2))
-        {
-          radians = radians + PI;
-        }
-        else if (radians > ((337.5/180)/PI))
-        {
-          radians = radians- PI;
-        }
-      }
-      else if (prevSection == 8)
-      {
-        if (radians < (PI/2) && radians >= 0)
-        {
-          radians = radians + PI;
-        }
-      }
-      else if (prevSection == 1)
-      {
-        if (radians > ((3*PI)/2) && radians < ((292.5/180)*PI))
-        {
-          radians = radians - PI;
-        }
-      }
-      else if (prevSection == 4)
-      {
-        if (radians < (PI/2) && radians > ((67.5/180)*PI))
-        {
-          radians = radians + PI;
-        }
-      }
-      /*
-      //DBJ why is it allowing jumps from 6 to 3?
-      print("prevSection: " + prevSection + "\tradians: " + radians);
       if (prevSection == 6 && radians < (PI / 6))
       {
-        //DBJ why a I subracting radians instead of adding them?
-        //radians = PI / 2 - radians; 
-        radians = (PI/2) + radians;
+        radians = PI / 2 - radians; 
       }
       else if (prevSection == 2 && radians < (PI / 6))
       {
@@ -868,9 +786,7 @@ class BrushEdgeFollowing extends Brush{
       {
         radians += 3 * PI / 2;
       }
-      */
     }
-    /*
     //Then make sure the angle is still within one rotation of the unit circle
     while (radians > 2 * PI)
     {
@@ -880,8 +796,6 @@ class BrushEdgeFollowing extends Brush{
     {
       radians -=(2 * PI);
     }
-    print("\tnew radians: " + radians + "\n");
-    */
     return radians;
   }
 
@@ -916,7 +830,6 @@ class BrushEdgeFollowing extends Brush{
     else
     {
       m = ( -((n * T)- (P * Q)) ) / ((n * R) - pow(P,2) );//Linear Regression Analysis Formula for slope
-      //DBJ is m in degrees or radians? 
       while (m > 2 * PI)//Make sure the angle is within one rotation of the unit circle
       {
         m = m - (2 * PI);
@@ -1083,7 +996,7 @@ class BrushEdgeFollowing extends Brush{
             }else if(second.picker==2){
               second.variationValue.set(round(grayVal(k.c)));
             }
-            //((Ui_RadioButton)second.ui.getId("pickers")).hide();;//I hope you dont need this line
+            ((EdgeFinderSettings.Ui_RadioButton)second.ui.getId("pickers")).hide();;
             //second.picker=0;
           }
         }
@@ -1111,209 +1024,6 @@ class BrushEdgeFollowing extends Brush{
       }
     
     
-    return this;
-  }
-  
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-int s = second();
-int m = millis();
-int newS;
-int newM;
-/*
-color 1 = rgb(255,0,204);
-color 2 = rgb(204,255,0);
-color 3 = rgb(0,204,255);
-*/
-
-
-class Axon extends Brush{
-  boolean paintLock;
-  //String[] args = {"Edge Outlining Tools"}; // I don't understand why this is needed, I just know that it is.
-  ColorPickerPointer colorPicker;
-  float rayCastAngle=0;  
-  
-  public Axon(color col,EMImage image,int s){
-      super(col,image,s);
-      colorPicker=new ColorPickerPointer();
-  }
-  
-
-  public Axon draw(){//this draws the shape of the BrushEdgeFollowing to the screen, generally should not update overlay unless there is a multi-frame process
-    //this should be called every frame
-    if(paintLock&&!mousePressed) paintLock=false;
-    float zoom=this.img.getZoom();
-    Pixel pixel = brushPosition();
-    image(shape,(pixel.x*zoom+this.img.offsetX),(pixel.y*zoom+this.img.offsetY),shape.width*zoom,shape.height*zoom);
-    return this; 
-  }
-  
-  public Axon paint(EMImage img){//this causes the BrushEdgeFollowing to lay down "ink" on the overlay and generally should only be called on mouse press or mouse drag
-      if (mousePressed){
-        if(!paintLock){
-          
-          newS = second();
-          newM = millis(); 
-          if ( (newS != s) & (newM != m))
-          {
-            Pixel p = this.img.getPixel(mouseX,mouseY);
-            axonStarter(p);
-          }
-        }
-      }
-      s = newS;
-      m = newM;
-      return this;
-  }
-  
-  public Axon axonStarter(Pixel p) {
-    color[][] selected = floodFill(p); //Fills in the current layers "axon"
-    membraneToOverlay(selected, img.layer); //Displays results
-    axonFinder(p);//In progress: flips through layers
-    return this;
-  }
-  
-  public color[][] floodFill(Pixel p){
-    color[][] init =  new color[width*2+1][height*2+1];
-    ArrayList<Pixel> pixels = new ArrayList<Pixel>();
-    color good = color(255,255,255);
-    color bad = color(0,0,0);
-    color highlighted = color(0,0,0,255);
-    p.c = highlighted;
-    pixels.add(p);
-    //theoretically this is where all pixels that are light enough are selected
-    while(!pixels.isEmpty())
-    {
-      System.out.print("pixels.size(): " + pixels.size() + "\n");
-      Pixel active = pixels.get(0);
-      pixels.remove(0);
-      System.out.print("Checking for pixels");
-      System.out.print("Section 1 check 1\t");
-      if(active.x+1 < width*2 )//in current area
-      {
-        System.out.print("Section 1 check 2\t");
-        if(init[active.x+1][active.y] != color(0,0,0,255))//and has not already been checked
-        {
-          System.out.print("Section 1 check 3\t");
-          System.out.print("Pixel color: " + red(img.get(int(active.x+1),int(active.y)).c) + "\t");
-          if(red(img.get(int(active.x+1),(int(active.y))).c) > 50)//and is of an acceptable color
-          {
-            System.out.print("Section 1 check 4\t");
-            init[active.x+1][active.y] = color(0,0,0,255);
-            pixels.add(new Pixel(active.x+1, active.y, c));
-          }
-        }
-      }
-      System.out.print("Section 2 check 1\t");
-      if(active.x-1 > 0)//in current area
-      {
-        System.out.print("Section 2 check 2\t");
-        System.out.print("active.x-1: " + (active.x-1) + "\t");
-        System.out.print("active.y: " + active.y+ "\t");
-        System.out.print("init[active.x-1]: " + init[active.x-1] + "\t");
-        System.out.print("init[active.x-1][active.y]: " + init[active.x-1][active.y] + "\t");
-        System.out.print("\n");        
-        if(init[active.x-1][active.y] != color(0,0,0,255))//and has not already been checked
-        {
-          System.out.print("Section 2 check 3\t");
-          if(red(img.get(int(active.x-1),(int(active.y))).c) > 50)//and is of an acceptable color
-          {
-            System.out.print("Section 2 check 4\t");
-            init[active.x-1][active.y] = color(0,0,0,255);
-            pixels.add(new Pixel(active.x-1, active.y, c));
-          }
-        }
-      }
-      if(active.y+1 < height*2+1)//in current area
-      {
-        if(init[active.x][active.y+1] != color(0,0,0,255))//and has not already been checked
-        {
-          if(red(img.get(int(active.x),(int(active.y+1))).c) > 50)//and is of an acceptable color
-          {
-            init[active.x][active.y+1] = color(0,0,0,255);
-            pixels.add(new Pixel(active.x, active.y+1, c));
-          }
-        }
-      }
-      if(active.y-1 > 0)//in current area
-      {
-        if(init[active.x][active.y-1] != color(0,0,0,255))//and has not already been checked
-        {
-          if(red(img.get(int(active.x),(int(active.y-1))).c) > 50)//and is of an acceptable color
-          {
-            init[active.x][active.y-1] = color(0,0,0,255);
-            pixels.add(new Pixel(active.x, active.y-1, c));
-          }
-        }
-      }
-      System.out.print("\n");
-    }
-    
-    //And theoretically those selected pixels can now be assembled for return
-    color[][] interested = new color[width*2+1][height*2+1];
-    System.out.print("Height is: " + height + "\tWidth is: " + width + "\t");
-    for(int i2 = 0; i2 <= width*2; i2 ++)//then for each pixel in the current area
-    {
-      for(int j2 = 0; j2 <= height*2; j2++)
-      {
-        if(init[i2][j2]==color(0,0,0,255))//If it has the special mark, mark it in the new lst
-        {
-          interested[i2][j2]= c;
-        }
-        else
-        {
-          interested[i2][j2] = color(0,0,0,0);
-        }
-      }
-    }
-    return interested;
-  }
-  
-  public Axon axonFinder(Pixel p)
-  {
-    //Check the slides above and below
-    int curent = img.layer;
-    for (int i = -5; i < 6; i++)
-    {
-      img.changeLayer(i);
-      if (curent != img.layer)
-      {
-        curent = img.layer;
-        color[][] selected = floodFill(p); //Fills in the current layers "axon"
-        membraneToOverlay(selected, img.layer);
-      }
-    }
-    return this;
-  }
-  
-  public Axon membraneToOverlay(color[][] black, int layer)
-  {
-    for (int i=0; i < width*2+1; i++)//For each pixel in a given area
-    {
-      //System.out.print("Check 1");
-      for (int j=0; j< height*2+1; j++)
-      {
-        //System.out.print("Check 2");
-         if( black[i][j] == c)//If the pixel is marked, display it on the overlay
-         {
-             this.img.overlay.set(layer,i, j, c);
-             //System.out.print("\nYay!\n");
-         }
-      }
-    }
     return this;
   }
   
