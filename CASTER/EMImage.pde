@@ -183,6 +183,7 @@ class EMImage {
       prevLayer=layer;
 			layer=max(0,layer-1);
 		}
+    project.layer=layer;
     log.stop();
 		return this;
 	}

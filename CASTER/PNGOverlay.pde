@@ -130,7 +130,9 @@ class PNGOverlay extends PNGImage{
      fileTerminator=true;
    }
    boolean run=true;
+   int ittr=0;
    while(run){
+     ittr++;
      file.read(byteC);
      file.read(byte2);
      color c=palette.get(unwrapNBytes(byteC));    
@@ -146,10 +148,12 @@ class PNGOverlay extends PNGImage{
        set(index,c);
        index++;
      }
-    
+      if(ittr%1000==0){
+        PNGLog.saveLog();
+      }
    }
    PNGLog.log("Stop PNGOverlay.fromJEMOv1()");
-    
+    PNGLog.saveLog();
    return fileTerminator;//is this layer the file terminator
  }
  OutputStream toJEMOv1(int colorSize,OutputStream file) throws IOException{//we throw an exception because this is not the first step in writing and previous layers are already handeling io exceptions so I dont feel like handeling it here

@@ -83,7 +83,7 @@ Ui buildUi(){
           slider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
               img.brush.setSize(((JSlider)e.getSource()).getValue()*2+1);
-              println(((JSlider)e.getSource()).getValue());
+             // println(((JSlider)e.getSource()).getValue());
             
             }
         });

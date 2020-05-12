@@ -4,6 +4,7 @@ import javax.xml.bind.DatatypeConverter;
 class EMProject{
   //these are used to verify that the stack is still the same stack
   String path="";
+  int layer=0;
   String savedBy;
   int version;
   int numFiles;//number of files in the dir incase some are not .(extension)
@@ -65,6 +66,7 @@ class EMProject{
     ret.setInt("width",width);
     ret.setInt("height",height);
     ret.setBoolean("stackLoaded",stackLoaded);
+    ret.setInt("layer",layer);
     ret.setString("lastOverlay",lastOverlay);
     if(stackLoaded){
       ret.setInt("stackSize",stackSize);
@@ -82,6 +84,7 @@ class EMProject{
     numFiles=in.getInt("numFiles",numFiles);
     stackPath=in.getString("stackPath");
     stackTopName=in.getString("topFileName");
+    layer=in.getInt("layer");
     width=in.getInt("width",width);
     height=in.getInt("height",height);
     stackLoaded=in.getBoolean("stackLoaded");

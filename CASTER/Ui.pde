@@ -20,7 +20,7 @@ class Ui{
      //datapath required for non processing file access from test
      buttons=new HashMap<String,Ui_Button>();
      recolor=new ArrayList<Ui_Button>();
-     root.setSize(400,in(9));
+     root.setSize(in(3.6),in(9));
      
      
      root.setLayout(null);
@@ -53,7 +53,7 @@ class Ui{
       {
         
         String accName = ((JButton) comps[i]).getAccessibleContext().getAccessibleName();
-        System.out.println(accName);
+        //System.out.println(accName);
         if(accName.equals("Maximize")|| accName.equals("Iconify")||
            accName.equals("Close")) comps[i].getParent().remove(comps[i]);
       }
