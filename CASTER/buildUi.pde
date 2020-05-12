@@ -32,7 +32,7 @@ Ui buildUi(){
     saveasP.addActionListener(new LambdaWrap(new SaveAsProject()));
     saveasO.addActionListener(new LambdaWrap(new SaveAsOverlay()));
     export3D.addActionListener(new LambdaWrap(new Create3D()));
-    exportPNG.addActionListener(new LambdaWrap(new NotSupported()));
+    exportPNG.addActionListener(new LambdaWrap(new ExportPNG()));
     export.add(export3D);
     export.add(exportPNG);
     saveAs.add(saveasP);

@@ -345,7 +345,9 @@ class EMOverlay{
 		return this;
 	}
 	
-
+PImage getLayer(int layer){
+  return overlay.get(layer).getImage(); 
+}
 
 PImage merge(PImage _1, PImage _2){
    log.start("PImage Merge");
