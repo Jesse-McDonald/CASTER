@@ -1,5 +1,4 @@
 /**
-
 BrushEdgeFollowing is designed to provide a simple BrushEdgeFollowing to draw with, BrushEdgeFollowing depends on having
 a global EMImage called this.img for some of its functionality and should only exist
 as a member of that object
@@ -8,117 +7,114 @@ BrushEdgeFollowing requires access to int x, int y, Pixel(int x, int y, color), 
 float getZoom(), Pixel getPixel(int layer, int x, int y),color get(int layer, int x, int y), int layer, and EMOverlay overlay from EMImage (this.img)
 void set(int layer,int x,int y,color), get(int layer,int x,int y) from EMOverlay
 
-BrushEdgeFollowing depends on color, PImage,       color g.strokeColor, float g.strokeWeight, color g.fillColorvoid, line(int x, int y, int x2, int y2), void ellipse(int x, int y, int width, int height), void PImage.resize(int w,int h), color PImage.get(int x, int y), void PImage.set(int x,int y, color), PImage createImage(int w, int h, int colorMode),PImage loadImage(String path), image(PImage this.img, int xPos, int yPos, int xScale, int yScale), image(PImage this.img, int xPos, int yPos), color(int red, int green, int blue, int alpha) from processing 
+BrushEdgeFollowing depends on color, PImage, color g.strokeColor, float g.strokeWeight, color g.fillColorvoid, line(int x, int y, int x2, int y2), void ellipse(int x, int y, int width, int height), void PImage.resize(int w,int h), color PImage.get(int x, int y), void PImage.set(int x,int y, color), PImage createImage(int w, int h, int colorMode),PImage loadImage(String path), image(PImage this.img, int xPos, int yPos, int xScale, int yScale), image(PImage this.img, int xPos, int yPos), color(int red, int green, int blue, int alpha) from processing 
 also depends on "bucket.png" in program dir
 */
 //TODO: remove dependance on golbal this.img
 
-import javax.swing.JFrame;//This is needed to make and display new frames
+//import javax.swing.JFrame;//This is needed to make and display new frames
 
-class BrushEdgeFollowing extends Brush{
-  
-//ThirdApplet third = new ThirdApplet();//This creates the frame that will show the outline in 3D moved to CASTER
-//EMOverlay[] overlayCopies = new EMOverlay[10]; //This is to make the undo button work properly, but it's not working just yet
-//Pixel[] overlayCenters = new Pixel[10];
-  boolean paintLock;
+class BrushEdgeFollowing extends Brush
+{
+  boolean paintLock; //JESSE 
   String[] args = {"Edge Outlining Tools"}; // I don't understand why this is needed, I just know that it is.
-  EdgeFinderSettings second;
-  ColorPickerPointer colorPicker;
+  ColorPickerPointer colorPicker; //JESSE
   float rayCastAngle=0;
-  public BrushEdgeFollowing(color col,EMImage image,int s){
+  
+  public BrushEdgeFollowing(color col,EMImage image,int s)
+  { //col is the current color selected, EMImage loads the current image, s is the brush size
       super(col,image,s);
-      second = new EdgeFinderSettings();//This crates the frame that will show the tools for the outliner
-      colorPicker=new ColorPickerPointer();
-      PApplet.runSketch(args, second);//Load and display the second pop up box, 
+      colorPicker=new ColorPickerPointer();//JESSE
   }
 
-  public BrushEdgeFollowing draw(){//this draws the shape of the BrushEdgeFollowing to the screen, generally should not update overlay unless there is a multi-frame process
+  public BrushEdgeFollowing draw()
+  {//this draws the shape of the BrushEdgeFollowing to the screen, generally should not update overlay unless there is a multi-frame process
     //this should be called every frame
-    if(paintLock&&!mousePressed) paintLock=false;
+    paintLock = false; 
+    if(paintLock&&!mousePressed) 
+    {
+       paintLock=false;
+    }
     float zoom=this.img.getZoom();
     Pixel pixel = brushPosition();
-    if(second.picker==0){
-      image(shape,(pixel.x*zoom+this.img.offsetX),(pixel.y*zoom+this.img.offsetY),shape.width*zoom,shape.height*zoom); 
-    }else{
-      colorPicker.updateMask(img.getPixel(mouseX,mouseY).c);
-      colorPicker.draw((mouseX),(mouseY));
-    }
+    image(shape,(pixel.x*zoom+this.img.offsetX),(pixel.y*zoom+this.img.offsetY),shape.width*zoom,shape.height*zoom); 
     return this; 
   }
-  
-
 
   //This causes the EdgeFinderBrushEdgeFollowing to repeat a specifed number of times from the input box
-  public BrushEdgeFollowing outlineRepeater(Pixel p, int counts, int prevsection, color lightest, int variation, double prevRadians, int repeats)
+  public BrushEdgeFollowing outlineRepeater(Pixel p, int counts, int prevsection, int repeats)
   {
+    counts = 0;
     if (counts < repeats)
     {
       counts++;
-      outlineBase(p, counts, prevsection, lightest, variation, prevRadians, repeats);
+      outlineBase(p, counts, prevsection, repeats);
     }
     return this;
   }
   
-  
   //This is where the EdgeFinderBrushEdgeFollowing starts working
-  public BrushEdgeFollowing outlineStarter(int counts, Pixel p, color lightest, int variation, int repeats)//Send this up, down, left, and right only in outline starter? 
+  public BrushEdgeFollowing outlineStarter(int counts, Pixel p)//Send this up, down, left, and right only in outline starter? 
   {
+    int lightest = acceptableColorRange(p);
+    color[][] temp = FindPossibleMembrane(p, lightest); //Finds all pixles that are dark enough to be an object in the area
+    color[][] white = FindNotMembrane(p, temp, lightest);//Identifies what is not an object in the area being searched
+    color[][] black = GetMembrane(temp, white, p, lightest);//Identifies the object that we are trying to locate
+    membraneToOverlay(black, p, c);//Display the outline
     
-    color Min = MinColor(p, lightest); //Finds the darkest pixel in the current area
-    color[][] temp = FindPossibleMembrane(p, Min, lightest, variation); //Finds all pixles that are dark enough to be an object in the area
-    color[][] white = FindNotMembrane(p, Min, variation, temp);//Identifies what is not an object in the area being searched
-    color[][] black = GetMembrane(temp, white, p, lightest, variation);//Identifies the object that we are trying to locate
-    membraneToOverlay(black, p, c); // Display the identified object
+    int repeats = 1;
     if(repeats>0)
     {
-      double radians = linearRegression(black, size); // Find the angle in radians of the line of best fit (based on what is the outlined object and what is not)
-      for(int i = 0; i < 8; i++)
+      double radians = linearRegression(black, p); // Find the angle in radians of the line of best fit (based on what is the outlined object and what is not) 
+      /*
+      for(int i = 1; i < 9; i++)
       { 
-        int section = i; //The program doesn't know to start going in any particular direction, so one is given here
-        double degree = Math.toDegrees((double)radians); //Convert radians to degrees
+        int section = i;
+        double degree = Math.toDegrees((double)radians); //Convert radians to degrees                        
         degree = degreeVerifier(degree, section); //And verify the degree based on the given section, correcting where needed
         radians = Math.toRadians(degree); //Convert degrees to radians
         section = SectionFinder(degree, section);//and select the correct section based on the degree
-        Pixel p2 = FindPixelForRecursion(radians, p, black, section, size, lightest, variation);//Locate a pixel in the direction being moved that is on the membrane (usually)
-        int membraneCount = testArea(p2, lightest, variation);
-        //print("Membrane count is: " + membraneCount + ".\n");
+        Pixel p2 = FindPixelForRecursion(radians, p, black, section, size, lightest);//Locate a pixel in the direction being moved that is on the membrane (usually)  
+        int membraneCount = testArea(p2, lightest);
         if (membraneCount >= 10)
         {
           counts++;//Increment counts for our repeater
           
           ConnectTheDots(p, p2, black);
           
-          outlineBase(p2, counts, section, lightest, variation, radians, repeats);//And call the main repeating function
+          //outlineBase(p2, counts, section, repeats);//And call the main repeating function
         }
       }
+      */
     }
     return this;
   }
   
   //This is the main function of the Edge Finder Brush
-  public BrushEdgeFollowing outlineBase(Pixel p, int counts, int prevSect, color lightest, int variation, double prevRadians, int repeats)
+  public BrushEdgeFollowing outlineBase(Pixel p, int counts, int prevSect, int repeats)
   {
-    //print("The repeater is working.");
-    color Min = MinColor(p, lightest);//Find the darkest pixel in the given area
-    color[][] temp = FindPossibleMembrane(p, Min, lightest, variation);//Find objects in the given area
-    color[][] white = FindNotMembrane(p, Min, variation, temp);//Find what is not objects in the given area
-    color[][] black = GetMembrane(temp, white, p, lightest, variation);//And locate the object that we are trying to follow
-    membraneToOverlay(black, p, c);//Display the outline
+    int lightest = acceptableColorRange(p);
+    color[][] temp = FindPossibleMembrane(p, lightest);//Find objects in the given area
+    color[][] white = FindNotMembrane(p, temp, lightest);//Find what is not objects in the given area
+    color[][] black = GetMembrane(temp, white, p, lightest);//And locate the object that we are trying to follow
+    membraneToOverlay(black, p, color(135, 135, 0));//Display the outline
     
-    double radians = linearRegression(black, size);//Find the degree in radians of the line of best fit
+    double radians = linearRegression(black, p);//Find the degree in radians of the line of best fit
     radians  = radiansToSection(radians, prevSect);//And verify the degree based on the section we are moving from
     double degree = Math.toDegrees(radians);//Convert radians to degrees
     degree = degreeVerifier(degree, prevSect); //And verify the degree based on the previous section (This seems irrelevant but for some reason helps)
     radians = Math.toRadians(degree);//Convert degrees to radians
     int section = SectionFinder(degree, prevSect);//Find the section being moved into
-    Pixel p2 = FindPixelForRecursion(radians, p, black, section, size, lightest, variation);//And locate a pixel in the direction we are moving that is on the membrane
+    Pixel p2 = FindPixelForRecursion(radians, p, black, section, size, lightest);//And locate a pixel in the direction we are moving that is on the membrane
     ConnectTheDots(p, p2, black);
-    outlineRepeater(p2, counts, section, lightest, variation, radians, repeats);//Call the function to be repeated
+    
+    //This is omitted due to computer limitations.
+    //outlineRepeater(p2, counts, section, repeats);//Call the function to be repeated
     return this;
   }
 
   //This finds the darkest pixel within the current area being searched
-  public color MinColor(Pixel p, color lightest)
+  public color MinColor(Pixel p)
   {
     color Min = 255;//starting with white because it is the brightest color
     for (int i=-size; i<size; i++)//Check each pixel in the box
@@ -132,30 +128,31 @@ class BrushEdgeFollowing extends Brush{
         }
       }
      }
-    if (Min > grayVal(lightest)){//Make sure that the darkest pixel isn't too light!
-      Min = (int) grayVal(lightest);
-    }
     return Min;//And return the darkest pixel
   }
   
   //This finds the sections within the current box that could be membrane
-  public color[][] FindPossibleMembrane(Pixel p, color Min, color lightest, int variation)
+  public color[][] FindPossibleMembrane(Pixel p, color lightest)
   {
     color[][] temp = new color[size*2+1][size*2+1]; //create storage for the possible membrane
-    temp = MatchingPixels(p, Min, temp, variation); //get any pixel that is within the right color range
-    return FocusMembrane(temp, p, lightest, variation); //and bring the membrane into focus
+    temp = MatchingPixels(p, lightest, temp); //get any pixel that is within the right color range
+    return FocusMembrane(temp); //and bring the membrane into focus
   }
 
   //This finds all pixels within a specific color range within the current box
-  public color[][] MatchingPixels(Pixel p, color Min, color[][] temp, int variation)
+  public color[][] MatchingPixels(Pixel p, color lightest, color[][] temp)
   {
-    for (int i=-size; i<size; i++){//Check each pixel within the current box
-      for (int j=-size; j<size; j++){
-         Pixel pix=img.get(p.x+i, p.y+j); 
-         if (Min+variation >= grayVal(pix.c)){ //and if it's color is within the acceptable range
-             temp[i+size][j+size]=c;//color in the pixel for storage
-         }else{
-            temp[i+size][j+size]=color(0,0,0,0);//otherwise set it to blank
+    for (int i=0; i < size*2+1; i++)
+    {//Check each pixel within the current box
+      for (int j=0; j < size*2+1; j++)
+      {
+         Pixel pix=img.get(p.x+i-size, p.y+j-size);
+         if (lightest >= grayVal(pix.c))
+         { //and if it's color is within the acceptable range
+             temp[i][j]=c;//color in the pixel for storage
+         }else
+         {
+            temp[i][j]=color(0,0,0,0);//otherwise set it to blank
          }
       }
     }
@@ -163,53 +160,147 @@ class BrushEdgeFollowing extends Brush{
   }
     
   //This takes the current objects within the box and helps focus them
-  public color[][] FocusMembrane(color[][] temp, Pixel p, color lightest, int variation)
+  public color[][] FocusMembrane(color[][] temp)
   {
-    temp = RemoveOutliers(temp);//Remove any isolated pixels
     temp = MembraneFiller(temp);//Fill in any gaps in objects
-    temp = WeedOutLightPixels(temp, p, lightest, variation); //and remove any pixels that are just too light to be anything
+    temp = RemoveOutliers(temp);//Remove any isolated pixels 
     return temp;
   }
   
   //This function removes any isolated pixels
   public color[][] RemoveOutliers(color [][]temp)
   {
-    for (int i=1;i<temp.length-1;i++)//For every pixel in a given area
-    { 
-     for(int j=1;j<temp[i].length-1;j++)
-     {
-      if (temp[i][j] == c)//If that pixel is part of an object/membrane
-      {   
-       int count=0;
-       for(int w=-1;w<=1;w++){
-        for(int h=-1;h<=1;h++){
-          if(temp[i+w][j+h]==c){
-           count++;
+    for(int repeat = 3; repeat >= 0; repeat--)
+    //for(int repeat = 3; repeat > 0; repeat--)
+    {
+      for (int i=0;i<temp.length;i++)
+      {
+         for(int j=0;j<temp.length;j++)
+         {
+           int count=0;
+           if(i == 0 && j == 0)//Upper left-hand corner
+           {
+             for(int w=0; w<=1; w++)
+             {
+              for(int h=0; h<=1; h++)
+              {
+                if(temp[i+w][j+h]==c)
+                {
+                 count++;
+                }
+              }
+             }
+           }
+           else if (i==0 && j == temp.length-1)//Lower left-hand corner
+           {
+             for(int w=0;w<=1;w++)
+             {
+              for(int h=-1;h<=0;h++)
+              {
+                if(temp[i+w][j+h]==c)
+                {
+                 count++;
+                }
+              }
+             }
+           }
+           else if (i == temp.length-1 && j == 0)//Upper right-hand corner
+           {
+             for(int w=-1;w<=0;w++)
+             {
+              for(int h=0;h<=1;h++)
+              {
+                if(temp[i+w][j+h]==c)
+                {
+                 count++;
+                }
+              }
+             }
+           }
+           else if(i == temp.length-1 && j == temp.length-1)//Lower right-hand corner
+           {
+             for(int w=-1;w<=0;w++)
+             {
+              for(int h=-1;h<=0;h++)
+              {
+                if(temp[i+w][j+h]==c)
+                {
+                 count++;
+                }
+              }
+             }
+           }
+           else if(i == 0) //left-hand side column
+           {
+             for(int w=0;w<=1;w++)
+             {
+              for(int h=-1;h<=1;h++)
+              {
+                if(temp[i+w][j+h]==c)
+                {
+                 count++;
+                }
+              }
+             }
+           }
+           else if(i == temp.length-1)//right-hand side column
+           {
+            for(int w=-1;w<=0;w++)
+            {
+              for(int h=-1;h<=1;h++)
+              {
+                if(temp[i+w][j+h]==c)
+                {
+                 count++;
+                }
+              }
+             }
+           }
+           else if(j == 0 && i < temp.length-1)//top row
+           {
+             for(int w=-1;w<=1;w++)
+             {
+              for(int h=0;h<=1;h++)
+              {
+                if(temp[i+w][j+h]==c)
+                {
+                 count++;
+                }
+              }
+             }
+           }
+           else if (j==temp.length-1)//bottom row
+           {
+             for(int w=-1;w<=1;w++)
+             {
+              for(int h=-1;h<=0;h++)
+              {
+                if(temp[i+w][j+h]==c)
+                {
+                 count++;
+                }
+              }
+             }
+           }
+           else if (i > 0 && i < temp.length-1 && j > 0 && j < temp.length-1)//entire box
+           {
+             for(int w=-1;w<=1;w++)
+             {
+              for(int h=-1;h<=1;h++)
+              {
+                if(temp[i+w][j+h]==c)
+                {
+                  count++;
+                }
+              }
+             }
+           }
+          if(count<=repeat)
+          {
+            temp[i][j]=color(0,0,0,0); //This sets the pixel to a color which will be ignored. The specific color is not important. 
           }
-        }
-       }
-       if(count<=3)//And it is touching 3 or less other membrane/object sections, unmark it
-       {
-        temp[i][j]=color(0,0,0,0);
-       }
+         }
       }
-     }
-    }
-    //And repeat the process once more for touching one or less sections for those that got left out before
-    for (int i=1;i<temp.length-1;i++){
-       for(int j=1;j<temp[i].length-1;j++){
-         int count=0;
-         for(int w=-1;w<=1;w++){
-          for(int h=-1;h<=1;h++){
-            if(temp[i+w][j+h]==c){
-             count++;
-            }
-          }
-         }
-         if(count<=1){
-          temp[i][j]=color(0,0,0,0);
-         }
-       }
     }
     return temp;
   }
@@ -239,9 +330,10 @@ class BrushEdgeFollowing extends Brush{
        }
      }
     }
-    for (int i=-size; i<size; i++)//Then add all the points in the spare storage into the primary storage
+    
+    for (int i=-size; i<size+1; i++)//Then add all the points in the spare storage into the primary storage
     {
-      for (int j=-size; j<size; j++)
+      for (int j=-size; j<size+1; j++)
       {
          if(temp2[i+size][j+size]==c)
          {
@@ -253,14 +345,15 @@ class BrushEdgeFollowing extends Brush{
   }
   
   //This function removes pixels that are too light in color to be an object
-  public color[][] WeedOutLightPixels(color[][] black, Pixel p, color lightest, int variation)
+  public color[][] WeedOutLightPixels(color[][] black, Pixel p, color lightest)
   {
+    //Then finding the pixels that match those parameters
     for (int i = -size; i <= size; i++)//for each pixel in a given area
     {
-      for(int j = -size; j <= size; j++)
+      for (int j = -size; j <= size; j++)
       {
         Pixel pix = img.get(int(p.x+i),(p.y+j));
-        if (grayVal(pix.c) > grayVal(lightest) + grayVal(variation))//If that pixel is outside of the acceptable color range
+        if (grayVal(pix.c) > lightest)//If that pixel is outside of the acceptable color range
         {
           black[i+size][j+size] = color(0,0,0,0);//unmark it
         }
@@ -269,21 +362,49 @@ class BrushEdgeFollowing extends Brush{
     return black;
   } 
   
+  public int acceptableColorRange(Pixel p)
+  {
+    //Setting an acceptable color range, making sure to weed out lightly colored pixels
+    int totalPixelCount = 0;
+    int totalColorCount = 0;
+    for (int i = -size; i <= size; i++)
+    {
+      for (int j = -size; j <= size; j++)
+      {
+        totalPixelCount++;
+        totalColorCount += grayVal((img.get(int(p.x+i),(p.y+j))).c);
+      }
+    }
+    int averageColor = totalColorCount/totalPixelCount;
+    int acceptableColorRange = int(0.85 * averageColor);
+    if(acceptableColorRange > 255)
+    {
+      acceptableColorRange = 255;
+    }
+    else if (acceptableColorRange < 0)
+    {
+      acceptableColorRange = 0;
+    }
+    //println("AcceptableColorRange: " + acceptableColorRange + "\n");
+    return acceptableColorRange;
+  }
+  
+  
   //This function identifies what is not an object
-  public color[][] FindNotMembrane(Pixel p, color Min, int variation, color[][] temp)
+  public color[][] FindNotMembrane(Pixel p, color[][] temp, color lightest)
   {
     color[][] white = new color[size*2+1][size*2+1];// create blank storage for the new pixels
     white = WhiteSpaceFloodFill(white, temp);//select any segments that are not already identified as object(s)
-    white = BadPixels(p, Min, white, variation);//and add any pixels that are too bright to be an object
+    white = BadPixels(p, white, lightest);//and add any pixels that are too bright to be an object
     return white;
   }
   
   //This function selects anything that is not an object and marks it
   public color[][] WhiteSpaceFloodFill(color[][] white, color[][] object)
   {
-    for (int i=0; i < size*2; i++)//for each pixel in a given area
+    for (int i=0; i < size*2+1; i++)//for each pixel in a given area
     {
-      for (int j=0; j <size*2; j++)
+      for (int j=0; j <size*2+1; j++)
       {
         if (object[i][j] != c)//if the pixel is not marked as an object
         {
@@ -295,14 +416,16 @@ class BrushEdgeFollowing extends Brush{
   }
 
   //This function selects any pixel that can't be an object
-  public color[][] BadPixels(Pixel p, color Min, color[][] white, int variation)
+  public color[][] BadPixels(Pixel p, color[][] white, color lightest)
   {
-    for (int i=-size; i<=size; i++){//for each pixel in a given area
-      for (int j=-size; j<=size; j++){
+    for (int i=-size; i<=size; i++)
+    {//for each pixel in a given area
+      for (int j=-size; j<=size; j++)
+      {
          Pixel pix=img.get(p.x+i, p.y+j);
-         if (Min + variation + (variation/3.0) < grayVal(pix.c)){//if the pixel's color is too light, mark it
-             white[i+size][j+size]=c;
-         
+         if (lightest < grayVal(pix.c))
+         {//if the pixel's color is too light, mark it
+             white[i+size][j+size] = c;
          }  
       }
     }
@@ -310,17 +433,17 @@ class BrushEdgeFollowing extends Brush{
   }
   
   //This function selects the current object being followed
-  public color[][] GetMembrane(color[][] temp, color[][] white, Pixel p, color lightest, int variation)
+  public color[][] GetMembrane(color[][] temp, color[][] white, Pixel p, color lightest)
   {
-    color[][] black = FocusMembrane(temp, p, lightest, variation);//focus the suspected membrane
+    color[][] black = FocusMembrane(temp);//focus the suspected membrane
     black = realMemFloodFill(temp, white, new Pixel(size, size, p.c));//and select only the area that is membrane
-    black = WeedOutLightPixels(black, p, lightest, variation);//remove any pixels that are too light to be membrane
+    black = WeedOutBadPixels(black, p, lightest);//remove any pixels that are too light to be membrane
     return black;
   }
   
   //Flood fills the object that is currently being followed
-  public color[][] realMemFloodFill(color[][] temp, color[][]white, Pixel onMembrane)
-  {     
+  public color[][] realMemFloodFill(color[][] temp, color[][]white, Pixel onMembrane) // Why am I only checking 4 of the 8 sections? DBJ
+  { 
     ArrayList<Pixel> pixels = new ArrayList<Pixel>();//create storage for markers of known membrane peices
     pixels.add(onMembrane);//and add the one peice that we know is membrane (based on user click)
     onMembrane.c = color(0,0,0,255);
@@ -329,13 +452,13 @@ class BrushEdgeFollowing extends Brush{
       Pixel p = pixels.get(0);//Select and remove one pixel from storage and mark it with a special color
       pixels.remove(0);
       //Then for each pixel around the one being checked (staying within the current area as well)
-      if (p.x+1 < size*2)
+      if (p.x+1 < size*2+1)
       {
         //If that pixel has not already been checked, and it is an object
         if ((temp[p.x+1][p.y] != color(0,0,0,255)) && (white[p.x+1][p.y] == color(0,0,0,0)))
         {
           temp[p.x+1][p.y]=color(0,0,0,255);
-          pixels.add(new Pixel(p.x+1*int(p.x<2*size),p.y,c)); //Add that pixel to the storage of peices to be checked
+          pixels.add(new Pixel(p.x+1*int(p.x<2*size+1),p.y,c)); //Add that pixel to the storage of peices to be checked
         }
       }
       if (p.x-1 > 0)
@@ -346,12 +469,12 @@ class BrushEdgeFollowing extends Brush{
           pixels.add(new Pixel(p.x-1*int(p.x>0),p.y,c));
         }
       }
-      if (p.y + 1 < 2*size)
+      if (p.y + 1 < 2*size+1)
       {
         if ((temp[p.x][p.y+1] != color(0,0,0,255)) && (white[p.x][p.y+1] == color(0,0,0,0)))
         {
           temp[p.x][p.y+1]=color(0,0,0,255);
-          pixels.add(new Pixel(p.x,p.y+1*int(p.y<2*size),c));
+          pixels.add(new Pixel(p.x,p.y+1*int(p.y<2*size+1),c));
         }
       }
       if (p.y-1 > 0)
@@ -381,9 +504,30 @@ class BrushEdgeFollowing extends Brush{
     return black;
   }
   
-  //This locates a pixel to be the center of the next box
-  public Pixel FindPixelForRecursion(double radians, Pixel p, color[][] black, int section, int area, color lightest, int variation)
+   public color[][] WeedOutBadPixels(color[][] black, Pixel p, color lightest)
   {
+    //Then finding the pixels that match those parameters
+    float tooLight = lightest / 0.85;
+    for (int i = -size; i <= size; i++)//for each pixel in a given area
+    {
+      for (int j = -size; j <= size; j++)
+      {
+        Pixel pix = img.get(int(p.x+i),(p.y+j));
+        if (grayVal(pix.c) > tooLight)//If that pixel is outside of the acceptable color range
+        {
+          black[i+size][j+size] = color(0,0,0,0);//unmark it
+        }
+      }
+    }
+    return black;
+  } 
+  
+  
+  
+  //This locates a pixel to be the center of the next box
+  public Pixel FindPixelForRecursion(double radians, Pixel p, color[][] black, int section, int area, color lightest)
+  {
+    //The sections are defined in a graphic at https://delaneybjones.netlify.com/educaton.html
     Pixel p2 = SectionsBy(p, radians, area); // locate a pixel in the direction being moved
     p2 = MembraneFinder(p2, p, black); //Then find the closest piece of membrane to it
     //If the best new pixel is the same as the old one...
@@ -394,10 +538,10 @@ class BrushEdgeFollowing extends Brush{
       if (section == 6 || section == 8)
       {
         Pixel right = new Pixel (p2.x + 3, p2.y, 0);
-        int RightCount = testArea(right, lightest, variation);
+        int RightCount = testArea(right, lightest);
         Pixel left = new Pixel (p2.x - 3, p2.y, 0);
-        int LeftCount = testArea(left, lightest, variation);
-        int CurrentCount = testArea(p2, lightest, variation);
+        int LeftCount = testArea(left, lightest);
+        int CurrentCount = testArea(p2, lightest);
         if (LeftCount > RightCount && LeftCount > CurrentCount)
         {
           p2 = left; 
@@ -410,10 +554,10 @@ class BrushEdgeFollowing extends Brush{
       else if (section == 7 || section == 5)
       {
         Pixel up = new Pixel (p2.x, p2.y-3, 0);
-        int UpCount = testArea(up, lightest, variation);
+        int UpCount = testArea(up, lightest);
         Pixel down = new Pixel (p2.x, p2.y+3, 0);
-        int DownCount = testArea(down, lightest, variation);
-        int CurrentCount = testArea(p2, lightest, variation);
+        int DownCount = testArea(down, lightest);
+        int CurrentCount = testArea(p2, lightest);
         if (UpCount > DownCount && UpCount > CurrentCount)
         {
           p2 = up;
@@ -426,14 +570,15 @@ class BrushEdgeFollowing extends Brush{
       else
       {
         Pixel up = new Pixel (p2.x, p2.y-3, 0);
-        int UpCount = testArea(up, lightest, variation);
+        int UpCount = testArea(up, lightest);
         Pixel down = new Pixel (p2.x, p2.y+3, 0);
-        int DownCount = testArea(down, lightest, variation);
+        int DownCount = testArea(down, lightest);
         Pixel right = new Pixel (p2.x + 3, p2.y, 0);
-        int RightCount = testArea(right, lightest, variation);
+        int RightCount = testArea(right, lightest);
         Pixel left = new Pixel (p2.x - 3, p2.y, 0);
-        int LeftCount = testArea(left, lightest, variation);
-        int CurrentCount = testArea(p2, lightest, variation);
+        int LeftCount = testArea(left, lightest);
+        int CurrentCount = testArea(p2, lightest);
+        //DBJ why am I using >= instead of > ?
         if (UpCount >= DownCount && UpCount >= LeftCount && UpCount >= RightCount && UpCount >= CurrentCount)
         {
           p2 = up;
@@ -452,7 +597,7 @@ class BrushEdgeFollowing extends Brush{
         }
       } 
       //STAR
-      int n = testArea(p2, lightest, variation);
+      int n = testArea(p2, lightest);
       if (n < 5)
       {
         p2 = PixelChecker(p2, p, section);//Then if all else fails, force move the pixel in the direction being moved
@@ -462,14 +607,13 @@ class BrushEdgeFollowing extends Brush{
   }
   
   //This tests for suspected "membrane" peices
-  public int testArea(Pixel p, color lightest, int variation)
+  public int testArea(Pixel p, color lightest)
   {
-    color Min = MinColor(p, lightest);//Based off the sent out pixel, get the lightest color in the area around it
-    color[][] temp = FindPossibleMembrane(p, Min, lightest, variation);//locate what could be membrane
-    color[][] white = FindNotMembrane(p, Min, variation, temp);//and what is is not membrane
-    color[][] black = GetMembrane(temp, white, p, lightest, variation);//then select, based off the sent out pixel, "membrane"
+    color[][] temp = FindPossibleMembrane(p, lightest);//locate what could be membrane
+    color[][] white = FindNotMembrane(p, temp, lightest);//and what is is not membrane
+    color[][] black = GetMembrane(temp, white, p, lightest);//then select, based off the sent out pixel, "membrane"
     
-    int num = MembraneSegmentCounter(black, size);//then count how many peices of possible "membrane" there are
+    int num = MembraneSegmentCounter(black);//then count how many peices of possible "membrane" there are
     return num;
   }
   
@@ -494,7 +638,7 @@ class BrushEdgeFollowing extends Brush{
        if(black[i][j] == c)//if it is membrane
        {
         /*This just displays the pixel of membrane that is being looked at. It is helpful in debuging.
-        color[][] blank = new color[size*2][size*2];
+        color[][] blank = new color[size*2+1][size*2+1];
         blank[size][size] = c;
         membraneToOverlay(blank, newPix, color(0,255,255,100));
         */
@@ -510,7 +654,7 @@ class BrushEdgeFollowing extends Brush{
     }
     //This just dispays the pixel that was settled upon. Its useful for debuging.
     /*
-    color[][] blank = new color[size*2][size*2];
+    color[][] blank = new color[size*2+1][size*2+1];
     blank[size][size] = c;
     membraneToOverlay(blank, holding, color(0,255,100,255));
     */
@@ -523,7 +667,6 @@ class BrushEdgeFollowing extends Brush{
   {
     if (p2.x == p.x && p2.y == p.y)//If the center of the new box is the same as the center of the old box
     {
-      //print("Force moving the box\n");
       //Force move the center of the new box according to the direction given by the line of best fit
       if (section == 1)
       {
@@ -553,6 +696,7 @@ class BrushEdgeFollowing extends Brush{
       {
         p2 = new Pixel(p.x-3, p.y, c);
       }
+      //DBJ am I mixing up sections 6 and 8 so they are reversed
       else
       {
         p2 = new Pixel(p.x, p.y+3, c);
@@ -567,7 +711,7 @@ class BrushEdgeFollowing extends Brush{
   {
     int curSect = prevSect; // Just initializes the current section
     //For each section, if the degree falls within the section, that section becomes the current section
-    if (degree <= 22.5 && degree > -22.5 || degree > 337.5)
+    if (degree <= 22.5 || degree > 337.5)
     {
       curSect = 5;
     }
@@ -583,19 +727,19 @@ class BrushEdgeFollowing extends Brush{
     {
       curSect = 2;
     }
-    else if (degree > 157.5  && degree <= 202.)
+    else if (degree <= 202.5 && degree > 157.5)
     {
       curSect = 7;
     }
-    else if (degree <= -22.5 && degree > -67.5 || degree > 292.5 && degree <= 337.5)
+    else if (degree <= 337.5 && degree > 292.5)
     {
       curSect = 4;
     }
-    else if (degree <= -67.5 && degree > -112.5 || degree > 247.5 && degree <= 292.5)
+    else if (degree <= 292.5 && degree > 247.5)
     {
       curSect = 8;
     }
-    else if (degree <= -67.5 && degree > -157.5 || degree > 202.5 && degree <= 247.5 )
+    else if ( degree <= 247.5 && degree > 202.5)
     {
       curSect = 3;
     }
@@ -619,6 +763,7 @@ class BrushEdgeFollowing extends Brush{
     boolean found = false;
     for (int i = 0; i < 3; i++)//For each right, middle, and left option for a section
     {
+      //DBJ keep getting "ArrayIndexOutOfBoundsException: -1" 
       if (sectionGrabbers[section-1][i] == prevsection)//If the section being moved into neighbors the previous section
       {
         found = true;//Then the new section has been verified
@@ -649,7 +794,7 @@ class BrushEdgeFollowing extends Brush{
     {
       degree = 0;
     }
-    else if (section == 1 && (degree > 112.5 && degree > 337.5 ))
+    else if (section == 1 && (degree > 112.5 && degree < 337.5 ))
     {
       degree = 45;
     }
@@ -669,7 +814,7 @@ class BrushEdgeFollowing extends Brush{
     {
       degree = 225;
     }
-    else if (section == 8 && (degree < 247.5 || degree > 292.5))
+    else if (section == 8 && (degree < 202.5 || degree > 337.5))
     {
       degree = 269;
     }
@@ -726,7 +871,7 @@ class BrushEdgeFollowing extends Brush{
   //This matches degree of radians to the proper section
   public double radiansToSection(double radians, int prevSection)
   {
-    if(radians > Float.MAX_VALUE)//I set undefined slopes to 1000000, so we know the line of best fit moves up and down
+    if(radians == PI/2)
     {
       if (prevSection == 1 || prevSection == 6 || prevSection == 2)
       {
@@ -737,80 +882,82 @@ class BrushEdgeFollowing extends Brush{
         radians = 3 * PI / 2;
       }
     }
-    //Otherwise make sure the radians are within one unit circle of rotation
-    while (radians > 2 * PI)
-    {
-      radians -= (2 * PI);
-    }
-    while (radians < 0)
-    {
-      radians += (2 * PI);
-    }
-
+    
     //If the previous section was on the left hand side of the unit circle, adjust the angle for accuracy
-    if (prevSection == 6 || prevSection == 2 || prevSection == 7 || prevSection == 3 || prevSection == 8)
+    if (prevSection == 6 || prevSection == 2 || prevSection == 7 || prevSection == 3 || prevSection == 8 || prevSection == 1 || prevSection == 4)
     {
-      if (prevSection == 6 && radians < (PI / 6))
+      if (prevSection == 6 && radians > PI)
       {
-        radians = PI / 2 - radians; 
+        //We don't care if prevSection == 6 && radians <= PI because arcTangent won't mess it up. 
+        radians = radians - PI;
       }
-      else if (prevSection == 2 && radians < (PI / 6))
+      else if (prevSection == 2)
       {
-        radians +=  3 * PI / 4;
+        if (radians > ((3*PI)/2))
+        {
+          radians = radians - PI;
+        }
       }
-      else if (prevSection == 2 && radians >= (PI/6))
+      else if (prevSection == 7)
       {
-        radians += PI/2;
+        if (radians < (PI/2) && radians >= 0)
+        {
+            radians = radians + PI;
+        }
+        else if (radians > ((3 * PI)/2))
+        {
+          radians = radians - PI;
+        }
       }
-      else if (prevSection == 7 && radians < (PI / 6))
+      else if (prevSection == 3)
       {
-        radians += 3 * PI / 4;
+        if (radians <= 0 && radians < (PI/2))
+        {
+          radians = radians + PI;
+        }
+        else if (radians > ((337.5/180)/PI))
+        {
+          radians = radians- PI;
+        }
       }
-      else if (prevSection == 7 && radians >= (PI / 6))
+      else if (prevSection == 8)
       {
-        radians += PI;
+        if (radians < (PI/2) && radians >= 0)
+        {
+          radians = radians + PI;
+        }
       }
-      else if (prevSection == 3 && radians < PI / 6)
+      else if (prevSection == 1)
       {
-        radians += 5 * PI / 4;
+        if (radians > ((3*PI)/2) && radians < ((292.5/180)*PI))
+        {
+          radians = radians - PI;
+        }
       }
-      else if (prevSection == 3 && radians > PI /6)
+      else if (prevSection == 4)
       {
-        radians += PI;
+        if (radians < (PI/2) && radians > ((67.5/180)*PI))
+        {
+          radians = radians + PI;
+        }
       }
-      else if (prevSection == 8 && radians < PI / 6)
-      {
-        radians += 5 * PI / 4;
-      }
-      else if (prevSection == 8 && radians > PI / 6)
-      {
-        radians += 3 * PI / 2;
-      }
-    }
-    //Then make sure the angle is still within one rotation of the unit circle
-    while (radians > 2 * PI)
-    {
-      radians -= (2 * PI);
-    }
-    while (radians < 0)
-    {
-      radians -=(2 * PI);
     }
     return radians;
   }
 
   //Cacluates the slope of the line of best fit in radians using linear regression analysis
-  public float linearRegression(color[][] black, int searchWidth)
+  public double linearRegression(color[][] black, Pixel p)
   {
+    double radians;
     float m;
     int P=0; //make a variable called P
     int Q=0; //make a variable called Q
     int n = 0; //make a variable called n
     int R = 0; //make a variable called R
     int T = 0;//make a variable called T
-    for (int i=0; i<searchWidth*2; i++)
+    for (int i=0; i<size*2; i++)
     {//for each row (x value)
-      for (int j=0; j<searchWidth*2; j++)
+      for (int j=0; j<size*2; j++)
       {// for each column (y value)
         if(black[i][j] == c)
         {//if the point is colored
@@ -822,33 +969,163 @@ class BrushEdgeFollowing extends Brush{
         }
       }
     }
-    //If the slope is undefined, return this so it doesn't default to a slope of 0
+    //If the slope is undefined, the degrees in radians must be PI/2 or 3PI/2. 
     if(((n * R) - pow(P,2)) == 0)
     {
-      m = 1000000;
+      radians = PI / 2;
+      TestIdea2(black, p);
     }
     else
     {
-      m = ( -((n * T)- (P * Q)) ) / ((n * R) - pow(P,2) );//Linear Regression Analysis Formula for slope
-      while (m > 2 * PI)//Make sure the angle is within one rotation of the unit circle
+      m = ( -((n * T)- (P * Q)) ) / ((n * R) - pow(P,2) );//Linear Regression Analysis Formula for slope (modified to meet CASTER's grid system)
+      
+      float intercept = (T - R * ( ((n*T - P*Q))/(n*R-pow(P,2)) )) / (P);  
+      //TestIdea(intercept, m, black, p);
+      radians = atan(m); // Tangent is sin/cos which is rise/run which is slope. To get the angle, we can use atan on the slope.
+      while (radians > 2 * PI)//Make sure the angle is within one rotation of the unit circle
       {
-        m = m - (2 * PI);
+        radians = radians - (2 * PI);
       }
-      while (m < 0)
+      while (radians < 0)
       {
-        m = m + (2 * PI);
+        radians = radians + (2 * PI);
       }
     }
-    return m;
+
+    return radians;
   }
   
+  public void TestIdea(float intercept, float slope, color[][] black, Pixel p)
+  {
+    /*
+    
+      I don't think I have time to finish this bit myself, so I'll leave a note here incase anyone wants to pick up where I left off. 
+      The edge finder brush works pretty well, but there are complications getting the brush to follow an object for very far. 
+      This section displays the linear regression analysis line over top of the object that is being followed, presumably membrane. (purple)
+      Linear regression references a base line, and this line is displayed in blue. I don't have it displaying quite right yet. This line should be horizontal,
+      and there should be roughly equal amounts of colored object (membrane) on either side of it.
+      
+      So back to the idea. The least squares method is used on linear regression lines to determine the statisitcal accuracy of the regression line.
+      This then predicts how well the linear regression line fits the data. Theoretically, I think, that as long as there is a high percent from the SSR / SST
+      then it should be safe to continue following the object without requiring user input. I found this Youtube playlist to ber very helpful in understanding how this works.
+      
+      https://www.youtube.com/watch?v=ZkjP5RJLQF4&list=PLIeGtxpvyG-LoKUpV0fSY8BGKIMIdmfCi&index=1
+      
+      I would like to note that the grid system that CASTER works off of is different than the standard cartesian coordinate system works, so the equations need some tweaking.
+      
+    */
+    int xMean = 0;
+    int n = 0;
+    
+    for (int i=0; i<size*2; i++)
+    {//for each row (x value)
+      for (int j=0; j<size*2; j++)
+      {// for each column (y value)
+        if(black[i][j] == c)
+        {//if the point is colored
+          n += 1;// increment the count by one
+          xMean += i;
+        }
+      }
+    }
+    xMean = xMean / n;
+    float SST = 0;
+    float SSE = 0;
+    float SSR = 0;
+ 
+    color[][] xBarLine = new color[size*2+1][size*2+1];
+    color[][] regressionLine = new color[size*2+1][size*2+1];
+    for (int i=0; i<size*2; i++)
+    {
+      float yPredict = (-1 * (slope * i)) + (intercept);
+      if (yPredict < size*2 && yPredict > 0)
+      {
+        regressionLine[i][int(yPredict)] = c;
+        for(int j = 0; j < size*2; j++)
+        {
+          if (black[i][j] == c)
+          {
+            float T, E = 0;
+            T = xMean - (size*2+1)-j;
+            E = yPredict - j;      
+            SST += pow(T, 2);
+            SSE += pow(E, 2); 
+          }
+        }
+      }
+      if (xMean > 0 && xMean < size*2)
+      {
+        xBarLine[i][xMean] = c;
+      }
+    }
+    SSR = SST - SSE;
+    membraneToOverlay(regressionLine, p, color(128,0,128));
+    membraneToOverlay(xBarLine, p, color(34, 179, 181));
+    membraneToOverlay(regressionLine, p, color(128,0,128));
+    float coefficientOfDetermination = 100 * (SSR / SST);
+    println("CoD: " + coefficientOfDetermination + "%\n");
+  }
+  
+  
+  public void TestIdea2(color[][] black, Pixel p)
+  {
+    /*
+    int xMean = 0;
+    int n = 0;
+    
+    for (int i=0; i<size*2; i++)
+    {//for each row (x value)
+      for (int j=0; j<size*2; j++)
+      {// for each column (y value)
+        if(black[i][j] == c)
+        {//if the point is colored
+          n += 1;// increment the count by one
+          xMean += i;
+        }
+      }
+    }
+    xMean = xMean / n;
+    float SST = 0;
+    float SSE = 0;
+    float SSR = 0;
+ 
+    color[][] xBarLine = new color[size*2+1][size*2+1];
+    color[][] regressionLine = new color[size*2+1][size*2+1];
+    for (int i=0; i<size*2; i++)
+    {
+      for(int j = 0; j < size*2; j++)
+      {
+        if (black[i][j] == c)
+        {
+          float T, E = 0;
+          T = xMean - (size*2+1)-j;
+          E = yPredict - j;      
+          SST += pow(T, 2);
+          SSE += pow(E, 2); 
+        }
+      }
+      if (xMean > 0 && xMean < size*2)
+      {
+        xBarLine[i][xMean] = c;
+      }
+    }
+    SSR = SST - SSE;
+    membraneToOverlay(regressionLine, p, color(128,0,128));
+    membraneToOverlay(xBarLine, p, color(34, 179, 181));
+    membraneToOverlay(regressionLine, p, color(128,0,128));
+    float coefficientOfDetermination = 100 * (SSR / SST);
+    println("CoD: " + coefficientOfDetermination + "%\n");
+    */
+  }
+  
+  
   //Counts the number of "membrane" segments within a given area
-  public int MembraneSegmentCounter(color[][] black, int searchWidth)
+  public int MembraneSegmentCounter(color[][] black)
   {
     int n = 0; //make a variable called n
-    for (int i=0; i<searchWidth*2; i++)
+    for (int i=0; i<size*2; i++)
     {//for each row (x value)
-      for (int j=0; j<searchWidth*2; j++)
+      for (int j=0; j<size*2; j++)
       {// for each column (y value)
         if(black[i][j] == c)
         {//if the point is colored
@@ -861,12 +1138,13 @@ class BrushEdgeFollowing extends Brush{
   
   //Dispay the identified membrane so the user can see it
   public BrushEdgeFollowing membraneToOverlay(color[][] black, Pixel p, color col)
-  {
-    for (int i=-size; i<size; i++)//For each pixel in a given area
+  {    
+    for (int i=-size; i<size+1; i++)//For each pixel in a given area
     {
-      for (int j=-size; j<size; j++)
+      for (int j=-size; j<size+1; j++)
       {
-         if( black[i+size][j+size]==c)//If the pixel is marked, display it on the overlay
+         
+         if( black[i+size][j+size]==c )//If the pixel is marked, display it on the overlay
          {
              this.img.overlay.set(img.layer,p.x+i, p.y+j, col);
          }
@@ -877,7 +1155,6 @@ class BrushEdgeFollowing extends Brush{
   
   public color[][] ConnectTheDots(Pixel p, Pixel p2, color[][] black)
   {
-    //print("Starting to connect the dots\n");
     int count = size * 2;
     int xMoves = 0;
     int yMoves = 0;
@@ -891,19 +1168,14 @@ class BrushEdgeFollowing extends Brush{
     int xMoved = 0;
     int yMoved = 0;
     //print("So far our actual moves x is: " + xMoved + " and our actual moves y is: " + yMoved + "\n\n");
-    while((p.x + xMoved != p2.x) && (p.y + yMoved != p2.y) && count > 0)
+    while(((p.x + xMoved != p2.x) && (p.y + yMoved != p2.y) && count > 0))
     {
       if (abs(xMoves) >= abs(yMoves))
       {  
-        //print("There are more x moves than y moves.");
-        //I need to see what is colored or not...
-        if(black[xMoved + size][yMoved + size] == c)
+        if (yMoved < size)
         {
-          //print("Is already colored.");
-        }
-        else if (yMoved + 1 <= size*2)
-        {
-          if(black[xMoved + size][yMoved + 1 + size] == c)
+          //println("Black's size is: " + black.length + " xMoved+size is: " + (xMoved+size) + " and yMoved+size is: " + (yMoved+size) + "\n");
+          if(black[xMoved + size][yMoved + size] == c)
           {
             yMoved++;
           }
@@ -922,14 +1194,9 @@ class BrushEdgeFollowing extends Brush{
       }
       else
       {
-        //print("There are more y moves than x moves");
         if(yMoves > 0)
         {
-          if(black[xMoved + size][yMoved + size] == c)
-          {
-            //print("Is already colored.");
-          }
-          else if(xMoved + 1 <= size*2)
+          if(xMoved + 1 <= size*2)
           {
             if(black[xMoved +1 + size][yMoved + size] ==c)
             {
@@ -949,19 +1216,16 @@ class BrushEdgeFollowing extends Brush{
           } 
         }
       }
-      
       count--;
       distance = Distance(p, xMoved, yMoved, p2);
       xMoves = distance[1];
       yMoves = distance[0];
-      //print("Moves x is: " + xMoves + " and Moves y is: " + yMoves + "\n");
-      //print("So far our actual moves x is: " + xMoved + " and our actual moves y is: " + yMoved + "\n\n\n");
     }
     
     membraneToOverlay(black, p, c);
     //This is just a check to see how this method is working
     /*
-    color[][] blank = new color[size*2][size*2];
+    color[][] blank = new color[size*2+1][size*2+1];
     blank[size][size] = c;
     membraneToOverlay(blank, p2, color(0,255,100,100));
     */
@@ -977,43 +1241,24 @@ class BrushEdgeFollowing extends Brush{
   }
   
   public BrushEdgeFollowing paint(EMImage img){//this causes the BrushEdgeFollowing to lay down "ink" on the overlay and generally should only be called on mouse press or mouse drag
-    //Pixel pixel= brushPosition();//apparently we dont use this ever, but oh well, we dont actually need it with pixel k
-      //if (mousePressed){
         Pixel k = this.img.getPixel(mouseX,mouseY); //Obtain pixel of membrane the user clicked on
-        if(!paintLock){
-          if(second.picker==0){
-            float[] parameters = second.getParameters();//Retrieve parameters from the Edge Finder Tools box
-            //NOTE: a good starting lightest is 65, and a good starting variation is 75. Repeats is much more flexible.
-            color lightest = color(parameters[0]);
-            int variation = (int) parameters[1];
-            int repeats = (int) parameters[2];
-            outlineStarter( 0, k, lightest, variation, repeats);//Then call the BrushEdgeFollowing to start outlining.
+        if(!paintLock)
+        {
+            outlineStarter( 0, k);//Then call the BrushEdgeFollowing to start outlining.
             img.snap();//we have done so much we might as well set a history save
-          }else{
             paintLock=true;
-            if(second.picker==1){
-              second.lightnessValue.set(round(grayVal(k.c)));
-            }else if(second.picker==2){
-              second.variationValue.set(round(grayVal(k.c)));
-            }
-            ((EdgeFinderSettings.Ui_RadioButton)second.ui.getId("pickers")).hide();;
-            //second.picker=0;
-          }
         }
-
     return this;
   }
 
-  
-
-  public BrushEdgeFollowing update(){//updates the shape of the brush, this should only be called when there is a reasonable certainty that the BrushEdgeFollowing has changed in some way
+  public BrushEdgeFollowing update()
+  {//updates the shape of the brush, this should only be called when there is a reasonable certainty that the BrushEdgeFollowing has changed in some way
     //as it can be a computationally complex operation
-      //If the edge finder BrushEdgeFollowing is activated
       shape=createImage((size+1)*2+1,(size+1)*2+1,ARGB);
-    
-    
-      for(int x=0;x<shape.width;x++){
-        for(int y=0;y<shape.height;y++){
+      for(int x=0;x<shape.width;x++)
+      {
+        for(int y=0;y<shape.height;y++)
+        {
           color myColor = color(144, 237, 255, 50);
           shape.set(x,y,myColor);
           shape.set(0,y,c);
