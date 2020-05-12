@@ -7,9 +7,6 @@ this depends on all implimented functions of all implimented classes in some way
 this is heavily reliant much of on processing
 */
 
-//version: INDEV-20w7a
-String VERSION="INDEV-20w7a";
-
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
 }
@@ -21,6 +18,7 @@ PImage imgFromFile(String path){//this exists for 1 and only 1 reason.  The idio
   return loadImage(path); 
 }
 
+import codeanticode.tablet.*;
 Binding<Integer> sizeSlider;
 float PPI=93;//apparently not even your os knows the true value of this number, so we just have to wing it, make this nubmer configurable in settings at some point
 Tablet tablet;
@@ -42,8 +40,10 @@ ProgramSettings programSettings;
 float range(float a, float b, float c){
 	float minV=min(a,b,c);
 	float maxV=max(a,b,c);
-	return a+b+c-minV-maxV;//clever way to find the unused variable, this way the 2 that have been used cancel out
-	
+	float inV=a+b+c-minV-maxV;//clever way to find the unused variable, this way the 2 that have been used cancel out
+	float ret = max(minV,inV);
+	ret=min(ret,maxV);
+	return ret;
 
 }
 void objSavePasser(File pass){
@@ -102,7 +102,7 @@ void settings()
 {
   programSettings =new ProgramSettings("settings.json");
   PPI=programSettings.monitorPPI;//we have used this so much I dont feel like replacing all useages
-  size(displayWidth,displayHeight);//window size
+  size(2000,1000);//window size
   noSmooth();//without this line, the picture will be smoothed as we zoom in, great for zooming pictures and not having them get pixilated.... but we want pixilated
 }
 
@@ -115,14 +115,10 @@ void setup(){//setup the window
 	if(programSettings.autoOpen){
     
     if(!programSettings.lastProject.equals("")){
-      String oldPath=programSettings.lastProject;
       File temp=new File(programSettings.lastProject);
       if(temp.exists()){
         load(programSettings.lastProject);
-      }else{
-        oldPath="";        
       }
-      programSettings.lastProject=oldPath;
     }
   }//selectInput("Select an image in the Stack","load");//trigger stack load
   //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
