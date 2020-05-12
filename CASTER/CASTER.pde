@@ -9,7 +9,7 @@ this is heavily reliant much of on processing
 */
 StackTrace log;
 
-String VERSION="INDEV-20w15a";
+String VERSION="INDEV-20w20a";
 int itterations;
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
@@ -76,6 +76,7 @@ void load(String path){
        File dir=new File(img.project.stackPath);
        if(dir.exists()){
          load(img.project.stackPath+"/"+img.project.stackTopName);
+         img.layer=img.project.layer;
        }
        if(img.project.lastOverlay!=null){
          File overlay=new File(img.project.lastOverlay);
@@ -94,9 +95,10 @@ void autoSave(){//calls various autosaves, does not save overlay (I think) I may
   if(!img.project.path.equals("")){
     img.saveProject(img.project.path); 
   }
-  programSettings.lastProject=img.project.path;
+  programSettings.load("settings.json");//load any changes
+  programSettings.lastProject=img.project.path;//update path
   log.saveLog();
-  //programSettings.save();//no way to change settings from inside program, this would just overwrite user changes
+  programSettings.save();
 }
 void settings()
 {
@@ -201,12 +203,14 @@ void draw(){
   //}
   //println(img.brush.getSize());
   log.stop();
+  log.start("Saving Log");
   if(itterations%54000==0){//auto save every 15 minutes
     autoSave(); 
   }else if(itterations%3600==0){//save log every minute
     
     log.saveLog();  
   }
+  log.stop();
 }
 
 void mouseDragged(){//mouse drag handler

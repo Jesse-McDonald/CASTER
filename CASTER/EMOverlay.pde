@@ -1,4 +1,6 @@
 import java.nio.ByteBuffer;
+import java.util.Queue;
+import java.util.LinkedList; 
 /**
 EMOverlay is really an obfuscation of ArrayList<PImage> overlay built do decrease the legwork of EMImage
 this class tracks the overlay array, the image width, height, and depth, it also handles drawing the overlay
@@ -14,6 +16,8 @@ class EMOverlay{
 	ArrayList<PNGOverlay> overlay;//PImage stack for storing the overlay
   HashMap<Integer,Integer> key;
   ArrayList<Integer> palette;
+  
+  String path="";//path to save to
   HashMap<Integer,Integer> paletteMap;
 	int width;//width of overlay, all PImages in overlay should have same width
 	int height;//height of overlay, all PImages in overlay should have same width
@@ -21,7 +25,9 @@ class EMOverlay{
   public byte[] uuid;
   PImage drawCache;
   PImage fastCache;
+  Queue<Pixel> changeLog;
   PImage cached;
+  
   Pixel lastStart,lastEnd;
   int lastLayer=-1;
   PNGThread pthread; //this is a c joke ;)
@@ -42,11 +48,12 @@ class EMOverlay{
 		for( int i=0;i<d;i++){
 			addLayer();
 		}
-    pthread=new PNGThread("EMOverlay");
+    pthread=new PNGThread("EMOverlay/");
     history=new FBuffer<HistorySnap>(new HistorySnap[programSettings.undoDepth]);
     fHistory=new HistorySnap();
     lastStart=new Pixel(0,0,0);
     lastEnd=lastStart;
+    changeLog=new LinkedList<Pixel>();
     log.stop();
 	}
   boolean exists(int layer){
@@ -60,17 +67,26 @@ class EMOverlay{
     depth++;
     return this;
   }
+  EMOverlay cacheSet(Pixel p){
+    cached.set(p.x,p.y,p.c);
+    return this;
+  }
 	EMOverlay set(int l, int x, int y, color c){//obfuscate overlay.overlay.get(key.get(layer)).set(x,y,c) to overlay.set(layer, x, y, c)
-    
+
     if(!key.containsKey(l)){
       log.log("EMOverlay adding new layer");
       overlay.add(new PNGOverlay(width,height,palette,paletteMap));//add new image to the stack and add its index to the key
       key.put(l,overlay.size()-1);
+      //cached=createImage(width,height,ARGB);
     }
     if(cached!=null){
       cached.set(x,y,c);
     }else{
+      if(drawCache.get(x,y)!=c){
+        changeLog.add(new Pixel(x,y,c));
+      }
       drawCache.set(x,y,c); 
+      
     }
     
     if(logChanges){
@@ -144,27 +160,39 @@ class EMOverlay{
            
            
           }
-          pthread=new PNGThread("EMOverlay");
+          pthread=new PNGThread("EMOverlay/");
           pthread.terminate=false;
           pthread.in=overlay.get(key.get(p.layer));
           cached=null;
           
           pthread.retv=cached;
           new Thread(pthread).start();
-          lastLayer=p.layer;
+          
           forceCache=true;
           drawCache=createImage(width,height,ARGB);
           pushHistory(lastLayer);
+          lastLayer=p.layer;
           log.stop();
         }
         if(cached!=null){
             if(drawCache!=null){
+              image(drawCache,p.offsetX, p.offsetY, this.width*p.zoom, this.height*p.zoom);
+            }
+            log.start("Image draw");
+            image(cached,p.offsetX, p.offsetY, this.width*p.zoom, this.height*p.zoom);//we removed meta shifts from the overlay, it does not make sense for the future of this since meta is not stored in the JEMO, but the 3d visualization is only based on the JEMO so if
+            log.stop();
+            if(drawCache!=null){
               log.log("merging Cache");
-              cached=merge(cached,drawCache);//todo, move to cache thread
+              log.start("restoring changes");
+              while(!changeLog.isEmpty()){
+                cacheSet(changeLog.remove());
+              }
+              log.stop();
+              //cached=merge(cached,drawCache);//todo, move to cache thread
               drawCache=null;
             }
             //image(cached,p.offsetX+p.meta.get(p.layer).offsetX*p.zoom, p.offsetY+p.meta.get(p.layer).offsetY*p.zoom, this.width*p.zoom, this.height*p.zoom);
-            image(cached,p.offsetX, p.offsetY, this.width*p.zoom, this.height*p.zoom);//we removed meta shifts from the overlay, it does not make sense for the future of this since meta is not stored in the JEMO, but the 3d visualization is only based on the JEMO so if
+
       //we landmark align the image and save an JEMO, then make a 3d of it, it will be shifted.  combine that with the server based landmark alignment that is planned and overlay shifting is rather hard to justify
         }else{
           log.log("Normal render");
@@ -317,7 +345,9 @@ class EMOverlay{
 		return this;
 	}
 	
-
+PImage getLayer(int layer){
+  return overlay.get(layer).getImage(); 
+}
 
 PImage merge(PImage _1, PImage _2){
    log.start("PImage Merge");

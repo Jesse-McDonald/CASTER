@@ -183,6 +183,7 @@ class EMImage {
       prevLayer=layer;
 			layer=max(0,layer-1);
 		}
+    project.layer=layer;
     log.stop();
 		return this;
 	}
@@ -224,6 +225,7 @@ class EMImage {
     return saveOverlay(fileName.getAbsolutePath());
   }
   public boolean saveOverlay(String path){
+    overlay.path=path;
     log.start("EMImage.saveOverlay()");
     if(saving){
       log.stop();
@@ -366,6 +368,16 @@ class EMImage {
   }
   float greyVal(color c){//this averages the RGB values of a given color to determine its grayscale value
     return ((c >> 16 & 0xFF) + (c >> 8 & 0xFF) + (c & 0xFF))/3.0;//extract and average rgb values
+  }
+  void exportPNG(String path, int ilayer){
+    if(ilayer>=0&&ilayer<img.depth){
+      PGraphics grap=createGraphics(img.width,img.height);
+      grap.beginDraw();
+      grap.image(img.getLayer(ilayer),0,0);
+      grap.image(overlay.getLayer(ilayer),0,0);
+      grap.endDraw();
+      grap.save(path);
+    }
   }
   /*land mark alignment no longer supported, use TrackEM
   public EMImage alignLandmarks(int size){return alignLandmarks(size,1);}//because FRIKING JAVA DOES NOT ALLOW DEFAULT ARGUMENTS!!!

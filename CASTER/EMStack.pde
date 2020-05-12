@@ -192,4 +192,7 @@ EMStack draw(EMImage p, Pixel p0, Pixel pe){
   color get(int layer, int x,int y){
       return stackLoader.get(layer,x,y);
   }
+PImage getLayer(int layer){
+  return stackLoader.get(layer); 
+}
 }

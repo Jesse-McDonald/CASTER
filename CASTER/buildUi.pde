@@ -27,12 +27,12 @@ Ui buildUi(){
     load.addActionListener(new LambdaWrap(new Load()));
     pref.addActionListener(new LambdaWrap(new OpenPref()));
     saveAll.addActionListener(new LambdaWrap(new Save()));
-    saveP.addActionListener(new LambdaWrap(new NotSupported()));
-    saveO.addActionListener(new LambdaWrap(new NotSupported()));
-    saveasP.addActionListener(new LambdaWrap(new NotSupported()));
-    saveasO.addActionListener(new LambdaWrap(new NotSupported()));
+    saveP.addActionListener(new LambdaWrap(new SaveProject()));
+    saveO.addActionListener(new LambdaWrap(new SaveOverlay()));
+    saveasP.addActionListener(new LambdaWrap(new SaveAsProject()));
+    saveasO.addActionListener(new LambdaWrap(new SaveAsOverlay()));
     export3D.addActionListener(new LambdaWrap(new Create3D()));
-    exportPNG.addActionListener(new LambdaWrap(new NotSupported()));
+    exportPNG.addActionListener(new LambdaWrap(new ExportPNG()));
     export.add(export3D);
     export.add(exportPNG);
     saveAs.add(saveasP);
@@ -83,7 +83,7 @@ Ui buildUi(){
           slider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
               img.brush.setSize(((JSlider)e.getSource()).getValue()*2+1);
-              println(((JSlider)e.getSource()).getValue());
+             // println(((JSlider)e.getSource()).getValue());
             
             }
         });

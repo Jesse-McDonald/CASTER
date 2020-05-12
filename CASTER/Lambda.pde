@@ -42,7 +42,7 @@ public void run(){
 }catch(Exception e){}//file dne
     }
 }
-public class NotSupported extends Lambda{//allows for overlay save button
+public class NotSupported extends Lambda{
 public void run(){
       println("This button not yet supported");
       showMessageDialog (null, "This button not yet supported");
@@ -160,16 +160,10 @@ class EraserBrush extends Lambda{//allows for erase mode button
 
   }
 }
-
-public class Save extends Lambda{//allows for overlay save button
-        public void run(){
-          if(img.project.path.equals("")){
-             selectOutput("Select file to save Project","handler2",null,this);
-          }
-          selectOutput("Select file to save overlay","handler",null,this);
-        
-        }
-  
+public class SaveAsOverlay extends Lambda{
+  public void run(){
+            selectOutput("Select file to save overlay","handler",null,this);
+  }
   public void handler(File f){//this gets called by selectOutput when the output is selected
     if(f!=null){
        
@@ -178,7 +172,21 @@ public class Save extends Lambda{//allows for overlay save button
     }
     
   }
-  public void handler2(File f){//this gets called by selectOutput when the output is selected
+}
+public class SaveProject extends Lambda{
+    public void run(){
+      if(img.project.path.equals("")){
+             (new SaveAsProject()).run();
+          }else{
+     img.saveProject(img.project.path);
+          }
+  }
+}
+public class SaveAsProject extends Lambda{
+  public void run(){
+    selectOutput("Select file to save Project","handler2",null,this);
+  }
+    public void handler2(File f){//this gets called by selectOutput when the output is selected
     if(f!=null){
       String path=f.getAbsolutePath();
       
@@ -196,6 +204,25 @@ public class Save extends Lambda{//allows for overlay save button
     }
     
   }
+}
+public class SaveOverlay extends Lambda{
+  public void run(){
+    if(img.overlay.path.equals("")){
+            (new SaveAsOverlay()).run();
+          }else{
+            
+    img.saveOverlay(img.overlay.path); 
+          }
+  }
+}
+public class Save extends Lambda{//allows for overlay save button
+        public void run(){
+          
+          (new SaveProject()).run();
+          (new SaveOverlay()).run();
+          
+        
+        }
 }
 
 public class Load extends Lambda{//allow for overlay load button 
@@ -230,27 +257,6 @@ public class EdgeFollowingBrushDestroy extends Lambda{//I am guessing anti edgef
  
 }
 
-public class AxonBrush extends Lambda{//Edgefollowing trigger
-  Axon brush;
-  boolean first=true;
-  public void run(){
-    if(first){
-      brush=new Axon(img.brush.c,img.brush.img,img.brush.size);
-    }
-    first=false;
-    brush.c=img.brush.c;
-    brush.size=img.brush.size;
-    img.brush= brush;
-    img.brush.erase=((Ui_Button)sidebar.getId("eraser")).selected();//change eraser state to the right one based on the button
-  }
- 
-}
-public class AxonBrushDestroy extends Lambda{//I am guessing anti edgefollowing trigger, but I dont know
-  public void run(){
-    img.brush= new Brush(img.brush.c,img.brush.img,img.brush.size);
-  }
- 
-}
 
 
 public class BlankButton extends Lambda{//blank button for testing, hyjack all you want
@@ -279,6 +285,100 @@ public class Create3D extends Lambda{
         window=true;
       }else{
         view3D.prep();
+      }
+    }
+  }
+  
+}
+public class ExportPNG extends Lambda{
+  ArrayList<Integer> layers;
+  void run(){
+   String s=null;
+    boolean goodInput=false;
+    String invalid="";
+    while(!goodInput){
+      layers=new ArrayList<Integer>();
+    s = (String)JOptionPane.showInputDialog(
+                    frame,
+                    invalid+"Layers to Export (ie '1,2,5-8')\n",
+                    "Customized Dialog",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    img.layer);
+    goodInput=true;
+    if(s!=null){
+      String[] sec;
+      if(s.contains(",")){
+        sec=s.split(",");
+      }else{
+        sec=new String[]{""};
+        sec[0]=s;
+      }
+      try{
+      for(int i=0;i<sec.length ;i++){
+        if(sec[i].contains("-")){
+          String[] range=sec[i].split("-");
+          if (range.length>2){
+            goodInput=false;
+          }
+          int start=Integer.parseInt(range[0]);
+          int end=Integer.parseInt(range[1]);
+          for(;start<=end;start++){
+            layers.add(start); 
+          }
+        }else{
+           layers.add(Integer.parseInt(sec[i]));
+        }
+      }
+      }catch(Exception e){
+        goodInput=false;
+     }
+      if(goodInput==false){
+      invalid="Invalid input given\n"; 
+    }
+    
+    
+         if(s.equals("")){
+           layers.add(img.layer); 
+           goodInput=true;
+         }
+         
+    }
+
+  }
+  if(s!=null&&layers.size()>0){
+  boolean abort=false;
+  if(layers.size()>1||layers.get(0)!=img.layer){
+    abort=YES_OPTION!=showConfirmDialog (null, "WARNING! Exporting layers other than the active layer may take some time/nand could crash the program in certain circumstances, continue? (Saving first is recomended)","Warning",YES_NO_OPTION);
+   
+  }
+  if(!abort){
+  selectOutput("Select file to export first selection to","exportHandler",null,this);
+  }
+  }
+  }
+  public void exportHandler(File f){
+    if(f!=null){
+       String path=f.getAbsolutePath();
+      String file="";
+      String ext=""; 
+      int dot=path.lastIndexOf('.');
+      if(dot>=0){
+        ext=path.substring(dot,path.length()).toLowerCase();
+        file=path.substring(0,dot);
+      }
+      if(!ext.equals(".png")){
+        file+=ext;
+        ext=".png";
+        
+      }
+      if(layers.size()>1){
+        for(int i=0;i<layers.size();i++){
+          img.exportPNG(path+layers.get(i)+ext,layers.get(i)); 
+        }
+      }else{
+        img.exportPNG(path+ext,layers.get(0)); 
       }
     }
   }
