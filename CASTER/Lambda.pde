@@ -344,8 +344,8 @@ public class ExportPNG extends Lambda{
             goodInput=false;
           }
           int start=Integer.parseInt(range[0]);
-          int end=Integer.parseInt(range[0]);
-          for(;start<end;start++){
+          int end=Integer.parseInt(range[1]);
+          for(;start<=end;start++){
             layers.add(start); 
           }
         }else{
@@ -368,9 +368,9 @@ public class ExportPNG extends Lambda{
     }
 
   }
-  if(s!=null){
+  if(s!=null&&layers.size()>0){
   boolean abort=false;
-  if(layers.size()>1&&layers.get(0)!=img.layer){
+  if(layers.size()>1||layers.get(0)!=img.layer){
     abort=YES_OPTION!=showConfirmDialog (null, "WARNING! Exporting layers other than the active layer may take some time/nand could crash the program in certain circumstances, continue? (Saving first is recomended)","Warning",YES_NO_OPTION);
    
   }

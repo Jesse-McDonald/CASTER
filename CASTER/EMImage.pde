@@ -370,10 +370,12 @@ class EMImage {
     return ((c >> 16 & 0xFF) + (c >> 8 & 0xFF) + (c & 0xFF))/3.0;//extract and average rgb values
   }
   void exportPNG(String path, int ilayer){
-    if(ilayer>0&&ilayer<img.depth){
+    if(ilayer>=0&&ilayer<img.depth){
       PGraphics grap=createGraphics(img.width,img.height);
-      grap.image(img.getLayer(layer),0,0);
-      grap.image(overlay.getLayer(layer),0,0);
+      grap.beginDraw();
+      grap.image(img.getLayer(ilayer),0,0);
+      grap.image(overlay.getLayer(ilayer),0,0);
+      grap.endDraw();
       grap.save(path);
     }
   }
