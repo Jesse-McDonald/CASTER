@@ -34,7 +34,7 @@ class ColorScroll{
     JPanel wraper=new JPanel();
           wraper.setBounds(0,0,in(1),in(1));
          
-          Ui_Button button= quickColor(c,.1,.1);
+          Ui_Button button= quickColor(c);
           button.setHandler(Color);
           button.addToUi(ui,wraper);
           colorPanel.add(wraper);
@@ -42,7 +42,7 @@ class ColorScroll{
           colors.add(new SegmentationColor(c,name));
     return this;
   }
-        Ui_Button quickColor(color c,float xin, float yin){
+        Ui_Button quickColor(color c){
     Ui_Button button=new Ui_Button(new JToggleButton(),"RGB("+red(c)+","+green(c)+","+blue(c)+")");
     button.setImage("ui/color.png");
     button.setClickImage("ui/colorActive.png");
@@ -50,7 +50,7 @@ class ColorScroll{
       button.setFill(new Color(round(red(c)),round(green(c)),round(blue(c))));//clear out old button everything
     
     button.setSize(in(1),in(1));
-    button.setPos(in(xin),in(yin));
+    //button.setPos(in(xin),in(yin));
     
     button.setRadius(in(.5));
     //button.toolTip("RGB("+red(c)+","+green(c)+","+blue(c)+")");
