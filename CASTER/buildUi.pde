@@ -1,6 +1,7 @@
 //logging not added to this file
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.border.*;
 int in(float inches){
  return round(programSettings.monitorPPI*inches) ;
 }
@@ -191,57 +192,14 @@ Ui buildUi(){
           button.setHandler(new PopupPanel(brushPanel));
         }
        }
-      {///colors
-
-      
-      
-        JPanel colorPanel=new JPanel();
-        colorPanel.setBounds(in(2.3),in(0),in(1.2),in(6.7));
-        colorPanel.setLayout(null);
-        colorPanel.setBackground(new Color(240,240,240));
-        
-        
-        
-        {
-          Ui_Button button= quickColor(color(255,100,200,75),.1,.1);
-          button.setHandler(Color);
-          button.addToUi(ui,colorPanel);
-        }
-        {
-          Ui_Button button= quickColor(color(255,0,0,75),.1,1.2);
-          button.setHandler(Color);
-          button.addToUi(ui,colorPanel);
-        }
-        {
-          Ui_Button button= quickColor(color(255,150,0,75),.1,2.3);
-          button.setHandler(Color);
-          button.addToUi(ui,colorPanel);
-        }
-        {
-          Ui_Button button= quickColor(color(255,255,0,75),.1,3.4);
-          button.setHandler(Color);
-          button.addToUi(ui,colorPanel);
-        }
-        {
-          Ui_Button button= quickColor(color(0,255,0,75),.1,4.5);
-          button.setHandler(Color);
-          button.addToUi(ui,colorPanel);
-        }
-        {
-          Ui_Button button= quickColor(color(26,140,255,75),.1,5.6);
-          button.setHandler(Color);
-          button.addToUi(ui,colorPanel);
-        }
-        {
-          Ui_Button button= quickColor(color(255,0,255,75),.1,6.7);
-          button.setHandler(Color);
-          button.addToUi(ui,colorPanel);
-        }
-
-
-
-        ui.f.add(colorPanel);
-      }
+      ColorScroll scroll=new ColorScroll(ui,Color,2.3,0,1.2,6.7);
+      //scroll.addColor(color(255,100,200,75));
+      //scroll.addColor(color(255,0,0,75));
+      //scroll.addColor(color(255,128,0,75));
+      //scroll.addColor(color(255,255,0,75));
+      //scroll.addColor(color(0,255,0,75));
+      //scroll.addColor(color(0,0,255,75));
+      //scroll.addColor(color(255,0,255,75));
     ui.f.add(main);
   }
    
@@ -251,21 +209,7 @@ Ui buildUi(){
  
   return ui;
 }
-Ui_Button quickColor(color c,float xin, float yin){
-    Ui_Button button=new Ui_Button(new JToggleButton(),"RGB("+red(c)+","+green(c)+","+blue(c)+")");
-    button.setImage("ui/color.png");
-    button.setClickImage("ui/colorActive.png");
-    button.setMouseOver("ui/highlight.png");
-    button.setSize(in(1),in(1));
-    button.setPos(in(xin),in(yin));
-    
-    button.setRadius(in(.5));
-    button.toolTip("RGB("+red(c)+","+green(c)+","+blue(c)+")");
-    button.setHandler(new LambdaWrap(new LColor(c), new LColor(0)));
-    button.setFill(new Color(round(red(c)),round(green(c)),round(blue(c))));//clear out old button everything
-    
-    return button;
-}
+
 Ui_Button quickButton(AbstractButton src, String name, float xin, float yin){
   Ui_Button button=new Ui_Button(src,name);
     button.setFill(null);//clear out old button everything

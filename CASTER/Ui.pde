@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 class Ui{
   JFrame root;
   JPanel f;
+  ColorScroll scroll;
   HashMap<String,Ui_Button> buttons;
   ArrayList<Ui_Button> recolor;
   JSlider sizeSlider;
@@ -85,16 +86,20 @@ class Ui_Button{
   }
   Ui_Button addToUi(Ui ui){
     fill.add(b);
+
     ui.f.add(fill);
    // ui.f.add(b);
     ui.buttons.put(name,this);
+
     ui.f.revalidate();
     ui.f.repaint();
+    
     return this;
   }
   Ui_Button addToUi(Ui ui,JPanel panel){
     fill.add(b);
     panel.add(fill);
+    
    // ui.f.add(b);
     ui.buttons.put(name,this);
     panel.revalidate();
@@ -201,13 +206,13 @@ class Ui_Button{
     return this;
   }
   Ui_Button setFill(Color c){
-    if(b instanceof JRadioButton){
-      fill.setBorder(BorderFactory.createEmptyBorder(-9,  0, 0,0));//apparently, radio buttons are 1 pixel differnt from all other buttons... oh joy
+   // if(b instanceof JRadioButton){
+   //   fill.setBorder(BorderFactory.createEmptyBorder(0,  -10, 0,0));//apparently, radio buttons are 1 pixel differnt from all other buttons... oh joy
+  //    println("unused");
+ //   }else{
+      fill.setBorder(BorderFactory.createEmptyBorder(-10,  -22, -10,-22));//Not entirly sure why this line works, but without it the button is not centered on the lable
   
-    }else{
-      fill.setBorder(BorderFactory.createEmptyBorder(-10,  0, 0,0));//Not entirly sure why this line works, but without it the button is not centered on the lable
-  
-    }
+ //   }
     b.setBorderPainted(false);
 b.setFocusPainted(false);
 b.setContentAreaFilled(false);

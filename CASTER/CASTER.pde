@@ -124,6 +124,7 @@ void setup(){//setup the window
   tablet = new Tablet(this);
 	img=new EMImage();//build an EMImage
 	surface.setResizable(true);//allow the window to be resized
+  sidebar=buildUi();
 	if(programSettings.autoOpen){
     if(!programSettings.lastProject.equals("")){
       log.start("opening last project");
@@ -142,7 +143,7 @@ void setup(){//setup the window
   //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
 	//ui=buildUi(this);
   String[] args={""};
-  sidebar=buildUi();
+  
   //stackPos=new Ui_Slider();
   //{//pos slider,
   //  PImage tImg=new PImage(100,40,ARGB);
