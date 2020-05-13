@@ -77,7 +77,7 @@ class EMOverlay{
       log.log("EMOverlay adding new layer");
       overlay.add(new PNGOverlay(width,height,palette,paletteMap));//add new image to the stack and add its index to the key
       key.put(l,overlay.size()-1);
-      //cached=createImage(width,height,ARGB);
+      cached=createImage(width,height,ARGB);
     }
     if(cached!=null){
       cached.set(x,y,c);
