@@ -166,10 +166,10 @@ class EMImage {
     return img.size();
   }
 	public Pixel get(int x, int y) {//just an obfuscation of img.img.get(...) to img.get(...)
-    log.start("EMIage.get()");
+
 		color c;
 		c=img.get(layer, x, y);
-    log.stop();
+
 		return new Pixel(x, y, c);
 	}
 		

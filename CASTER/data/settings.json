@@ -7,5 +7,6 @@
   "monitorPPI": -1,
   "maxPixelCache": 1400000,
   "lastProject": "D:\\test.caster",
-  "maxProgramRam": 120000
+  "maxProgramRam": 120000,
+  "floodSpeed":1
 }

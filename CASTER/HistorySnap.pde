@@ -33,7 +33,9 @@ class HistorySnap{
       target.overlay.set(layer,before.get(i).x,before.get(i).y,after.get(i));
     }
     target.overlay.logChanges=true;
+    if(layer!=-1){
     target.layer=layer;
+    }
     log.stop();
     return this;
   }
@@ -41,11 +43,13 @@ class HistorySnap{
     log.start("HistorySnap.undo()");
     target.overlay.logChanges=false;
    
-    for(int i=0;i<before.size();i++){
+    for(int i=before.size()-1;i>=0;i--){//turns out you should go through the list backwards, suppose I do a=1, a=2, a=1, history logs it as 0,1 1,2 2,1 and then undoes it from 1 to 0, then  1 to 2 and then from 2 to 1, final state being 1, not 0
       target.overlay.set(layer,before.get(i).x,before.get(i).y,before.get(i).c);
     }
     target.overlay.logChanges=true;
-    target.layer=layer;
+    if(layer!=-1){
+      target.layer=layer;
+    }
     log.stop();
     return this;
   }

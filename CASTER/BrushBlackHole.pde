@@ -55,7 +55,8 @@ class BrushBlackHole extends Brush{
         img.snap(); 
         undoFrames=0;
     }
-    while(!pixels.isEmpty()&ittr<pixels.size()*size/5.){//flood fill ends when there are no non c colored pixels to spread to
+    int startNum=round(pixels.size()*size/5.);
+    while(!pixels.isEmpty()&ittr<startNum*programSettings.floodSpeed&&ittr<10000*programSettings.floodSpeed){//flood fill ends when there are no non c colored pixels to spread to
       Pixel p=pixels.get(0);
       pixels.remove(0);
       if (this.img.overlay.get(this.img.layer,p.x,p.y)==c){//its flood fill, but anti, this and the next line is all that needs changed
