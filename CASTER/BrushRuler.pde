@@ -14,6 +14,9 @@ class BrushRuler extends Brush{
   }
   public BrushRuler draw(){//this draws the shape of the brush to the screen, generally should not update overlay unless there is a multi-frame process
     log.start("BrushRuler.draw()");
+    rectMode(CORNER);
+    textMode(CORNER);
+    textAlign(LEFT);
     //this should be called every frame
     float zoom=this.img.getZoom();
     int xDistance=0;
@@ -45,13 +48,13 @@ class BrushRuler extends Brush{
     noStroke();
     fill(255,200);
     textSize(16);
-    String info="X Distance: "+xDistance+"\nY Distance: "+yDistance+"\nLayer Distance: "+layerDistance+"\nAbsolute Distance: "+distance;
-    rect(mouseX,mouseY-textAscent()*7,textWidth(info)+10,textAscent()*7);
+    String info="X Position: "+pixel.x+"\nY Position: "+pixel.y+"\nX Distance: "+xDistance+"\nY Distance: "+yDistance+"\nLayer Distance: "+layerDistance+"\nAbsolute Distance: "+distance;
+    rect(mouseX,mouseY-textAscent()*11,textWidth(info)+20,textAscent()*11);
 
     image(shape,mouseX-shape.width+9,mouseY-shape.height+13);
     fill(0);
     
-    text(info, mouseX+10,mouseY-textAscent()*6);
+    text(info, mouseX+10,mouseY-textAscent()*9);
     if(clickToggle==1&&!mousePressed){
       clickToggle=0; 
     } 

@@ -256,7 +256,14 @@ public class EdgeFollowingBrushDestroy extends Lambda{//I am guessing anti edgef
   }
  
 }
+public class Ruler extends Lambda{//la ruler
+  public void run(){
 
+    img.brush=new BrushRuler(img.brush.c,img.brush.img,img.brush.size);
+
+  }
+
+}
 
 
 public class BlankButton extends Lambda{//blank button for testing, hyjack all you want
