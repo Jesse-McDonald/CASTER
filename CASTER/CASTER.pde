@@ -163,6 +163,8 @@ void setup(){//setup the window
 }
 
 void draw(){
+
+
   itterations++;
   log.start("Processing.draw()");
 	background(50);//set background to non discript gray
