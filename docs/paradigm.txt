@@ -1,0 +1,44 @@
+This document outlines the Paradigm and use case involved in creating CASTER.  If your use case is different but still matches our paradigm, then CASTER will likely work for you.  If your use case does not match out paradigm, then heavy modification is likely required to the core of CASTER to get it to work for your use case.
+
+The Use case
+Our specific use case for CASTER is to be able to navigate and segment nerve cells in scanning electron microscope scan stacks made from a mouse retina.  Each stack contains about 600 grayscale images that are all the same size, roughly 6000x8000 totaling about 32GB when uncompressed.  The images must be freely navigable and zoom-able at raw quality with no lossy compression.  Preferably automated tools should assist in this.
+
+The Machines
+CASTER was designed for specific computers.  Each computer had 128GB of ram, a Core i7-5820k processor, and a GTX 1070 8GB graphics card with a 3 button mouse or Wacom tablet.
+Due to events in 2020, CASTER was emergency retrofitted to run on lesser hardware and was ported to be able to run on a computer with a core i5-6600k, 32 GB of ram, and a GTX 1060 6GB with a 3 button mouse.  Weaker computers have been tried, but the minimum recommended specs are i5 desktop processor, gtx 970 or better, and at least 16GB of ram and a 3 button mouse.
+
+The paradigm
+When creating CASTER, we boiled down our use case into a few requirements.
+The CORE paradigm
+1. CASTER must navigate a stack of images, in x,y,z and zoom
+2. CASTER must allow for nondestructive segmentation of images
+3. CASTER must be easy to modify to add additional brushes
+The lesser Paradigm
+1. The user should never have to wait for data to be loaded after startup
+2. Future devs should be able to consider both the image stack and the overlay as a 3D grid of pixels
+
+Before executing these, the following limitation was also established
+1. The base images should never be changed, especially not on disk
+
+The Controls
+As a direct result of the paradigm the controls where established
+Firstly, left click on the mouse was reserved for core 2, segmentation of images.
+Second the mouse wheel was allocated for moving up and down the image stack.  As the images are discrete this made more sense than zoom on the mouse wheel.
+3rd as z movement was already on the mouse wheel, x and y pan where assigned to the middle mouse button (generally under the scroll wheel)
+This left 1 mouse button remaining, as such, it was assigned image zoom.
+
+This leaves the brush controls, it would be convenient to be able to change brush size, the scroll wheel was the obvious choice, but already in use.  Thus, ctrl+scroll was assigned brush sizing
+
+Similarly, erase would also be handy for fast access, thus it was assigned alt, for no reason other than proximity to control and lack of existing use.
+
+CRTL+Z was assigned to undo by convention
+CTRL+SHIFT+Z and CTRL+y where assigned redo by convention
+CTRL+S was assigned save all by convention
+
+When the Wacom pen tablet was introduced, the difficulty in scroll (no wheel) gave several additional bindings
+UP arrow was assigned change layer up
+DOWN arrow was assigned change layer down
+- was assigned brush size down
++ was assigned brush size up
+and the eraser on the pen was assigned to erase.
+The pen tip was assigned paint by default, and move/zoom if its 2 buttons are pressed
