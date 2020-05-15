@@ -412,7 +412,7 @@ public class AddLayer extends Lambda{
           if (result == JOptionPane.OK_OPTION) {
              String c=col.getText();
              String n=name.getText();
-             if(c.contains("rgb(")){//try to parse as 3-4 values
+             if(c.toLowerCase().contains("rgb(")){//try to parse as 3-4 values
              try{
                String rgbs=c.substring(c.indexOf("rgb(")+4,c.indexOf(")"));
                String[] rgb=rgbs.split(",");
@@ -429,7 +429,14 @@ public class AddLayer extends Lambda{
                }
              }else{//try to parse as hex with leading 0x, # or nothing
                try{
-                 retCol=Integer.parseInt(c,16);
+                 String parse=c;
+                 if(c.toLowerCase().contains("0x")){
+                   parse=c.substring(c.indexOf("0x")+2,c.length());
+                 }else if(c.contains("#")){
+                   parse=c.substring(c.indexOf("#")+1,c.length());
+                 }
+                   
+                 retCol=Integer.parseInt(parse,16);
                  if((0xff000000&retCol)==0){//add alpha channel if needed
                     retCol=0x48000000|retCol;
                  }
