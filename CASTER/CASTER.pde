@@ -270,6 +270,9 @@ void keyTyped(){//key type handler, for wacom tablet ease of resizing and layer 
     img.undo();
   }else if(((key==26&&SHIFT_DOWN)||key==25)&&CTRL_DOWN){//ctrl shift z or ctrl y
     img.redo();
+  }else if(key==10&&CTRL_DOWN){
+    (new SaveProject()).run();
+    (new SaveOverlay()).run();
   }
   //println(CTRL_DOWN);
   //println((int)key);

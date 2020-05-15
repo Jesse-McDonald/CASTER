@@ -323,7 +323,7 @@ class LambdaWrap implements ActionListener{//this is a wraper for existing lambd
                 // to the selection or deselection 
                 // of the button 
 
-    if(abstractButton.getModel().isSelected()||abstractButton instanceof JMenuItem){//menu buttons dont report selected when clicked.... for some reason
+    if(abstractButton.getModel().isSelected()||abstractButton instanceof JMenuItem||abstractButton instanceof JButton){//menu and normal buttons buttons dont report selected when clicked.... for some reason
       lam.run();
     }else{
       if(onRelease!=null){

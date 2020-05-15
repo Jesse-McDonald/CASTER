@@ -5,8 +5,8 @@
   "MaxFastCache": 10,
   "LogExecution": true,
   "monitorPPI": -1,
+  "floodSpeed": 1,
   "maxPixelCache": 1400000,
-  "lastProject": "D:\\test.caster",
-  "maxProgramRam": 120000,
-  "floodSpeed":1
+  "lastProject": "",
+  "maxProgramRam": 120000
 }

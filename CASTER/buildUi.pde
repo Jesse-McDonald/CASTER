@@ -202,7 +202,14 @@ Ui buildUi(){
       //scroll.addColor(color(255,0,255,75));
     ui.f.add(main);
   }
-   
+   {//Add layer
+          Ui_Button button=quickButton(new JButton(),"add",2.3,6.7);
+          button.toolTip("Add Color");
+          button.addToUi(ui);
+
+          button.setHandler(new LambdaWrap(new AddLayer()));
+        }
+        
   ui.setColor(new Color(0,0,0,0));
     ui.f.revalidate();//these 2 lines clear up random issues in buttons not showing
     ui.f.repaint();
