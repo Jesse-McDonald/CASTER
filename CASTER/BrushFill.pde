@@ -75,7 +75,7 @@ class BrushFill extends Brush{
     }
     int ittr=0;
     int startNum=round(pixels.size()*size/5.);
-    while(!pixels.isEmpty()&ittr<startNum){//flood fill ends when there are no non c colored pixels to spread to
+    while(!pixels.isEmpty()&&ittr<startNum*programSettings.floodSpeed&&ittr<10000*programSettings.floodSpeed){//flood fill ends when there are no non c colored pixels to spread to
       Pixel p=pixels.get(0);
       pixels.remove(0);
 

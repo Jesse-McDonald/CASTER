@@ -9,7 +9,7 @@ this is heavily reliant much of on processing
 */
 StackTrace log;
 
-String VERSION="INDEV-20w20a";
+String VERSION="INDEV-20w20b";
 int itterations;
 int tColor(int r,int g,int b, int a){//processings color function is not thread safe, not only that but it is final preventing me from overloading it, so I made my own that is thread safe
   return ((a&0xff)<<24)+((r&0xff)<<16)+((g&0xff)<<8)  +(b&0xff);
@@ -124,6 +124,7 @@ void setup(){//setup the window
   tablet = new Tablet(this);
 	img=new EMImage();//build an EMImage
 	surface.setResizable(true);//allow the window to be resized
+  sidebar=buildUi();
 	if(programSettings.autoOpen){
     if(!programSettings.lastProject.equals("")){
       log.start("opening last project");
@@ -142,7 +143,7 @@ void setup(){//setup the window
   //img=new EMImage(new EMStack("D:\\B1run02_png\\B1_Run02_BSED_slice_0000.png"));//temp speed load
 	//ui=buildUi(this);
   String[] args={""};
-  sidebar=buildUi();
+  
   //stackPos=new Ui_Slider();
   //{//pos slider,
   //  PImage tImg=new PImage(100,40,ARGB);
@@ -269,6 +270,9 @@ void keyTyped(){//key type handler, for wacom tablet ease of resizing and layer 
     img.undo();
   }else if(((key==26&&SHIFT_DOWN)||key==25)&&CTRL_DOWN){//ctrl shift z or ctrl y
     img.redo();
+  }else if(key==10&&CTRL_DOWN){
+    (new SaveProject()).run();
+    (new SaveOverlay()).run();
   }
   //println(CTRL_DOWN);
   //println((int)key);

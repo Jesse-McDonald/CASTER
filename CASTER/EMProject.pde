@@ -68,6 +68,15 @@ class EMProject{
     ret.setBoolean("stackLoaded",stackLoaded);
     ret.setInt("layer",layer);
     ret.setString("lastOverlay",lastOverlay);
+    JSONArray j=new JSONArray();
+    for(int i=0;i<sidebar.scroll.colors.size();i++){
+     
+      JSONObject col=new JSONObject();
+      col.setInt("color",sidebar.scroll.colors.get(i).c);
+      col.setString("name",sidebar.scroll.colors.get(i).name);
+      j.setJSONObject(i,col);
+    }
+    ret.setJSONArray("Layers",j);
     if(stackLoaded){
       ret.setInt("stackSize",stackSize);
     }
@@ -88,6 +97,11 @@ class EMProject{
     width=in.getInt("width",width);
     height=in.getInt("height",height);
     stackLoaded=in.getBoolean("stackLoaded");
+    JSONArray j=in.getJSONArray("Layers");
+    for(int i=0;i<j.size();i++){
+      JSONObject obj=j.getJSONObject(i);
+      sidebar.scroll.addColor(obj.getInt("color"),obj.getString("name"));
+    }
     if(stackLoaded){
       stackSize=in.getInt("stackSize");
     }

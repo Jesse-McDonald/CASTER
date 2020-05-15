@@ -1,10 +1,11 @@
 {
   "undoDepth": 100,
-  "autoOpen": true,
+  "autoOpen": false,
   "MaxPNGCache": 50,
   "MaxFastCache": 10,
   "LogExecution": true,
   "monitorPPI": -1,
+  "floodSpeed": 1,
   "maxPixelCache": 1400000,
   "lastProject": "",
   "maxProgramRam": 120000

@@ -9,6 +9,7 @@ class ProgramSettings{
  boolean logExecution;
  boolean autoOpen=true;
  String lastProject="";
+ float floodSpeed=1;
  JSONObject raw;
  ProgramSettings(String path){
    this(loadJSONObject(path)); 
@@ -27,6 +28,7 @@ class ProgramSettings{
   maxProgramRam=settingsJSON.getInt("maxProgramRam");
   monitorPPI=settingsJSON.getInt("monitorPPI");
   undoDepth=settingsJSON.getInt("undoDepth"); 
+  floodSpeed=settingsJSON.getFloat("floodSpeed");
   logExecution=settingsJSON.getBoolean("LogExecution");
   if(monitorPPI==-1){
     saveMonitorPPI=false;

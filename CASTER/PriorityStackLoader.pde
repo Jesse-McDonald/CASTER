@@ -136,18 +136,22 @@ class PriorityStack{
     return get(currentLayer,x,y);
   }
   color get(int layer, int x, int y){//retrive a pixel from any layer
-    log.start("PriorityStack.get()");
+ 
     color ret;
     if(cached.containsKey(layer)){
       ret=cached.get(layer).get(x,y);
     }else if(loaded.containsKey(layer)){
+      log.start("retreving pixel from cache");
       ret=loaded.get(layer).get(x,y);
+      log.stop();
     }else if(layer>0&&layer<files.length){
+      log.start("retreving pixel from disk");
       ret=load(files[layer]).get(x,y);
+      log.stop();
     }else{
       ret=0;
     }
-    log.stop();
+
     return ret;
   }
 }

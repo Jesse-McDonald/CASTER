@@ -27,6 +27,7 @@ class StackTrace{
     logs.add(lg);
   }
   void saveLog(){
+    try{
     String[] strings=new String[logs.size()];
     int i=0;
     for(String str:logs){
@@ -34,6 +35,7 @@ class StackTrace{
       i++;
     }
     saveStrings("log/"+filename,strings);
+    }catch(Exception e){}
   }
   void printLog(){
     println(filename);

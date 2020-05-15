@@ -384,3 +384,65 @@ public class ExportPNG extends Lambda{
   }
   
 }
+public class AddLayer extends Lambda{
+  void run(){
+      JTextField col = new JTextField(10);
+      JTextField name = new JTextField(10);
+
+      JPanel myPanel = new JPanel();
+      myPanel.add(new JLabel("Color:"));
+      myPanel.add(col);
+      myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+      myPanel.add(new JLabel("Name:"));
+      myPanel.add(name);
+      boolean prompt=true;
+      while(prompt){
+            
+          color retCol=0;
+          prompt=false;
+          int result = JOptionPane.showConfirmDialog(null, myPanel, 
+                   "Enter a Color Value and Name", JOptionPane.OK_CANCEL_OPTION);
+          if (result == JOptionPane.OK_OPTION) {
+             String c=col.getText();
+             String n=name.getText();
+             if(c.contains("rgb(")){//try to parse as 3-4 values
+             try{
+               String rgbs=c.substring(c.indexOf("rgb(")+4,c.indexOf(")"));
+               String[] rgb=rgbs.split(",");
+               if(rgb.length==3){
+                 retCol=tColor(Integer.parseInt(rgb[0]),Integer.parseInt(rgb[1]),Integer.parseInt(rgb[2]),75);
+               }else if(rgb.length==4){
+                 retCol=tColor(Integer.parseInt(rgb[0]),Integer.parseInt(rgb[1]),Integer.parseInt(rgb[2]),Integer.parseInt(rgb[3]));
+               
+               }else{
+                prompt=true; 
+               }
+             }catch(Exception e){
+                 prompt=true;
+               }
+             }else{//try to parse as hex with leading 0x, # or nothing
+               try{
+                 retCol=Integer.parseInt(c,16);
+                 if((0xff000000&retCol)==0){//add alpha channel if needed
+                    retCol=0x48000000|retCol;
+                 }
+               }catch(Exception e){
+                 prompt=true;
+               }
+             }
+             
+             if(prompt){
+                showMessageDialog (null, "Invalid Color, plese use format \"rgb(r,g,b)\", \"rgb(r,g,b,a)\", \"#rrggbb\", \"#aarrggbb\", \n\"0xaarrggbb\", \"0xrrggbb\", \"rrggbb\", or \"aarrggbb\" ",null,OK_OPTION);
+     
+             }else{
+               if(n.equals("")){
+                 n="RGB("+red(retCol)+","+green(retCol)+","+blue(retCol)+")";
+               }
+               sidebar.scroll.addColor(retCol,n);
+             }
+          }
+          
+      }
+  }
+  
+}
