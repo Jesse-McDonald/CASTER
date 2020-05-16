@@ -1,0 +1,37 @@
+INDEV:
+INDEV-B base program as completed at the end of the 2017 summer, synonymous with INDEV-17w31a
+further indev versions marked as INDEV-[yy]w[ww][i] where yy is the 2 digit year, ww is the month number within that year, and i is an alphabetical incremented for the number of releases in that week
+Example: version released on 8/4/2017 being the first version that week would be INDEV-17w31a
+program shall remain in INDEV until it is a functioning standalone program and should have 3d visualization, multiple layer handling, more file types supported, and be a functioning and stable manual segmentation solution prior to advancing
+
+ALPHA:
+version numbers are the same as the indev are but with ALPHA- instead of INDEV-, major releases released with a 'a' preceding the version number
+The program will advance to this point when it is ready for use and testing with in the dev team and emediat associates, 
+once the program has reached ALPHA level all INDEV branches should merge into an ALPHA branch prior to merging into Master
+
+BETA:
+version numbers are the same as the alpha are but with BETA- instead of ALPHA-, major releases released with a 'b' preceding the version number
+The program will advance to this point when it is ready for use and testing by random strangers, the program should work fine, and there should be no debug print statements in these versions
+Once the program has reached BETA level all ALPHA branches should merge into a BETA branch prior to merging into Master
+
+RELEASE:
+3 number version number preceded by CASTER-, (CASTER-1.0.0)
+for refference the numbers are a.b.c
+a starts at 1 and counts up by 1
+b and c start at 0 and count up by 1
+if a changes, b resets, if b changes c resets
+number a is used for large changes, if a changes, there should be a large change with in the foundation of CASTER that is greatly noticable by the user, the user may be required to reconfigures some prefferneces
+number b is for large changes, if b changes there should be a large change to how the program works that is noticable by the user, this includes major UI changes and new tools/settings, no previously saved prefferences will be changed, only defaults
+files saving may change, but support for loading and converting of previous saves is required
+number c is for minor changes and bug fixes, generaly the user should not notice changes, small tools and ui tweeks can be added here
+The program will advance to this point starting at CASTER-1.0.0 once it is completely standalone and stable, at this point the program should be in a "marketable" state to professionals wishing to uses this tool in a professional manner without
+the risk of major bugs or errors.  projects saved in later c versions should be backwards compatible with versions in the same a.b version
+Once the program has reached RELEASE level, all beta branches should merge into a RELEASE branch prior to merging into MASTER, in doing so, a, b, or c is required to incriment
+
+there is the future option to expand the version number to A.a.B.b.C.c if there is need, if a goes above 4, or b goes above 20, there may be good reason to switch to this
+(example, there may be a time when a.b.c.d is used with d being bugs, c being new tools, b being big changes, and a being paridime shifs)
+HOTFIX:
+version numbers save as INDEV but with HOTFIX instead of INDEV
+HOTFIX versions do nothing except patch bugs where you dont want to wait for the current version of ALPHA to stablilize, they can be inserted at any point to any branch except to an existing RELEASE branch, when injected into RELEASE they must incriment c at the minimum
+These branches should be used sparingly and only for program breaking bug fixes where any consequence of the branch skipping the usual testing phases are less important than the existing problem (i.e. program crashes on the 20th layer change of an image exactly 6000 pixels, solution dont load 6000 pixel image at all)
+HOTFIXes are designed to be emergency and temporary, and should be replaced by more rigerous solutions (or ran through testing phases) in the next round of testing (ie the next ALPHA/BETA branch)
