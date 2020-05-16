@@ -15,6 +15,9 @@ INDEV-18w22a developed from INDEV-17w52a to INDEV-18w28d by Jesse McDonald and D
 SIDE-DEV branch merged
 Funding was provided by INBRE and the National Institute of General Medical Sciences of the National Institutes of Health Grant #P20GM103408
 
-7/20/2018-(unknown)
-INDEV-18w29a developed from INDEV-18w28d to [UNKNOWN] by Jesse McDOnald under Dr. Samual (Seth) Long at Lewis-Clark State College
+7/20/2018-5/15/2020
+INDEV-18w29a developed from INDEV-18w28d to INDEV-20w20b by Jesse McDOnald under Dr. Samual (Seth) Long at Lewis-Clark State College
 Funding was provided by Lewis-Clark State College
+Additional work by Delaney Jones on edge finder brush
+Documentation and testing by Ben (Greg) Van Zant
+
