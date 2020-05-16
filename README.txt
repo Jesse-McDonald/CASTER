@@ -11,6 +11,7 @@ Saving and loading overlays in JEMO format
 RAE CAST ray segmentation semi-automatic segmentation brush
 EdgeDetection brush for semi-automatic and automatic selection of membrain
 3D visualization
+Priority Queue stack loading for systems with insufficient memory
 
 NOTE:
 The CASTER_Key.pdf is key to understanding the EdgeFollowing Brush. 

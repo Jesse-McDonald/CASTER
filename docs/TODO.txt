@@ -1,0 +1,10 @@
+This is just my plan for the next steps of CASTER
+
+add scale slider to 3d view
+
+make layer copying adjust layers to new membrane (plan is to look for closest pixel that matches the previous pixel the best, probably a quadratic or exponential distance drop off)
+add Decision tree classifier
+add handling of non png file types (like tif)
+add import/export of track em projects
+add .dm3 file handling
+remove processing color as a dependancy, it is not thread safe, tColor should be a 1-1 replacement that is thread safe
