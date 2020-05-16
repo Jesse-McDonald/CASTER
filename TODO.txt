@@ -1,15 +1,6 @@
 This is just my plan for the next steps of CASTER
-priority queue image caching
-add bindings to button to allow picker to clear all brushes and vice versa
-add binding to radio button too
+
 add scale slider to 3d view
-add measure tool to ui
-migrate edgeFinder toolbar to 2nd window
-
-server based landmark allignment
-add multiple segmentation layers (Colors) (3rd window?) (user addable, not just debug)(although the debug did teach me quite a bit)
-
-
 
 make layer copying adjust layers to new membrane (plan is to look for closest pixel that matches the previous pixel the best, probably a quadratic or exponential distance drop off)
 add Decision tree classifier
