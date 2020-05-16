@@ -1,0 +1,141 @@
+INDEV-17w52a
+*Added ChangeLog.txt (I know, I know, meta and all that)
+*Refactored Brush class to be polymorphic rather than mode dependant
+*Refactored Lambda functions to work with new polymorphic brushes
+*removed debug prints from UI lookup by name
+*changed pixel border minimum from 10 to 1 (EMImage.move)
+*Renamed test-environment.pde to CASTER.pde
+
+INDEV-18w26a
+*Merged changes from sepperate DEV branch
+*changes merged:
+	*EdgeFinder brush
+	*edgeFinder controle pannel
+*added semi automation pannel
+*added edgefinder to the semi automation pannel
+*moved RAE to semi automation pannel
+*added 3d button
+*added 3d test
+*added PNGImage
+	*compresses image in memory without loosing quality
+	*fast access to any pixel
+	*image buffering on layer change
+	*designed to hold scans
+	*presents self as color[width][height] or PImage(width,height)
+*changed EMImage to use PNGImage instead of PImage
+*added PNGOverlay
+	*Extends PNGImage
+	*designed to hold overlay
+	*expandable pallet
+	*fast access of color pallet from color to index or index to color
+	*presents self as color[width][height] or PImage(width,height)
+*changed EMOverlay to use PNGOverlay
+*changed EMOverlay to uses dynamic stack of PNGOverlay
+	*Each layer only uses memory if there is "ink" on the layer
+	*use HashMap key to look up given layer to real layer location
+*fixed memory issues to allow for loading of larger stacks (up to 50GB in 128GB ram in theory) with above changes to EMImage and EMOverlay
+*designed JEMO V.1 for compressed overlay storage
+*updating saving to JEMO v.1
+*NOTICE: Saving currently dissabled due to being in transition from JEMO v.0 to JEMO v.1, saving and loading not recomended, un expected results may occur 
+*parallelised image stack loading so you dont have to wait for a full stack to load
+*parallelised image caching so you dont have any frame hitches changing layers
+*added an undo/redo cache 
+*moved icon images to /data folder for cleaner main folder
+
+INDEV-18w26b
+*3d visulization now works
+*3d visulization now pulls overlay
+*multi color support
+*no export yet
+
+INDEV-18w27a
+*Migrated ui to 2nd window (not edgefinder brush controles yet)
+*UI now supports n window (in theory)
+*hashCode implimented for PNGImage and EMStack
+*UUID implimented for EMStack
+*updated priorities in TODO
+
+INDEV-18w27b
+*JEMO v.1 support
+*project import/export via json file
+*updated grant numbers in attribution.txt
+*added project data to stacks
+
+INDEV-18w28a
+*Fixed error in JEMO loading where unsigned short hack was not working
+*changed default overlay color to blue for better colorblind support
+*increased performance of 3D viewer by hijacking PShape as a GLDisplayList (synthetic test of 20,000 points (about 180,000 triangles?) had no noticable frame lag
+*fixed off by one error in PNGImage.get bound checking that could cause the program to crash in certain cercumstances 
+*isolatated cause of crash on 168 of PNGImage.fastGet
+*corrected error in JEMO format docs where a 32 byte header had 42 bytes listed (uuid listed as 32 not 16 bytes)
+
+INDEV-18w28b
+*added support for wacom pen tablets
+	*currently we support drawing
+	*errasing
+	*moving
+	*zoming
+	*all with the pen 
+	*and changing brush size
+	*and changing layer now have key bindings for the tablet to use
+*added debug color pallete
+*fixed UI (should scale better too)
+*3d visulalizer can now be ran twice
+
+INDEV-18w28c (first version number with a c :)  )
+*added colored brush buttons
+*changed buttons to be transparrent where previously colored
+*curent brush color now shows up on each brush button that uses a color
+*fixed calcWidth and calcHeight on ui_panel
+*added Black Hole Brush (flood fill erraser)
+*added black hole brush ui
+*added black hole brush icon
+*added layer thickness on keybinding (no slider yet)
+
+INDEV-18w28d
+*decreased membrain jumping of edge follower brush
+*increased edge following performance
+*added measure tool
+*fixed bug with stylus clearing eraser state when triggered by ui
+
+INDEV-18w29a
+*added Ui_Slider class
+*added obj export
+
+INDEV-18w29b
+*Optimized obj export to use less memory
+*flood fill now only fills the color you clicked on
+*added color picker brush (not on ui yet)
+*updated future version numbering plan
+
+INDEV-18w31a
+*Bug fixes
+*fixed undo for the flood fill bruhes
+*fixes some issures with the edgefinder brush settings pannel
+these changes rather hacked together
+*fixed layer caching error while zoomed out and changing layers
+*we now have a slider that controles brush size, but the 2 other ways we have to change size do not update the slider.  This is in preperation for migrading the 3 slider window
+*added settings.json for CASTER
+
+INDEV-18w32a
+*moved edgefinder settings to own file
+*migrated to EdgeFinderSettings
+*removed legacy global edgefinder settings tracker and merged them with the edgeFinder lambda
+*added Color Slider
+*migrated existing edgefinder settings ui to use Ui_Sliders rather than raw sliders
+*refactored Ui_Slider Draw to be more consistant at many sizes
+*Removed now legacy otherWindows.pde
+
+INDEV-18w32b
+*Added Bindings
+*Added Ui_TextPannel
+*connected all (all user, not internal) methods of changing brush size to change the slider position too
+*Added Lables to EdgeFinder Brush Sliders
+*added color changing color picker icon
+*background work for EdgeFollower color picker, we just have to tie it to the ui... I think
+
+INDEV-18w32c
+*bound edge follower picker buttons to edge follower picker stuff
+*we now have color picker in the edge finder
+*added imgFromFile wrapper as a safe way of forcing image loading to use the main thread, see comment
+*added color picker to ui, currently stableish, it wont cause crashes, but it wont deselect brushes, colors, or its self and visa versa

@@ -33,6 +33,7 @@ class Ui{
      f.setLayout(null);
      f.setVisible(true);
      root.add(f);
+     root.setAlwaysOnTop(true);
   }
   Ui setColor(Color c){
     for(int i=0;i<recolor.size();i++){

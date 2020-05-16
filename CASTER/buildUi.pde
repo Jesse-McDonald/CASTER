@@ -192,6 +192,35 @@ Ui buildUi(){
           button.setHandler(new PopupPanel(brushPanel));
         }
        }
+       {//toolbox "brushes"
+        JPanel brushPanel=new JPanel();
+        brushPanel.setBounds(in(1.1),in(0),in(1.2),in(5.6));
+        brushPanel.setLayout(null);
+        brushPanel.setBackground(new Color(240,240,240));
+        
+        
+        {
+          Ui_Button button=quickButton(new JToggleButton(),"rulerButton",.1,.1);//this makes a toggle able button with the name of paintbrush at .1 inch and .1 inch
+          ui.recolor.add(button);//this adds the button to the recolor list
+          button.addToUi(ui,brushPanel);//this puts it on the panel, it also adds it to a list in UI
+          button.toolTip("Ruler");//this adds a mouse over tip
+          button.setHandler(brushes);//this connects the button to the brushes radio
+          button.setHandler(new LambdaWrap(new Ruler(), new ClearBrush()));//this sets the normal click handlers
+        }
+        
+       
+
+        brushPanel.setVisible(false);
+        ui.f.add(brushPanel);
+        {
+          Ui_Button button=quickButton(new JToggleButton(),"toolbox",.1,2.3);
+          
+          button.addToUi(ui,main);
+          button.toolTip("Non brush Tools");
+          button.setHandler(sections);
+          button.setHandler(new PopupPanel(brushPanel));
+        }
+       }
       ColorScroll scroll=new ColorScroll(ui,Color,2.3,0,1.2,6.7);
       //scroll.addColor(color(255,100,200,75));
       //scroll.addColor(color(255,0,0,75));
